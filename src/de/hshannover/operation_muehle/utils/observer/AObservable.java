@@ -40,7 +40,7 @@ public abstract class AObservable {
 	 * 
 	 * @param changed
 	 */
-	public void setObservableChanged(boolean changed) {
+	protected void setObservableChanged(boolean changed) {
 		this.observableChanged = changed;
 	}
 }
