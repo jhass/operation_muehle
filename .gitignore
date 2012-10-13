@@ -5,3 +5,6 @@ bin/
 # Package Files
 *.war
 *.ear
+
+
+*.bak
