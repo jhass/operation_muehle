@@ -6,17 +6,21 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot {
 	private int column;
 	
 	public Slot(int row, int column, int status) {
-		if(row<0) throw new IllegalArgumentException("Slot.Row ungueltig!");
-		if(column<0) throw new IllegalArgumentException("Slot.Column ungueltig!");
-		if(status<0 | status>2) throw new IllegalArgumentException("Slot.Status ungueltig!");
-		this.status= status;
-		this.row= row;
-		this.column= column;
+		if (row<0) 
+			throw new IllegalArgumentException("Slot.Row ungueltig!");
+		if (column<0) 
+			throw new IllegalArgumentException("Slot.Column ungueltig!");
+		if (status<0 | status>2) 
+			throw new IllegalArgumentException("Slot.Status ungueltig!");
+		this.status = status;
+		this.row = row;
+		this.column = column;
 	}
 	
 	public void setStatus(int status) {
-		if(status<0 | status>2) throw new IllegalArgumentException("Slot.Status ungueltig!");
-		this.status= status;
+		if (status<0 | status>2) 
+			throw new IllegalArgumentException("Slot.Status ungueltig!");
+		this.status = status;
 	}
 	
 	public int getStatus() {
