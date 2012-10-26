@@ -9,7 +9,7 @@ import java.util.ArrayList;
  *
  */
 public class SaveState extends GameState {
-	private Player[] players;
+	public Player[] players;
 
 	/**
 	 * Konstruktor

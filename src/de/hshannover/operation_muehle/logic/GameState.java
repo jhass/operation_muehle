@@ -8,10 +8,10 @@ import java.util.ArrayList;
  *
  */
 public class GameState {
-	private Gameboard currentGB;
-	private int currentPlayer;
-	private int winner;
-	private ArrayList<String> log;
+	public Gameboard currentGB;
+	public int currentPlayer;
+	public int winner;
+	public ArrayList<String> log;
 	
 	/**
 	 * Konstruktor
