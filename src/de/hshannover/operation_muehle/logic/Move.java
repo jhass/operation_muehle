@@ -11,13 +11,21 @@ public class Move implements de.hshannover.inform.muehle.strategy.Move {
 	private Slot endSlot;
 	
 	/**
-	 * Konstruktor
-	 * @param start Spielfeld, von dem gezogen wird/ 
-	 *               In der Setzphase= Null
-	 * @param end Spielfeld, in das gezogen/ gesetzt wird
+	 * Konstruktor fuer die Zugphase
+	 * @param start Spielfeld, von dem gezogen wird
+	 * @param end Spielfeld, in das gezogen wird
 	 */
 	public Move(Slot start, Slot end) {
-		this.startSlot= start;
+		this.startSlot = start;
+		this.endSlot = end;
+	}
+	
+	/**
+	 * Kontruktor fuer die Setzphase
+	 * @param end Spielfeld, in das ein Stein gesetzt wird
+	 */
+	public Move(Slot end) {
+		this.startSlot = null;
 		this.endSlot= end;
 	}
 	
