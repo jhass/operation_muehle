@@ -2,6 +2,7 @@ package de.hshannover.operation_muehle;
 
 import java.util.HashMap;
 
+import de.hshannover.operation_muehle.logic.SaveState;
 import de.hshannover.operation_muehle.logic.Slot;
 import de.hshannover.operation_muehle.logic.Move;
 import de.hshannover.operation_muehle.logic.Player;
@@ -21,16 +22,18 @@ public class Facade {
 	/**
 	 * Simple Constructor.
 	 */
-	public Facade() {
+	private Facade() {
 		appController = new ApplicationController();
-		stratload = new StrategyLoader;
+		stratload = new StrategyLoader();
 	}
 	
 	/**
-	 * I don't know what this does, tbh.
-	 * @return Something fancy?
+	 * Creates a Facade if not existent, otherwise returning
+	 * the existing one.
+	 * @return The Facade(SIngelton)
 	 */
 	static Facade getInstance() {
+		if (instance == null) {instance = new Facade(); }
 		return instance;
 	}
 	
@@ -59,7 +62,7 @@ public class Facade {
 	 */
 	public void loadGame(String path) {
 		SaveState save = IOOperation.loadGameInfo(path);
-		appController.initializeSave(save);
+		appController.initializeSaved(save);
 	}
 	
 	/**
@@ -67,8 +70,7 @@ public class Facade {
 	 */
 	public void abortGame() {
 		//Threads for the Thread-God, Saves for the Savethrone!
-		appcontroller.endGame();
-		this.finalize(); // Should do the trick.
+		appController.endGame();
 	}
 	
 	/**
@@ -95,7 +97,9 @@ public class Facade {
 	 * @param m The Move thats to be given.
 	 */
 	public void giveMove(Move m) {
-		appcontroller.givePlayerMove(m);
+		appController.givePlayerMove(m);
 	}
+	
+
 
 }
