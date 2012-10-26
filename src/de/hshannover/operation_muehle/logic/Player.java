@@ -29,12 +29,12 @@ public class Player {
 			throw new IllegalArgumentException("Player.Color ungueltig!");
 		if (thinkTime < 0)
 			throw new IllegalArgumentException("Player.Thinktime ungueltig!");
-		this.name= name;
-		this.color= color;
-		this.isAI= isAI;
-		this.thinkTime= thinkTime;
-		this.stones= 9;
-		this.phase= 1;
+		this.name = name;
+		this.color = color;
+		this.isAI = isAI;
+		this.thinkTime = thinkTime;
+		this.stones = 9;
+		this.phase = 1;
 	}
 	/**
 	 * Konstruktor fuer Spieler bei einem geladenen Spielstand.
@@ -49,12 +49,12 @@ public class Player {
 	 */
 	public Player(String name, int color, boolean isAI, int thinkTime, 
 			       Slot[] stones, int phase) {
-		this.name= name;
-		this.color= color;
-		this.isAI= isAI;
-		this.thinkTime= thinkTime;
-		this.stones= stones.length;
-		this.phase= phase;
+		this.name = name;
+		this.color = color;
+		this.isAI = isAI;
+		this.thinkTime = thinkTime;
+		this.stones = stones.length;
+		this.phase = phase;
 	}
 	
 	/**
