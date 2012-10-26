@@ -32,7 +32,7 @@ public class Facade {
 	 * the existing one.
 	 * @return The Facade(SIngelton)
 	 */
-	static Facade getInstance() {
+	public static Facade getInstance() {
 		if (instance == null) {instance = new Facade(); }
 		return instance;
 	}
