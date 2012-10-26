@@ -8,7 +8,7 @@ public class IOOperation {
 	 * @return A SaveState from the file.
 	 * @see SaveState
 	 */
-	static SaveState loadGameInfo(String name) {
+	public static SaveState loadGameInfo(String name) {
 		//loads and loads of loading
 	}
 	
@@ -19,7 +19,7 @@ public class IOOperation {
 	 * @param data The Data thats to be saved.
 	 * @see GameState
 	 */
-	static void saveGameInfo(String name, GameState data) {
+	public static void saveGameInfo(String name, GameState data) {
 		//Save yourselves!
 	}
 
