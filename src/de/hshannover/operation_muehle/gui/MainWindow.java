@@ -7,6 +7,8 @@ import javax.swing.JPanel;
 import java.util.ArrayList;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /** Main window displaying the game and providing access to all other functions.
  * 
@@ -18,6 +20,7 @@ public class MainWindow extends JFrame {
 	
 	private ArrayList<Runnable> toggleLogCallbacks = new ArrayList<Runnable>();
 	private ArrayList<Runnable> newGameCallbacks = new ArrayList<Runnable>();
+	private ArrayList<Runnable> closeWindowCallbacks = new ArrayList<Runnable>();
 	
 	private final JButton btnNewGame = new JButton("New Game");
 	private final JButton btnToggleLog = new JButton("Toggle Log");
@@ -36,15 +39,16 @@ public class MainWindow extends JFrame {
 		buttonContainer.add(btnToggleLog);
 		buttonContainer.add(btnNewGame);
 		
-		setupButtonCallbacks();
+		setupListener();
 		
 		setTitle("Mühle");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(500, 500);
 	}
 	
-	private void setupButtonCallbacks() {
+	private void setupListener() {
 		btnNewGame.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				for (Runnable callback : newGameCallbacks) {
 					callback.run();
@@ -53,8 +57,18 @@ public class MainWindow extends JFrame {
 		});
 		
 		btnToggleLog.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				for (Runnable callback : toggleLogCallbacks) {
+					callback.run();
+				}
+			}
+		});
+		
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent event) {
+				for (Runnable callback : closeWindowCallbacks) {
 					callback.run();
 				}
 			}
@@ -77,5 +91,9 @@ public class MainWindow extends JFrame {
 	 */
 	public void addNewGameCallback(Runnable callback) {
 		this.newGameCallbacks.add(callback);
+	}
+	
+	public void addCloseWindowCallback(Runnable callback) {
+		this.closeWindowCallbacks.add(callback);
 	}
 }
