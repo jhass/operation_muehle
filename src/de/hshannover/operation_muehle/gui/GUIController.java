@@ -31,7 +31,12 @@ public class GUIController implements IObserver {
 		this.mainWindow.addNewGameCallback(new Runnable() {
 			@Override
 			public void run() {
-				newGame();
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						newGame();
+					}
+				}).start();
 			}
 		});
 		
@@ -54,8 +59,11 @@ public class GUIController implements IObserver {
 	 * 
 	 */
 	public void newGame() {
-		HashMap<String,String> gameOptions = new HashMap<String,String>();
-		Facade.getInstance().newGame(gameOptions);
+		HashMap<String,HashMap<String,String>> gameOptions = NewGameDialog.getGameOptions();
+		
+		if (gameOptions != null) {
+			Facade.getInstance().newGame(gameOptions);
+		}
 	}
 	
 	
