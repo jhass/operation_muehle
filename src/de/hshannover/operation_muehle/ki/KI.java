@@ -6,6 +6,11 @@ import de.hshannover.operation_muehle.logic.Slot;
 
 import de.hshannover.inform.muehle.strategy.Strategy;
 
+/**
+ * 
+ * @author zyklos
+ *
+ */
 public class KI implements Strategy {
 
 	public static final int WHITE = 1;
