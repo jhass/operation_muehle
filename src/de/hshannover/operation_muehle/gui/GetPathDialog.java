@@ -6,14 +6,20 @@ import java.io.File;
 
 import javax.swing.JFileChooser; 
 
+/**a dialog where you select a file and pass off the path as string
+ * 
+ * @author Julian Haack
+ *
+ */
+
 public class GetPathDialog { 
+	
+	/**
+	 * opens a JFileChooser
+	 * ToDo: add return value
+	 */
 
-    public static void main(String[] args) { 
-    	GetPathDialog odc = new GetPathDialog(); 
-        odc.open(); 
-    } 
-
-    private void open() { 
+    public void open() { 
         final JFileChooser chooser = new JFileChooser("Verzeichnis wählen"); 
         chooser.setDialogType(JFileChooser.OPEN_DIALOG); 
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -34,12 +40,12 @@ public class GetPathDialog {
         final int result = chooser.showOpenDialog(null); 
         
         /**
-         * Ausgabe
+         * output: path with selected file's name as string
          */
-        
+
         if (result == JFileChooser.APPROVE_OPTION) { 
-            File inputVerzFile = chooser.getSelectedFile(); 
-            String inputVerzStr = inputVerzFile.getPath(); 
+            File pathFile = chooser.getSelectedFile(); 
+            String path = pathFile.getPath();        
         } 
         chooser.setVisible(false); 
     } 
