@@ -14,6 +14,14 @@ public class StrategyLoader extends ClassLoader {
 	/**
 	 * @see ClassLoader
 	 */
+	public StrategyLoader()
+		throws IOException {
+		super("KI_test");
+	}
+	
+	/**
+	 * @see ClassLoader
+	 */
 	public StrategyLoader(String searchPath)
 		throws IOException {
 		super(searchPath);
