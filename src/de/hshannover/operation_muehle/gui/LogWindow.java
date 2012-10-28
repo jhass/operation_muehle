@@ -20,13 +20,14 @@ public class LogWindow extends JFrame {
 	 * LogWindow Frame
 	 */
 	
-	private LogWindow() {
+	public LogWindow() {
 		setTitle("Log");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 200, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
+		setVisible(false);
 		
 		JList jlistLog = new JList();
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -51,7 +52,7 @@ public class LogWindow extends JFrame {
 	 * Hide LogWindow Frame
 	 */
 	
-	public void Hide() {
+	public void hide() {
 		setVisible(false);
 	}
 	
@@ -59,7 +60,7 @@ public class LogWindow extends JFrame {
 	 * Show LogWindow Frame
 	 */
 	
-	public void Show() {
+	public void show() {
 		setVisible(true);
 	}
 	
@@ -68,7 +69,7 @@ public class LogWindow extends JFrame {
 	 * ToDo:
 	 */
 	
-	public void SetLog() {
+	public void setLog() {
 		
 	}
 }
