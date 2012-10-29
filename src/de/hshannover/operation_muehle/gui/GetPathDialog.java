@@ -13,7 +13,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class GetPathDialog extends JFileChooser { 
 	
 	private static final long serialVersionUID = 1L;
-	private boolean isFinished;
 	protected FileNameExtensionFilter filter;
 	protected int returnValue;
 	
@@ -35,9 +34,5 @@ public class GetPathDialog extends JFileChooser {
 			return dialog.getSelectedFile().getPath();
 		}
 		return null;
-	}
-	
-	private boolean isFinished() {
-		return isFinished;
 	}
 } 
