@@ -1,5 +1,6 @@
 package de.hshannover.operation_muehle.logic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -7,7 +8,8 @@ import java.util.ArrayList;
  * @author Benjamin Held
  *
  */
-public class GameState {
+public class GameState implements Serializable {
+	private static final long serialVersionUID = 1L;
 	public Gameboard currentGB;
 	public int currentPlayer;
 	public int winner;

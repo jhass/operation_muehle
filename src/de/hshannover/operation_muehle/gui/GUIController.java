@@ -5,11 +5,12 @@ import java.util.HashMap;
 import de.hshannover.inform.muehle.strategy.Slot;
 import de.hshannover.operation_muehle.Facade;
 import de.hshannover.operation_muehle.logic.Player;
+import de.hshannover.operation_muehle.utils.PerformAsync;
 import de.hshannover.operation_muehle.utils.observer.IObserver;
 
 /** Flow controlling class and main entry point for the GUI layer
  * 
- * @author mrzyx
+ * @author Jonne Haß
  *
  */
 public class GUIController implements IObserver {
@@ -28,17 +29,27 @@ public class GUIController implements IObserver {
 			}
 		});
 		
-		this.mainWindow.addNewGameCallback(new Runnable() {
+		this.mainWindow.addNewGameCallback(new PerformAsync() {
 			@Override
-			public void run() {
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						newGame();
-					}
-				}).start();
+			public void task() {
+				newGame();
 			}
 		});
+		
+		this.mainWindow.addLoadGameCallback(new PerformAsync() {
+			@Override
+			public void task() {
+				loadGame();
+			}
+		});
+		
+		this.mainWindow.addSaveGameCallback(new PerformAsync() {
+			@Override
+			public void task() {
+				saveGame();
+			}
+		});
+		
 		
 		this.mainWindow.addCloseWindowCallback(new Runnable() {
 			@Override
@@ -71,7 +82,10 @@ public class GUIController implements IObserver {
 	 * 
 	 */
 	public void loadGame() {
-		Facade.getInstance().loadGame("foobar");
+		String path = LoadDialog.getPath();
+		if (path != null) {
+			System.out.println("load to: "+path); //TODO: call facade
+		}
 	}
 	
 	
@@ -79,14 +93,17 @@ public class GUIController implements IObserver {
 	 * 
 	 */
 	public void saveGame() {
-		Facade.getInstance().saveGame("foobar");
+		String path = SaveDialog.getPath();
+		if (path != null) {
+			System.out.println("save to: "+path); // TODO: call facade
+		}
 	}
 	
 	/** Display/hide log depending on the current state.
 	 * 
 	 */
 	public void toggleLog() {
-		
+		this.logWindow.toggleVisibility();
 	}
 	
 	/** Obtain a slot from the user

@@ -1,5 +1,7 @@
 package de.hshannover.operation_muehle.logic;
 
+import java.io.Serializable;
+
 /**
  * Diese Klasse realisiert ein einzelnes Feld des Spielbrettes. Es hat ein 
  * Koordinatentupel (row,column) und einen Status (white, black, empty).
@@ -9,7 +11,9 @@ package de.hshannover.operation_muehle.logic;
  * @author Benjamin Held
  *
  */
-public class Slot implements de.hshannover.inform.muehle.strategy.Slot {
+public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
+                                Serializable {
+	private static final long serialVersionUID = 1L;
 	private int status;
 	private int row;
 	private int column;
@@ -68,5 +72,10 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot {
 	@Override
 	public int getRow() {
 		return this.row;
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.column*10+this.row;
 	}
 }

@@ -13,7 +13,8 @@ import javax.swing.JList;
  */
 
 public class LogWindow extends JFrame {
-
+	private static final long serialVersionUID = 1L;
+	
 	private JPanel contentPane;
 
 	/**
@@ -49,19 +50,11 @@ public class LogWindow extends JFrame {
 	}
 	
 	/**
-	 * Hide LogWindow Frame
+	 * Toggle visibility of the window
 	 */
 	
-	public void hide() {
-		setVisible(false);
-	}
-	
-	/**
-	 * Show LogWindow Frame
-	 */
-	
-	public void show() {
-		setVisible(true);
+	public void toggleVisibility() {
+		setVisible(!isVisible());
 	}
 	
 	/**
