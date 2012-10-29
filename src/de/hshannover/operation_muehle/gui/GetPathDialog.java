@@ -20,7 +20,7 @@ public class GetPathDialog {
 	 */
 
     public void open() { 
-        final JFileChooser chooser = new JFileChooser("Verzeichnis w‰hlen"); 
+        final JFileChooser chooser = new JFileChooser("Verzeichnis w√§hlen"); 
         chooser.setDialogType(JFileChooser.OPEN_DIALOG); 
         chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         final File file = new File("/home"); 
