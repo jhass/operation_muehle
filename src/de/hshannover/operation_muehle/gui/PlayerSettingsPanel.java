@@ -15,10 +15,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 
 import de.hshannover.operation_muehle.logic.PlayerOptions;
+import de.hshannover.inform.muehle.strategy.Strategy;
+import de.hshannover.operation_muehle.Facade;
+import de.hshannover.operation_muehle.utils.loader.StrategyLoader;
 
-//import de.hshannover.inform.muehle.strategy.Strategy;
-//import de.hshannover.operation_muehle.Facade;
-//import de.hshannover.operation_muehle.utils.loader.StrategyLoader;
 
 /** Panel providing the settings for a single player
  * 
@@ -44,10 +44,10 @@ public class PlayerSettingsPanel extends JPanel {
 		addAIStrenghSelect();
 		
 		// TODO: associate  class names with strategy names and return the classname as value of the box
-		//StrategyLoader loader = Facade.getInstance().getStrategyLoader();
-		//for (Strategy strategy : loader.getAllStrategies()) {
-		//	aiSelect.addItem(strategy.getStrategyName());
-		//}
+		StrategyLoader loader = Facade.getInstance().getStrategyLoader();
+		for (Strategy strategy : loader.getAllStrategies()) {
+			aiSelect.addItem(new StrategyWrapper(strategy));
+		}
 		
 		
 	}
@@ -191,10 +191,24 @@ public class PlayerSettingsPanel extends JPanel {
 	public PlayerOptions collectGameOptions() {
 		boolean isAi = rdbtnAi.isSelected();
 		if (isAi) {
-			return new PlayerOptions((String) aiSelect.getSelectedItem(), aiStrength.getValue());
+			return new PlayerOptions(((StrategyWrapper) aiSelect.getSelectedItem())
+			                            .strategy.getClass().getName(), aiStrength.getValue());
 		} else {
 			return new PlayerOptions(humanName.getText());
 		}
 	}
 
+}
+
+// TODO: remove me
+class StrategyWrapper {
+	public Strategy strategy;
+	
+	public StrategyWrapper(Strategy strategy) {
+		this.strategy = strategy;
+	}
+	
+	public String toString() {
+		return strategy.getStrategyName(); 
+	}
 }

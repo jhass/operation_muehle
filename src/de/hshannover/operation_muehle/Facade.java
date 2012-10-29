@@ -1,5 +1,6 @@
 package de.hshannover.operation_muehle;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import de.hshannover.operation_muehle.logic.PlayerOptions;
@@ -22,16 +23,23 @@ public class Facade {
 	
 	/**
 	 * Simple Constructor.
+	 * @throws IOException 
 	 */
 	private Facade() {
 		appController = new ApplicationController();
-		stratload = new StrategyLoader();
+		try {
+			stratload = new StrategyLoader();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
 	 * Creates a Facade if not existent, otherwise returning
 	 * the existing one.
 	 * @return The Facade(SIngelton)
+	 * @throws  
 	 */
 	public static Facade getInstance() {
 		if (instance == null) {instance = new Facade(); }
