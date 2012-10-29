@@ -40,6 +40,31 @@ public class GUIController implements IObserver {
 			}
 		});
 		
+		this.mainWindow.addLoadGameCallback(new Runnable() {
+			@Override
+			public void run() {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						loadGame();
+					}
+				}).start();
+			}
+		});
+		
+		this.mainWindow.addSaveGameCallback(new Runnable() {
+			@Override
+			public void run() {
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						saveGame();
+					}
+				}).start();
+			}
+		});
+		
+		
 		this.mainWindow.addCloseWindowCallback(new Runnable() {
 			@Override
 			public void run() {
@@ -71,7 +96,7 @@ public class GUIController implements IObserver {
 	 * 
 	 */
 	public void loadGame() {
-		Facade.getInstance().loadGame("foobar");
+		System.out.println("load to: "+LoadDialog.getPath());
 	}
 	
 	
@@ -79,14 +104,14 @@ public class GUIController implements IObserver {
 	 * 
 	 */
 	public void saveGame() {
-		Facade.getInstance().saveGame("foobar");
+		System.out.println("save to: "+SaveDialog.getPath());
 	}
 	
 	/** Display/hide log depending on the current state.
 	 * 
 	 */
 	public void toggleLog() {
-		
+		this.logWindow.toggleVisibility();
 	}
 	
 	/** Obtain a slot from the user

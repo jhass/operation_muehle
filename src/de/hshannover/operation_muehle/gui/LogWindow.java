@@ -52,16 +52,8 @@ public class LogWindow extends JFrame {
 	 * Hide LogWindow Frame
 	 */
 	
-	public void hide() {
-		setVisible(false);
-	}
-	
-	/**
-	 * Show LogWindow Frame
-	 */
-	
-	public void show() {
-		setVisible(true);
+	public void toggleVisibility() {
+		setVisible(!isVisible());
 	}
 	
 	/**
