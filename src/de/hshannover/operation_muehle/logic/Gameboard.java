@@ -1,5 +1,6 @@
 package de.hshannover.operation_muehle.logic;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -14,13 +15,13 @@ import java.util.HashMap;
  *
  */
 public class Gameboard {
-	private HashMap<Coordinate,Slot> board;
+	private HashMap<Integer,Slot> board;
 	
 	/**
 	 * Konstruktor
 	 */
 	public Gameboard() {
-		this.board= new HashMap<Coordinate,Slot>();
+		this.board= new HashMap<Integer,Slot>();
 		initializeSlots();
 	}
 	
@@ -35,25 +36,59 @@ public class Gameboard {
 			generateNewPair(7,1+(i-1)*3);
 			generateNewPair(6,2*i);
 			generateNewPair(5,i+2);
-		}
-		for (int i = 1; i<4; i++) {
 			generateNewPair(4,i);
 			generateNewPair(4,4+i);
 		}
-	}
-	
-	public void generateNewPair(int c, int r) {
-		Coordinate cTemp= new Coordinate(r,(char) (c+64));
-		Slot s= new Slot(r,c,0);
-		this.board.put(cTemp, s);
+
 	}
 	
 	/**
-	 * Comming soon
-	 * @param s
-	 * @return
+	 * Erstellt ein Schluessel-Werte-Paar zur gegebenem Zeilen- und Spaltenindex
+	 * @param c Wert der Spalte
+	 * @param r Wert der Zeile
+	 */
+	public void generateNewPair(int c, int r) {
+		Slot s= new Slot(r,c,0);
+		int hashValue= s.hashCode(); 
+		this.board.put(hashValue, s);
+	}
+	
+	/**
+	 * Sucht zu einem gegebenen Slot alle möglichen Nachbarslots und gibt diese dann zurueck
+	 * @param s Slot, fuer den die Nachbarslots gesucht werden sollen
+	 * @return Slot[]
 	 */
 	public Slot[] getNeighbours(Slot s) {
+		Coordinate cTemp= new Coordinate(s.getRow(),s.getColumn());
+		Slot[] neighbours = new Slot[4];
+		neighbours[0] = getNeighbourSlot(cTemp,1,0);
+		neighbours[1] = getNeighbourSlot(cTemp,0,1);
+		neighbours[2] = getNeighbourSlot(cTemp,-1,0);
+		neighbours[3] = getNeighbourSlot(cTemp,0,-1);
+		return neighbours;
+	}
+	
+	/**
+	 * Diese Methode sucht in die vorgegebene Richtung (gegeben durch (rowIndex,
+	 * columnIndex)) und gibt einen Slot zurueck, wenn in der Richtung ein 
+	 * Nachbar existiert, sonst null, wenn in der Richtung kein Nachbar ist
+	 * @param coord Koordinate, von der gesucht wird
+	 * @param rowIndex Index, ob in Zeilenrichtung gesucht werden muss
+	 * @param columnIndex Index, ob in Spaltenrichtung gesucht werden muss
+	 * @return Slot
+	 */
+	public Slot getNeighbourSlot(Coordinate coord, int rowIndex, int columnIndex) {
+		int r= coord.row + rowIndex;
+		int c= (int) (coord.column - 64) + columnIndex;
+		while ( (r > 0 && r < 8) && (c > 0 && c < 8)) {
+			Coordinate help = new Coordinate(r, (char) (c+64));
+			if (this.board.containsKey(help.hashCode()))
+				 return this.board.get(help.hashCode());
+			else {
+				r += rowIndex;
+				c += columnIndex;
+			}
+		}
 		return null;
 	}
 	
@@ -108,6 +143,11 @@ public class Gameboard {
 		public Coordinate(int r, char c) {
 			this.column= c;
 			this.row= r;
+		}
+		
+		@Override
+		public int hashCode() {
+			return (int) (this.column-64) *10+this.row;
 		}
 	}
 }

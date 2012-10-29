@@ -69,4 +69,9 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot {
 	public int getRow() {
 		return this.row;
 	}
+	
+	@Override
+	public int hashCode() {
+		return this.column*10+this.row;
+	}
 }
