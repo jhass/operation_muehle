@@ -9,3 +9,5 @@ bin/
 
 *.bak
 *.lock
+
+*.classpath
