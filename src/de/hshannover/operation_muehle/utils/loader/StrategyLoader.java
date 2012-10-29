@@ -33,9 +33,7 @@ public class StrategyLoader {
 	 * @throws SecurityException
 	 * 
 	 */
-	public StrategyLoader() throws IOException, SecurityException,
-			IllegalArgumentException, NoSuchMethodException,
-			IllegalAccessException, InvocationTargetException {
+	public StrategyLoader() {
 		this("lib");
 	}
 
@@ -48,9 +46,7 @@ public class StrategyLoader {
 	 * @throws IllegalArgumentException
 	 * 
 	 */
-	public StrategyLoader(String jarDirName) throws MalformedURLException,
-			SecurityException, NoSuchMethodException, IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException {
+	public StrategyLoader(String jarDirName) {
 
 		File directory = new File(jarDirName);
 		if (!directory.isDirectory()) {
@@ -62,17 +58,43 @@ public class StrategyLoader {
 			if (file.getName().endsWith(".jar")) {
 
 				// first add that jar to the existing resource-heap
-				URL jarFile = new URL("jar", "", "file:"
-						+ file.getAbsolutePath() + "!/");
+				URL jarFile;
+				try {
+					jarFile = new URL("jar", "", "file:"
+							+ file.getAbsolutePath() + "!/");
+				} catch (MalformedURLException e1) {
+					e1.printStackTrace();
+					continue;
+				}
 
 				URLClassLoader cl = (URLClassLoader) java.lang.ClassLoader
 						.getSystemClassLoader();
 
 				Class<URLClassLoader> sysClass = URLClassLoader.class;
-				Method sysMethod = sysClass.getDeclaredMethod("addURL",
-						new Class[] { URL.class });
+				Method sysMethod;
+				try {
+					sysMethod = sysClass.getDeclaredMethod("addURL",
+							new Class[] { URL.class });
+				} catch (SecurityException e) {
+					e.printStackTrace();
+					continue;
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+					continue;
+				}
 				sysMethod.setAccessible(true);
-				sysMethod.invoke(cl, new Object[] { jarFile });
+				try {
+					sysMethod.invoke(cl, new Object[] { jarFile });
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+					continue;
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+					continue;
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+					continue;
+				}
 
 				// second, read all classnames in jar-file
 				ArrayList<String> classNamesInJar = this.readClassNames(file);
