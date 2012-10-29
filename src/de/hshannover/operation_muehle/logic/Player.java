@@ -1,5 +1,7 @@
 package de.hshannover.operation_muehle.logic;
 
+import java.io.Serializable;
+
 /**
  * Diese Klasse realisiert ein Spieler-Objekt. Es handelt sich hierbei um
  * eine reine datentragende Klasse, die alle notwendigen Attribute eines
@@ -7,7 +9,8 @@ package de.hshannover.operation_muehle.logic;
  * @author Benjamin Held
  *
  */
-public class Player {
+public class Player implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private String name;
 	private int color;
 	private int stones;

@@ -1,6 +1,6 @@
 package de.hshannover.operation_muehle.logic;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -14,7 +14,8 @@ import java.util.HashMap;
  * @author Benjamin Held
  *
  */
-public class Gameboard {
+public class Gameboard implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private HashMap<Integer,Slot> board;
 	
 	/**
@@ -93,14 +94,26 @@ public class Gameboard {
 	}
 	
 	/**
-	 * Noch bearbeitungsbeduerftig, da die "Setzzuege" aus Phase 1 zu einer Exception fuehren.
-	 * @param m
+	 * Die Methode aktualisiert das Spielfeld basierend auf den Informationen
+	 * des Slots
+	 * @param s
+	 */
+	public void applySlot(Slot s, int status) {
+		Slot appSlot= null;
+		if (this.board.containsKey(s.hashCode()))
+			 appSlot= this.board.get(s.hashCode());
+		appSlot.setStatus(status);
+	}
+	
+	/**
+	 * Die Methode aktualisiert das Spielfeld basierend auf den Informationen
+	 * des Move-Objektes.
+	 * @param m Das Move-Objekt, aus dem die Aenderungen uebernommen werde sollen
 	 */
 	public void applyMove(Move m) {
 		Slot start = m.fromSlot();
 		Slot end = m.toSlot();
-		end.setStatus(start.getStatus());
-		this.removeStone(start);
+		applySlot(end, start.getStatus());
 	}
 	
 	/**
