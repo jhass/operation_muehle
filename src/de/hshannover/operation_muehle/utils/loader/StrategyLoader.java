@@ -21,9 +21,9 @@ import de.hshannover.inform.muehle.strategy.Strategy;
  * @author MrZYX
  * @author zyklos
  */
-public class ClassFileLoader {
+public class StrategyLoader {
 
-	private ArrayList<String> availableClasses = new ArrayList<String>();
+	private ArrayList<String> availableClassNames = new ArrayList<String>();
 
 	/**
 	 * @throws InvocationTargetException
@@ -33,7 +33,7 @@ public class ClassFileLoader {
 	 * @throws SecurityException
 	 * 
 	 */
-	public ClassFileLoader() throws IOException, SecurityException,
+	public StrategyLoader() throws IOException, SecurityException,
 			IllegalArgumentException, NoSuchMethodException,
 			IllegalAccessException, InvocationTargetException {
 		this("lib");
@@ -48,27 +48,18 @@ public class ClassFileLoader {
 	 * @throws IllegalArgumentException
 	 * 
 	 */
-	public ClassFileLoader(String jarDir) throws MalformedURLException,
+	public StrategyLoader(String jarDirName) throws MalformedURLException,
 			SecurityException, NoSuchMethodException, IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException {
 
-		File directory = new File(jarDir);
+		File directory = new File(jarDirName);
 		if (!directory.isDirectory()) {
-			throw new IllegalArgumentException(jarDir + " is no directory");
+			throw new IllegalArgumentException(jarDirName + " is no directory");
 		}
 
-		File[] files = new File(jarDir).listFiles();
+		File[] files = new File(jarDirName).listFiles();
 		for (File file : files) {
 			if (file.getName().endsWith(".jar")) {
-				// that might be a jar-file
-				JarFile jar;
-				try {
-					jar = new JarFile(file);
-				} catch (IOException e) {
-					System.out.println("File " + file.getAbsolutePath()
-							+ " is not a " + "Jarfile");
-					continue;
-				}
 
 				// first add that jar to the existing resource-heap
 				URL jarFile = new URL("jar", "", "file:"
@@ -83,80 +74,106 @@ public class ClassFileLoader {
 				sysMethod.setAccessible(true);
 				sysMethod.invoke(cl, new Object[] { jarFile });
 
-				// notice all class-file entries
-				JarEntry entry;
-				for (Enumeration<JarEntry> entries = jar.entries(); entries
-						.hasMoreElements();) {
-					entry = entries.nextElement();
-
-					if (entry.getName().endsWith(".class")
-							&& !entry.getName().contains("$")) {
-
-						String className = entry.getName().replaceAll("/", ".")
-								.replaceAll(".class", "");
-
-						availableClasses.add(className);
-					}
-				}
-				try {
-					jar.close();
-				} catch (IOException e) {
-					System.out.println("Jarfile " + jar.getName()
-							+ " could not be closed.");
-				}
+				// second, read all classnames in jar-file
+				ArrayList<String> classNamesInJar = this.readClassNames(file);
+				this.availableClassNames.addAll(classNamesInJar);
 
 			}
 		}
 
-		// now, we can go for all class-files
+	}
 
+	private ArrayList<String> readClassNames(File file) {
+		ArrayList<String> result = new ArrayList<String>();
+
+		// that might be a jar-file
+		JarFile jar;
+		try {
+			jar = new JarFile(file);
+		} catch (IOException e) {
+			System.out.println("File " + file.getAbsolutePath() + " is not a "
+					+ "Jarfile");
+			return null;
+		}
+
+		// notice all class-file entries
+		JarEntry entry;
+		for (Enumeration<JarEntry> entries = jar.entries();
+				entries.hasMoreElements();) {
+			entry = entries.nextElement();
+
+			if (entry.getName().endsWith(".class")
+					&& !entry.getName().contains("$")) {
+
+				String className = entry.getName().replaceAll("/", ".")
+						.replaceAll(".class", "");
+
+				result.add(className);
+			}
+		}
+		try {
+			jar.close();
+		} catch (IOException e) {
+			System.out.println("Jarfile " + jar.getName()
+					+ " could not be closed.");
+		}
+
+		return result;
 	}
 
 	public ArrayList<String> getClassNames() {
-		return availableClasses;
+		return availableClassNames;
 	}
 
 	/**
-	 * Get a list of instances for all classes that can be instantiated with a
+	 * Get a list of class-objects that can be instantiated with a
 	 * default constructor.
 	 * 
-	 * @return
+	 * @param  type filter return
+	 * @return 			
 	 * @throws ClassNotFoundException
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	public ArrayList<Object> getClassesOfType(Class<?> type)
-			throws ClassNotFoundException {
-		ArrayList<Object> instances = new ArrayList<Object>();
+	public ArrayList<Class<?>> getClasses(Class<?> type) {
+		ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
 
-		for (String klass : availableClasses) {
+		for (String klass : availableClassNames) {
 			Class<?> c;
-			c = Class.forName(klass);
+			try {
+				c = Class.forName(klass);
+			} catch (ClassNotFoundException e) {
+				System.out.println(e.getMessage());
+				continue;
+			}
 			for (Class<?> i : c.getInterfaces()) {
 				if (type == null || i.getName().equals(type.getName())) {
 					continue;
 				}
-				instances.add(c);
+				classes.add(c);
 			}
 		}
 
-		return instances;
+		return classes;
 	}
 
 	/**
 	 * Get a list of instances for all available strategies
 	 * 
-	 * @deprecated this method might be redundant.
 	 * @return a list of strategies
 	 */
 	public ArrayList<Strategy> getAllStrategies() {
 		ArrayList<Strategy> strategies = new ArrayList<Strategy>();
+		ArrayList<Class<?>> classes;
 
-		/*
-		 * for (Object strategy : this.getStrategies()) { try {
-		 * strategies.add((Strategy) strategy); } catch (ClassCastException e) {
-		 * } }
-		 */
+		classes = this.getClasses(Strategy.class);
+		for (Class<?> cls : classes) {
+			try {
+				strategies.add((Strategy) cls.newInstance());
+			} catch (InstantiationException e) {
+			} catch (IllegalAccessException e) {
+			}
+		}
 
 		return strategies;
 	}
@@ -164,7 +181,6 @@ public class ClassFileLoader {
 	/**
 	 * Gets an instance of the given class using the default constructor.
 	 * 
-	 * @deprecated maybe too small for being a method
 	 * @param klass
 	 *            the name of the class
 	 * @return The instance
@@ -181,20 +197,23 @@ public class ClassFileLoader {
 	}
 
 	/**
-	 * Returns the Class of the given class
+	 * Returns the Class of the given classname
 	 * 
-	 * @deprecated maybe too small for being a method
+	 * 
 	 * @param klass
 	 * @return the Class object for klass
 	 * @throws ClassNotFoundException
 	 *             if the class isn't available
 	 */
-	private Class<?> getClass(String klass) throws ClassNotFoundException {
-		if (availableClasses.contains(klass)) {
-			return Class.forName(klass);
-		} else {
-			throw new ClassNotFoundException("Can't find " + klass);
+	public Class<?> getClass(String klass) throws ClassNotFoundException {
+		Class<?> result = null;
+		for (String clsName : availableClassNames) {
+			if (clsName.equals(klass)) {
+				result = Class.forName(clsName);
+			}
 		}
+
+		return result;
 	}
 
 }
