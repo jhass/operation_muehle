@@ -10,6 +10,6 @@ bin/
 *.bak
 *.lock
 
-#*.classpath
-#*.settings/*
+*.classpath
+*.settings/*
 *.msave
