@@ -163,7 +163,8 @@ public class KI implements Strategy {
 	}
 
 	@Override
-	public de.hshannover.inform.muehle.strategy.Slot removeStone(int thinktime) {
+	public de.hshannover.inform.muehle.strategy.Slot removeStone(
+			int thinktime) {
 		
 		de.hshannover.inform.muehle.strategy.Slot result;
 		/*
