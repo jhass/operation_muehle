@@ -30,7 +30,8 @@ public class MainWindow extends JFrame {
 	private final JButton btnSaveGame = new JButton("Save Game");
 	
 	public MainWindow() {
-		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+		getContentPane().setLayout(new BoxLayout(getContentPane(),
+												 BoxLayout.Y_AXIS));
 		
 		setVisible(true);
 		Board board = new Board();
@@ -38,7 +39,8 @@ public class MainWindow extends JFrame {
 		
 		JPanel buttonContainer = new JPanel();
 		getContentPane().add(buttonContainer);
-		buttonContainer.setLayout(new BoxLayout(buttonContainer, BoxLayout.X_AXIS));
+		buttonContainer.setLayout(new BoxLayout(buttonContainer,
+												BoxLayout.X_AXIS));
 		
 		buttonContainer.add(btnToggleLog);
 		buttonContainer.add(btnNewGame);
@@ -55,10 +57,10 @@ public class MainWindow extends JFrame {
 	}
 	
 	private void setupListener() {
-		setupCallbacks(btnNewGame, newGameCallbacks);
-		setupCallbacks(btnToggleLog, toggleLogCallbacks);
-		setupCallbacks(btnLoadGame, loadGameCallbacks);
-		setupCallbacks(btnSaveGame, saveGameCallbacks);
+		setupButtonCallbacks(btnNewGame, newGameCallbacks);
+		setupButtonCallbacks(btnToggleLog, toggleLogCallbacks);
+		setupButtonCallbacks(btnLoadGame, loadGameCallbacks);
+		setupButtonCallbacks(btnSaveGame, saveGameCallbacks);
 		
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -70,7 +72,9 @@ public class MainWindow extends JFrame {
 		});
 	}
 	
-	private void setupCallbacks(JButton button, final ArrayList<Runnable> callbacks) {
+	private void setupButtonCallbacks(JButton button,
+		final ArrayList<Runnable> callbacks) {
+		
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				for (Runnable callback : callbacks) {
@@ -88,7 +92,6 @@ public class MainWindow extends JFrame {
 		this.toggleLogCallbacks.add(callback);
 	}
 	
-	
 	/** Add an item to the callback chain for when a new game is requested
 	 * 
 	 * @param callback
@@ -97,14 +100,27 @@ public class MainWindow extends JFrame {
 		this.newGameCallbacks.add(callback);
 	}
 	
+	/** Add an item to the callback chain for when the closing of the window is requested
+	 * 
+	 * @param callback
+	 */
 	public void addCloseWindowCallback(Runnable callback) {
 		this.closeWindowCallbacks.add(callback);
 	}
-
+	
+	/** Add an item to the callback chain for when the loading of a game is requested
+	 * 
+	 * @param callback
+	 */
 	public void addLoadGameCallback(Runnable callback) {
 		this.loadGameCallbacks.add(callback);
 	}
 	
+	
+	/** Add an item to the callback chain for when saveing of the game is requested 
+	 * 
+	 * @param callback
+	 */
 	public void addSaveGameCallback(Runnable callback) {
 		this.saveGameCallbacks.add(callback);
 	}
