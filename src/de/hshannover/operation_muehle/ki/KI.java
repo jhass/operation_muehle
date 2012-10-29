@@ -15,6 +15,8 @@ public class KI implements Strategy {
 
 	public static final int WHITE = 1;
 	public static final int BLACK = 2;
+	
+	private MoveGenerator moveGen = new MoveGenerator();
 
 	/**
 	 * NIKI for 'Nicht Intelligente KI'
