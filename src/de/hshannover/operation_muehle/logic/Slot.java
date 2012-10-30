@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
                                 Serializable {
 	private static final long serialVersionUID = 1L;
-	private int status;
+	private SlotStatus status;
 	private int row;
 	private int column;
 	
@@ -25,20 +25,18 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	 * @param status Attribut zur Beschreibung des Spielfeldinhaltes
 	 *         (0= empty, 1= white, 2=black)
 	 */
-	public Slot(int row, int column, int status) {
+	public Slot(int row, int column, SlotStatus status) {
 		if (row<0) 
 			throw new IllegalArgumentException("Slot.Row ungueltig!");
 		if (column<0) 
 			throw new IllegalArgumentException("Slot.Column ungueltig!");
-		if (status<0 | status>2) 
-			throw new IllegalArgumentException("Slot.Status ungueltig!");
 		this.status = status;
 		this.row = row;
 		this.column = column;
 	}
 	
 	/**
-	 * Konstruktor, der den Status automatisch auf 0 setzt
+	 * Konstruktor, der den Status automatisch auf unbenutzt
 	 * @param row Zeilenindex (Constraint >0)
 	 * @param column Spaltenindex (Constraint >0)
 	 */
@@ -47,7 +45,7 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 			throw new IllegalArgumentException("Slot.Row ungueltig!");
 		if (column<0) 
 			throw new IllegalArgumentException("Slot.Column ungueltig!");
-		this.status = 0;
+		this.status = SlotStatus.FREE;
 		this.row = row;
 		this.column = column;
 	}
@@ -56,9 +54,7 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	 * Setzen bzw. Aendern eines Feldzustandes
 	 * @param status Statusindex
 	 */
-	public void setStatus(int status) {
-		if (status<0 | status>2) 
-			throw new IllegalArgumentException("Slot.Status ungueltig!");
+	public void setStatus(SlotStatus status) {
 		this.status = status;
 	}
 	
@@ -66,7 +62,7 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	 * Get-Methode fuer den Feldzustand
 	 * @return int 
 	 */
-	public int getStatus() {
+	public SlotStatus getStatus() {
 		return this.status;
 	}
 	

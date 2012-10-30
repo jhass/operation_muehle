@@ -43,28 +43,28 @@ public class Gameboard implements Serializable {
 	
 	/**
 	 * Erstellt ein Schluessel-Werte-Paar zur gegebenem Zeilen- und Spaltenindex
-	 * @param c Wert der Spalte
-	 * @param r Wert der Zeile
+	 * @param column Wert der Spalte
+	 * @param row Wert der Zeile
 	 */
-	public void generateNewPair(int c, int r) {
-		Slot s = new Slot(r,c,0);
-		int hashValue = s.hashCode(); 
-		this.board.put(hashValue, s);
+	public void generateNewPair(int column, int row) {
+		Slot slot = new Slot(row, column, SlotStatus.FREE);
+		int hashValue = slot.hashCode(); 
+		this.board.put(hashValue, slot);
 	}
 	
 	/**
 	 * Sucht zu einem gegebenen Slot alle möglichen Nachbarslots und gibt diese dann
 	 * zurueck. Findet sich in einer Richtung kein Nachbar wird null zurueckgegeben.
-	 * @param s Slot, fuer den die Nachbarslots gesucht werden sollen
+	 * @param slot Slot, fuer den die Nachbarslots gesucht werden sollen
 	 * @return Slot[]
 	 */
-	public Slot[] getNeighbours(Slot s) {
-		Coordinate cTemp = new Coordinate(s.getRow(),s.getColumn());
+	public Slot[] getNeighbours(Slot slot) {
+		Coordinate slotCoordinate = new Coordinate(slot.getRow(),slot.getColumn());
 		Slot[] neighbours = new Slot[4];
-		neighbours[0] = getNeighbourSlot(cTemp,1,0);
-		neighbours[1] = getNeighbourSlot(cTemp,0,1);
-		neighbours[2] = getNeighbourSlot(cTemp,-1,0);
-		neighbours[3] = getNeighbourSlot(cTemp,0,-1);
+		neighbours[0] = getNeighbourSlot(slotCoordinate,1,0);
+		neighbours[1] = getNeighbourSlot(slotCoordinate,0,1);
+		neighbours[2] = getNeighbourSlot(slotCoordinate,-1,0);
+		neighbours[3] = getNeighbourSlot(slotCoordinate,0,-1);
 		return neighbours;
 	}
 	
@@ -78,18 +78,18 @@ public class Gameboard implements Serializable {
 	 * @return Slot
 	 */
 	public Slot getNeighbourSlot(Coordinate coord, int rowIndex, int columnIndex) {
-		int r = coord.row + rowIndex;
-		int c = (int) (coord.column - 64) + columnIndex;
-		if (r == 4 && c == 4) return null; /* Einige Felder auf dem mittleren
+		int row = coord.row + rowIndex;
+		int column = (int) (coord.column - 64) + columnIndex;
+		if (row == 4 && column == 4) return null; /* Einige Felder auf dem mittleren
 		                                       Ring wuerden sonst 4 Nachbarn finden,
 		                                       obwohl sie nur 3 haben*/
-		while ( (r > 0 && r < 8) && (c > 0 && c < 8)) {
-			Coordinate help = new Coordinate(r, (char) (c+64));
+		while ( (row > 0 && row < 8) && (column > 0 && column < 8)) {
+			Coordinate help = new Coordinate(row, (char) (column+64));
 			if (this.board.containsKey(help.hashCode()))
 				 return this.board.get(help.hashCode());
 			else {
-				r += rowIndex;
-				c += columnIndex;
+				row += rowIndex;
+				column += columnIndex;
 			}
 		}
 		return null;
@@ -98,11 +98,11 @@ public class Gameboard implements Serializable {
 	/**
 	 * Die Methode aktualisiert das Spielfeld basierend auf den Informationen
 	 * des Slots
-	 * @param s
+	 * @param slot
 	 */
-	public void applySlot(Slot s, int status) {
-		if (this.board.containsKey(s.hashCode())) {
-			Slot appSlot = this.board.get(s.hashCode());
+	public void applySlot(Slot slot, SlotStatus status) {
+		if (this.board.containsKey(slot.hashCode())) {
+			Slot appSlot = this.board.get(slot.hashCode());
 			appSlot.setStatus(status);
 		} else {
 			System.out.println("Slot nicht vorhanden! " +
@@ -113,28 +113,27 @@ public class Gameboard implements Serializable {
 	/**
 	 * Die Methode aktualisiert das Spielfeld basierend auf den Informationen
 	 * des Move-Objektes.
-	 * @param m Das Move-Objekt, aus dem die Aenderungen uebernommen werde sollen
+	 * @param move Das Move-Objekt, aus dem die Aenderungen uebernommen werde sollen
 	 */
-	public void applyMove(Move m) {
-		Slot start = m.fromSlot();
-		Slot end = m.toSlot();
+	public void applyMove(Move move) {
+		Slot start = move.fromSlot();
+		Slot end = move.toSlot();
 		applySlot(end, start.getStatus());
 	}
 	
 	/**
-	 * Diese Methode erhält als int eine Spielfarbe und zählt, wie viele
-	 * Steine dieser Farbe auf dem Spielfeld vorhanden sind (formal: wie
-	 * viele Slots den entsprechenden Status besitzen) und gibt die 
+	 * Diese Methode erhält einen SlotStatus und zählt, wie viele
+	 * Steine dieses Status auf dem Spielfeld vorhanden sind und gibt die 
 	 * gefundene Anzahl zurueck
-	 * @param color Die Farbe der Steine, die gesucht werden soll
+	 * @param status Die Farbe der Steine, die gesucht werden soll
 	 * @return int
 	 */
-	public int getNumberStones(int color) {
-		if (color < 0 || color > 2) return -1;
+	public int getNumberStones(SlotStatus status) {
 		int count = 0;
-		for (int hashCode: this.board.keySet()) {
-			Slot temp= this.board.get(hashCode);
-			if (temp.getStatus() == color) count++;
+		for (Slot slot: this.board.values()) {
+			if (slot.getStatus() == status) {
+				count++;
+			}
 		}
 		return count;
 	}
@@ -142,11 +141,10 @@ public class Gameboard implements Serializable {
 	/**
 	 * Entfernen eines Steines aus einem Spielfeld, also aendern des Feldstatus fuer das
 	 * uebergebene Feld
-	 * @param s Spielfeld, aus dem der Stein entfernt wird
+	 * @param toRemove Spielfeld, aus dem der Stein entfernt wird
 	 */
-	public void removeStone(Slot s) {
-		Slot toRemove = returnSlot(s); 
-		toRemove.setStatus(0);
+	public void removeStone(Slot toRemove) { 
+		returnSlot(toRemove).setStatus(SlotStatus.FREE);
 	}
 	
 	/**
@@ -154,9 +152,9 @@ public class Gameboard implements Serializable {
 	 * @param s gesuchtes Spielfeld
 	 * @return  Slot
 	 */
-	public Slot returnSlot(Slot s) {
-		Coordinate temp = new Coordinate(s.getRow(),s.getColumn());
-		return this.board.get(temp);
+	public Slot returnSlot(Slot slot) {
+		Coordinate slotCoordinate = new Coordinate(slot.getRow(),slot.getColumn());
+		return this.board.get(slotCoordinate);
 	}
 	
 	/**
