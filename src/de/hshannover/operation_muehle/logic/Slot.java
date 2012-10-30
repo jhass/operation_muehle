@@ -19,7 +19,7 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	private int column;
 	
 	/**
-	 * Konstruktor
+	 * Konstruktor, der den Status des Slot entsprechend der Eingabe besetzt
 	 * @param row Zeilenindex (Constraint >0)
 	 * @param column Spaltenindex (Constraint >0)
 	 * @param status Attribut zur Beschreibung des Spielfeldinhaltes
@@ -33,6 +33,21 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 		if (status<0 | status>2) 
 			throw new IllegalArgumentException("Slot.Status ungueltig!");
 		this.status = status;
+		this.row = row;
+		this.column = column;
+	}
+	
+	/**
+	 * Konstruktor, der den Status automatisch auf 0 setzt
+	 * @param row Zeilenindex (Constraint >0)
+	 * @param column Spaltenindex (Constraint >0)
+	 */
+	public Slot(int row, int column) {
+		if (row<0) 
+			throw new IllegalArgumentException("Slot.Row ungueltig!");
+		if (column<0) 
+			throw new IllegalArgumentException("Slot.Column ungueltig!");
+		this.status = 0;
 		this.row = row;
 		this.column = column;
 	}

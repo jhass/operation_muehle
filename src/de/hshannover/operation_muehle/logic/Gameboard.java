@@ -101,10 +101,13 @@ public class Gameboard implements Serializable {
 	 * @param s
 	 */
 	public void applySlot(Slot s, int status) {
-		Slot appSlot = null;
-		if (this.board.containsKey(s.hashCode()))
-			 appSlot = this.board.get(s.hashCode());
-		appSlot.setStatus(status);
+		if (this.board.containsKey(s.hashCode())) {
+			Slot appSlot = this.board.get(s.hashCode());
+			appSlot.setStatus(status);
+		} else {
+			System.out.println("Slot nicht vorhanden! " +
+					"Gameboard.ApplySlot hat nichts hinzugefuegt");
+		}
 	}
 	
 	/**
@@ -116,6 +119,24 @@ public class Gameboard implements Serializable {
 		Slot start = m.fromSlot();
 		Slot end = m.toSlot();
 		applySlot(end, start.getStatus());
+	}
+	
+	/**
+	 * Diese Methode erhält als int eine Spielfarbe und zählt, wie viele
+	 * Steine dieser Farbe auf dem Spielfeld vorhanden sind (formal: wie
+	 * viele Slots den entsprechenden Status besitzen) und gibt die 
+	 * gefundene Anzahl zurueck
+	 * @param color Die Farbe der Steine, die gesucht werden soll
+	 * @return int
+	 */
+	public int getNumberStones(int color) {
+		if (color < 0 || color > 2) return -1;
+		int count = 0;
+		for (int hashCode: this.board.keySet()) {
+			Slot temp= this.board.get(hashCode);
+			if (temp.getStatus() == color) count++;
+		}
+		return count;
 	}
 	
 	/**
