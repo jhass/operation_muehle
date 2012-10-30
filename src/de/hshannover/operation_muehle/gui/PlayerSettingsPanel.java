@@ -3,7 +3,6 @@ package de.hshannover.operation_muehle.gui;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.HashMap;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -15,9 +14,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
 
-//import de.hshannover.inform.muehle.strategy.Strategy;
-//import de.hshannover.operation_muehle.Facade;
-//import de.hshannover.operation_muehle.utils.loader.StrategyLoader;
+import de.hshannover.operation_muehle.logic.PlayerOptions;
+import de.hshannover.inform.muehle.strategy.Strategy;
+import de.hshannover.operation_muehle.Facade;
+import de.hshannover.operation_muehle.utils.loader.StrategyLoader;
+
 
 /** Panel providing the settings for a single player
  * 
@@ -43,10 +44,10 @@ public class PlayerSettingsPanel extends JPanel {
 		addAIStrenghSelect();
 		
 		// TODO: associate  class names with strategy names and return the classname as value of the box
-		//StrategyLoader loader = Facade.getInstance().getStrategyLoader();
-		//for (Strategy strategy : loader.getAllStrategies()) {
-		//	aiSelect.addItem(strategy.getStrategyName());
-		//}
+		StrategyLoader loader = Facade.getInstance().getStrategyLoader();
+		for (Strategy strategy : loader.getAllStrategies()) {
+			aiSelect.addItem(new StrategyWrapper(strategy));
+		}
 		
 		
 	}
@@ -183,22 +184,31 @@ public class PlayerSettingsPanel extends JPanel {
 		add(aiStrength, gbc_strength);
 	}
 
-	/** First draft, TODO: await or create a dedicated object
+	/** Create a new PlayerOptions object from the current state
 	 * 
+	 * @return @see PlayerOptions
 	 */
-	public HashMap<String,String> collectGameOptions() {
-		HashMap<String,String> gameOptions = new HashMap<String,String>();
+	public PlayerOptions collectGameOptions() {
 		boolean isAi = rdbtnAi.isSelected();
-		gameOptions.put("AI", Boolean.valueOf(isAi).toString()); // BIG FAT UGLY SMELLING TODO
 		if (isAi) {
-			gameOptions.put("name", (String) aiSelect.getSelectedItem());
-			gameOptions.put("strength", Integer.valueOf(aiStrength.getValue()).toString()); // Can't have enough TODO markers in this one, actually lets add a FIXME just because I can
+			return new PlayerOptions(((StrategyWrapper) aiSelect.getSelectedItem())
+			                            .strategy.getClass().getName(), aiStrength.getValue());
 		} else {
-			gameOptions.put("name", humanName.getText());
+			return new PlayerOptions(humanName.getText());
 		}
-		
-		
-		return gameOptions;
 	}
 
+}
+
+// TODO: remove me
+class StrategyWrapper {
+	public Strategy strategy;
+	
+	public StrategyWrapper(Strategy strategy) {
+		this.strategy = strategy;
+	}
+	
+	public String toString() {
+		return strategy.getStrategyName(); 
+	}
 }

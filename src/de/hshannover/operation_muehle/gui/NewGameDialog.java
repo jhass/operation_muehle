@@ -6,6 +6,9 @@ import javax.swing.JFrame;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JButton;
+
+import de.hshannover.operation_muehle.logic.PlayerOptions;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -64,12 +67,11 @@ public class NewGameDialog extends JFrame {
 	
 	/** Create and show a new dialog, block and return the collected data.
 	 * 
-	 * @return The return value has the following layout for now: (TODO: make this a dedicated object)
-	 *         {"white": options, "black": options} with options being a HashMap with the following content:
-	 *         {"AI": "true/false", "name": "playerName/strategyClass", "strength": "thinkTime in seconds"}
-	 *         Returns null if the dialog was aborted.
+	 * @return The return value has the following content:
+	 *         {"white": options, "black": options} with options being a
+	 *         PlayerOptions object.
 	 */
-	public static HashMap<String,HashMap<String,String>> getGameOptions() {
+	public static HashMap<String,PlayerOptions> getGameOptions() {
 		NewGameDialog dialog = new NewGameDialog();
 		dialog.setVisible(true);
 		
@@ -94,9 +96,9 @@ public class NewGameDialog extends JFrame {
 		return isAborted;
 	}
 
-	private HashMap<String,HashMap<String,String>> collectGameOptions() {
-		HashMap<String,HashMap<String,String>> gameOptions =
-			new HashMap<String,HashMap<String,String>>();
+	private HashMap<String,PlayerOptions> collectGameOptions() {
+		HashMap<String,PlayerOptions> gameOptions =
+			new HashMap<String,PlayerOptions>();
 		gameOptions.put("white", whitePlayer.collectGameOptions());
 		gameOptions.put("black", blackPlayer.collectGameOptions());
 		return gameOptions; 

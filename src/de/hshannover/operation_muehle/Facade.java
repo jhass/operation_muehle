@@ -1,7 +1,9 @@
 package de.hshannover.operation_muehle;
 
+import java.io.IOException;
 import java.util.HashMap;
 
+import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.operation_muehle.logic.SaveState;
 import de.hshannover.operation_muehle.logic.Slot;
 import de.hshannover.operation_muehle.logic.Move;
@@ -24,7 +26,12 @@ public class Facade {
 	 */
 	private Facade() {
 		appController = new ApplicationController();
-		stratload = new StrategyLoader();
+		try {
+			stratload = new StrategyLoader();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -42,7 +49,7 @@ public class Facade {
 	 * @param gameOptions The Options.
 	 * @see GUIController
 	 */
-	public void newGame(HashMap gameOptions) {
+	public void newGame(HashMap<String,PlayerOptions> gameOptions) {
 		appController.initializeNew(gameOptions);
 		appController.playGame();
 	}

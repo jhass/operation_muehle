@@ -5,6 +5,7 @@ import java.util.HashMap;
 import de.hshannover.inform.muehle.strategy.Slot;
 import de.hshannover.operation_muehle.Facade;
 import de.hshannover.operation_muehle.logic.Player;
+import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.operation_muehle.utils.PerformAsync;
 import de.hshannover.operation_muehle.utils.observer.IObserver;
 
@@ -70,7 +71,7 @@ public class GUIController implements IObserver {
 	 * 
 	 */
 	public void newGame() {
-		HashMap<String,HashMap<String,String>> gameOptions = NewGameDialog.getGameOptions();
+		HashMap<String,PlayerOptions> gameOptions = NewGameDialog.getGameOptions();
 		
 		if (gameOptions != null) {
 			Facade.getInstance().newGame(gameOptions);
