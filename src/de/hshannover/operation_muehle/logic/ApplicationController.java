@@ -32,7 +32,7 @@ public class ApplicationController extends AObservable{
 	 * @param gameOption The Options for the new Game.
 	 * @see SaveState
 	 */
-	public void initializeNew(HashMap gameOptions) {
+	public void initializeNew(HashMap<String,PlayerOptions> gameOptions) {
 		//create Players?
 		currentPlayer = 1;
 		winner = -1;

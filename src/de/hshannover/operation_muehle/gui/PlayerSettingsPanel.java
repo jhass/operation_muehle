@@ -3,7 +3,6 @@ package de.hshannover.operation_muehle.gui;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.HashMap;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,6 +13,8 @@ import javax.swing.ButtonGroup;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
+
+import de.hshannover.operation_muehle.logic.PlayerOptions;
 
 //import de.hshannover.inform.muehle.strategy.Strategy;
 //import de.hshannover.operation_muehle.Facade;
@@ -183,22 +184,17 @@ public class PlayerSettingsPanel extends JPanel {
 		add(aiStrength, gbc_strength);
 	}
 
-	/** First draft, TODO: await or create a dedicated object
+	/** Create a new PlayerOptions object from the current state
 	 * 
+	 * @return @see PlayerOptions
 	 */
-	public HashMap<String,String> collectGameOptions() {
-		HashMap<String,String> gameOptions = new HashMap<String,String>();
+	public PlayerOptions collectGameOptions() {
 		boolean isAi = rdbtnAi.isSelected();
-		gameOptions.put("AI", Boolean.valueOf(isAi).toString()); // BIG FAT UGLY SMELLING TODO
 		if (isAi) {
-			gameOptions.put("name", (String) aiSelect.getSelectedItem());
-			gameOptions.put("strength", Integer.valueOf(aiStrength.getValue()).toString()); // Can't have enough TODO markers in this one, actually lets add a FIXME just because I can
+			return new PlayerOptions((String) aiSelect.getSelectedItem(), aiStrength.getValue());
 		} else {
-			gameOptions.put("name", humanName.getText());
+			return new PlayerOptions(humanName.getText());
 		}
-		
-		
-		return gameOptions;
 	}
 
 }
