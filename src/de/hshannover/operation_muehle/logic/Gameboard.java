@@ -9,8 +9,6 @@ import java.util.HashMap;
  * abdecken. Diese Klasse ist primaer Datentragend, liefert auf Anfrage die Nachbarn
  * eines Feldes zurueck und erlaubt die Aenderung des Feldzustandes, sollte ein Stein
  * gesetzt, gezogen oder geschlagen werden.
- * !!! Vorlaeufige Version !!! Es bleibt zu klären, ob HashMap oder andere Collectionart nicht
- * effizienter ist.
  * @author Benjamin Held
  *
  */
@@ -22,7 +20,7 @@ public class Gameboard implements Serializable {
 	 * Konstruktor
 	 */
 	public Gameboard() {
-		this.board= new HashMap<Integer,Slot>();
+		this.board = new HashMap<Integer,Slot>();
 		initializeSlots();
 	}
 	
@@ -49,18 +47,19 @@ public class Gameboard implements Serializable {
 	 * @param r Wert der Zeile
 	 */
 	public void generateNewPair(int c, int r) {
-		Slot s= new Slot(r,c,0);
-		int hashValue= s.hashCode(); 
+		Slot s = new Slot(r,c,0);
+		int hashValue = s.hashCode(); 
 		this.board.put(hashValue, s);
 	}
 	
 	/**
-	 * Sucht zu einem gegebenen Slot alle möglichen Nachbarslots und gibt diese dann zurueck
+	 * Sucht zu einem gegebenen Slot alle möglichen Nachbarslots und gibt diese dann
+	 * zurueck. Findet sich in einer Richtung kein Nachbar wird null zurueckgegeben.
 	 * @param s Slot, fuer den die Nachbarslots gesucht werden sollen
 	 * @return Slot[]
 	 */
 	public Slot[] getNeighbours(Slot s) {
-		Coordinate cTemp= new Coordinate(s.getRow(),s.getColumn());
+		Coordinate cTemp = new Coordinate(s.getRow(),s.getColumn());
 		Slot[] neighbours = new Slot[4];
 		neighbours[0] = getNeighbourSlot(cTemp,1,0);
 		neighbours[1] = getNeighbourSlot(cTemp,0,1);
@@ -79,8 +78,11 @@ public class Gameboard implements Serializable {
 	 * @return Slot
 	 */
 	public Slot getNeighbourSlot(Coordinate coord, int rowIndex, int columnIndex) {
-		int r= coord.row + rowIndex;
-		int c= (int) (coord.column - 64) + columnIndex;
+		int r = coord.row + rowIndex;
+		int c = (int) (coord.column - 64) + columnIndex;
+		if (r == 4 && c == 4) return null; /* Einige Felder auf dem mittleren
+		                                       Ring wuerden sonst 4 Nachbarn finden,
+		                                       obwohl sie nur 3 haben*/
 		while ( (r > 0 && r < 8) && (c > 0 && c < 8)) {
 			Coordinate help = new Coordinate(r, (char) (c+64));
 			if (this.board.containsKey(help.hashCode()))
@@ -99,9 +101,9 @@ public class Gameboard implements Serializable {
 	 * @param s
 	 */
 	public void applySlot(Slot s, int status) {
-		Slot appSlot= null;
+		Slot appSlot = null;
 		if (this.board.containsKey(s.hashCode()))
-			 appSlot= this.board.get(s.hashCode());
+			 appSlot = this.board.get(s.hashCode());
 		appSlot.setStatus(status);
 	}
 	
@@ -154,8 +156,8 @@ public class Gameboard implements Serializable {
 		private int row;
 		
 		public Coordinate(int r, char c) {
-			this.column= c;
-			this.row= r;
+			this.column = c;
+			this.row = r;
 		}
 		
 		@Override
