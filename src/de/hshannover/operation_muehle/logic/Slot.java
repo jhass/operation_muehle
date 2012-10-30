@@ -45,7 +45,7 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 			throw new IllegalArgumentException("Slot.Row ungueltig!");
 		if (column<0) 
 			throw new IllegalArgumentException("Slot.Column ungueltig!");
-		this.status = SlotStatus.FREE;
+		this.status = SlotStatus.EMPTY;
 		this.row = row;
 		this.column = column;
 	}

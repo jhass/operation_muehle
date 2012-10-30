@@ -16,5 +16,5 @@ public enum SlotStatus {
 	
 	/** Slot can take a stone
 	 */
-	FREE
+	EMPTY
 }

@@ -47,7 +47,7 @@ public class Gameboard implements Serializable {
 	 * @param row Wert der Zeile
 	 */
 	public void generateNewPair(int column, int row) {
-		Slot slot = new Slot(row, column, SlotStatus.FREE);
+		Slot slot = new Slot(row, column, SlotStatus.EMPTY);
 		int hashValue = slot.hashCode(); 
 		this.board.put(hashValue, slot);
 	}
@@ -144,7 +144,7 @@ public class Gameboard implements Serializable {
 	 * @param toRemove Spielfeld, aus dem der Stein entfernt wird
 	 */
 	public void removeStone(Slot toRemove) { 
-		returnSlot(toRemove).setStatus(SlotStatus.FREE);
+		returnSlot(toRemove).setStatus(SlotStatus.EMPTY);
 	}
 	
 	/**
