@@ -23,7 +23,6 @@ public class Facade {
 	
 	/**
 	 * Simple Constructor.
-	 * @throws IOException 
 	 */
 	private Facade() {
 		appController = new ApplicationController();
@@ -39,7 +38,6 @@ public class Facade {
 	 * Creates a Facade if not existent, otherwise returning
 	 * the existing one.
 	 * @return The Facade(SIngelton)
-	 * @throws  
 	 */
 	public static Facade getInstance() {
 		if (instance == null) {instance = new Facade(); }

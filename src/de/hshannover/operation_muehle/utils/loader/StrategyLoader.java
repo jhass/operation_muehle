@@ -8,6 +8,8 @@ import de.hshannover.inform.muehle.strategy.Strategy;
 
 /** Loads any found strategies
  *
+ * @author Jonne Haß
+ *
  */
 public class StrategyLoader extends ClassesLoader {
 	
@@ -24,8 +26,7 @@ public class StrategyLoader extends ClassesLoader {
 	/**
 	 * @see ClassesLoader
 	 */
-	public StrategyLoader(String searchPath)
-		throws IOException {
+	public StrategyLoader(String searchPath) throws IOException {
 		super(searchPath);
 	}
 	

@@ -10,15 +10,16 @@ import java.util.jar.JarFile;
 
 /** Generic class to fetch classes from JARs in a directory
  * 
+ * @author Jonne Haß
  *
  */
 public class ClassesLoader {
 	private ArrayList<String> availableClasses = new ArrayList<String>();
 	
 	
-	/**
+	/** Load all JARs in searchPath (not recursive!)
 	 * 
-	 * @param searchPath directory to seach for JARs
+	 * @param searchPath directory to search for JARs
 	 * @throws IOException If there's an error reading one of the JARs
 	 * @throws IllegalArgumentException if searchPath is not a directory
 	 */
