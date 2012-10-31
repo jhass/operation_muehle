@@ -123,10 +123,36 @@ public class ApplicationController extends AObservable{
 	 */
 	private boolean isInMill(Slot slot) {
 		boolean isInMill = false;
+		Slot[] closeSlotNeighbours = this.gameboard.getNeighbours(slot);
+		boolean checktop = (closeSlotNeighbours[0] != null);
+		boolean checkright = (closeSlotNeighbours[1] != null);
+		boolean checkbottom = (closeSlotNeighbours[2] != null);
+		boolean checkleft = (closeSlotNeighbours[3] != null);
+		
+		/* Pruefungen, wenn gegebenes Feld in der Mitte dreier Felder liegt
+		 * Wenn die Felder oberhalb und unterhalb des zu pruefenden Feldes existieren,
+		 * pruefe, ob eine Muehle geschlossen ist
+		 */
+		if (checktop && checkbottom) {
+			SlotStatus status= slot.getStatus(); //Status des zu preufenden Feldes
+			if (closeSlotNeighbours[0].getStatus() == status &&
+				closeSlotNeighbours[2].getStatus() == status) return true;
+		}
+		
+		/* Wenn die Felder links und rechts des zu pruefenden Feldes existieren,
+		 * pruefe, ob eine Muehle geschlossen ist
+		 */
+		if (checkleft && checkright) {
+			SlotStatus status= slot.getStatus(); //Status des zu preufenden Feldes
+			if (closeSlotNeighbours[1].getStatus() == status &&
+				closeSlotNeighbours[3].getStatus() == status) return true;
+		}
 		/*
-		 * Complex if/else statement to check if
-		 * the neighbouring Slots of slot are harbouring 
-		 * Stones, so that a Mill is closed.
+		 * ToDO: Uebrige Möglichkeiten:
+		 * aktuelles Feld ist "Aussenfeld" einer Muehle
+		 * - Nachbarn in entsprechender Richtung nehmen und drittes Feld
+		 * holen
+		 * - Status abprüfen
 		 */
 		return isInMill;
 	}
