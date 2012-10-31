@@ -8,6 +8,7 @@ import de.hshannover.operation_muehle.utils.observer.AObservable;
  * The ApplicationController, doing all of the games logic.
  * Extends the Observable abstract class, so it can be observed.
  * @author Richard Pump
+ * @author Benjamin Held
  *
  */
 public class ApplicationController extends AObservable{
@@ -128,32 +129,44 @@ public class ApplicationController extends AObservable{
 		boolean checkright = (closeSlotNeighbours[1] != null);
 		boolean checkbottom = (closeSlotNeighbours[2] != null);
 		boolean checkleft = (closeSlotNeighbours[3] != null);
-		
-		/* Pruefungen, wenn gegebenes Feld in der Mitte dreier Felder liegt
-		 * Wenn die Felder oberhalb und unterhalb des zu pruefenden Feldes existieren,
-		 * pruefe, ob eine Muehle geschlossen ist
-		 */
+				 
 		if (checktop && checkbottom) {
-			SlotStatus status= slot.getStatus(); //Status des zu preufenden Feldes
+			/* Wenn die Felder oberhalb und unterhalb des zu pruefenden Feldes existieren,
+			 * pruefe, ob eine Muehle geschlossen ist
+			 */
+			
+			SlotStatus status = slot.getStatus(); //Status des zu preufenden Feldes
 			if (closeSlotNeighbours[0].getStatus() == status &&
 				closeSlotNeighbours[2].getStatus() == status) return true;
+		} else if (checktop) {
+			/* Wenn Feld am unteren Ende eine moeglichen Muehle steht, benoetigte Felder
+			 * holen und auf Muehle pruefen
+			 */
+			
+		} else if (checkbottom) {
+			/* Wenn Feld am oberen Ende eine moeglichen Muehle steht, benoetigte Felder
+			 * holen und auf Muehle pruefen
+			 */
+			
 		}
 		
-		/* Wenn die Felder links und rechts des zu pruefenden Feldes existieren,
-		 * pruefe, ob eine Muehle geschlossen ist
-		 */
 		if (checkleft && checkright) {
-			SlotStatus status= slot.getStatus(); //Status des zu preufenden Feldes
+			/* Wenn die Felder links und rechts des zu pruefenden Feldes existieren,
+			 * pruefe, ob eine Muehle geschlossen ist
+			 */
+			
+			SlotStatus status = slot.getStatus(); //Status des zu preufenden Feldes
 			if (closeSlotNeighbours[1].getStatus() == status &&
 				closeSlotNeighbours[3].getStatus() == status) return true;
+		} else if (checkleft) {
+			/* Wenn Feld am rechten Ende eine moeglichen Muehle steht, benoetigte Felder
+			 * holen und auf Muehle pruefen
+			 */
+		} else if (checkright) {
+			/* Wenn Feld am linken Ende eine moeglichen Muehle steht, benoetigte Felder
+			 * holen und auf Muehle pruefen
+			 */
 		}
-		/*
-		 * ToDO: Uebrige Möglichkeiten:
-		 * aktuelles Feld ist "Aussenfeld" einer Muehle
-		 * - Nachbarn in entsprechender Richtung nehmen und drittes Feld
-		 * holen
-		 * - Status abprüfen
-		 */
 		return isInMill;
 	}
 	/**
