@@ -17,12 +17,12 @@ public class Logger {
 	
 	/**
 	 * Adds the given Object to the Log
-	 * @param o The Object to Log, can be Slot, Move
+	 * @param o The Object to Log, must be Slot, Move
 	 * @see Slot
 	 * @see Move
 	 */
 	public void addEntry(Object o) {
-		//find out, what we got, save it!
+		log.add(o.toString()); //TODO How to handle Objects of a false class...
 	}
 	
 	/**
@@ -31,7 +31,7 @@ public class Logger {
 	 * @return String-Representation of the last Entry
 	 */
 	public String getLastEntry() {
-		return "A Move I am"; //example!
+		return log.get(log.size()-1);
 	}
 	
 	/**
