@@ -20,12 +20,12 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	
 	/**
 	 * Konstruktor, der den Status des Slot entsprechend der Eingabe besetzt
-	 * @param row Zeilenindex (Constraint >0)
 	 * @param column Spaltenindex (Constraint >0)
+	 * * @param row Zeilenindex (Constraint >0)
 	 * @param status Attribut zur Beschreibung des Spielfeldinhaltes
 	 *         (0= empty, 1= white, 2=black)
 	 */
-	public Slot(int row, int column, SlotStatus status) {
+	public Slot(int column, int row, SlotStatus status) {
 		if (row<0) 
 			throw new IllegalArgumentException("Slot.Row ungueltig!");
 		if (column<0) 
@@ -37,10 +37,10 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	
 	/**
 	 * Konstruktor, der den Status automatisch auf unbenutzt
-	 * @param row Zeilenindex (Constraint >0)
 	 * @param column Spaltenindex (Constraint >0)
+	 * @param row Zeilenindex (Constraint >0)
 	 */
-	public Slot(int row, int column) {
+	public Slot(int column, int row) {
 		if (row<0) 
 			throw new IllegalArgumentException("Slot.Row ungueltig!");
 		if (column<0) 

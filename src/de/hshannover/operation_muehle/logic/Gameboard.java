@@ -55,6 +55,11 @@ public class Gameboard implements Serializable {
 	/**
 	 * Sucht zu einem gegebenen Slot alle möglichen Nachbarslots und gibt diese dann
 	 * zurueck. Findet sich in einer Richtung kein Nachbar wird null zurueckgegeben.
+	 * Anordnung: 
+	 * Slot[0]: oberhalb
+	 * Slot[1]: rechts
+	 * Slot[2]: unterhalb
+	 * Slot[3]: links
 	 * @param slot Slot, fuer den die Nachbarslots gesucht werden sollen
 	 * @return Slot[]
 	 */
@@ -105,7 +110,7 @@ public class Gameboard implements Serializable {
 			Slot appSlot = this.board.get(slot.hashCode());
 			appSlot.setStatus(status);
 		} else {
-			System.out.println("Slot nicht vorhanden! " +
+			throw new IllegalArgumentException("Slot nicht vorhanden! " +
 					"Gameboard.ApplySlot hat nichts hinzugefuegt");
 		}
 	}
