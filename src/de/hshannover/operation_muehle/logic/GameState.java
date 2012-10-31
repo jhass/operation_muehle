@@ -25,7 +25,7 @@ public class GameState implements Serializable {
 	public GameState(Gameboard g, int cp, int w, ArrayList<String> log) {
 		if (cp != 1 && cp !=2) 
 			throw new IllegalArgumentException("GameState.CurrentPlayer ungueltig!");
-		if (winner != 1 && winner !=2) 
+		if (winner < 0 || winner > 2) 
 			throw new IllegalArgumentException("GameState.Winner ungueltig!");
 		this.currentGB = g;
 		this.currentPlayer = cp;

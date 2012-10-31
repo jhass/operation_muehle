@@ -89,4 +89,10 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	public int hashCode() {
 		return this.column*10+this.row;
 	}
+	
+	@Override
+	public String toString() {
+		char c= (char) (this.column+64);
+		return "("+c+", "+this.row+")";
+	}
 }
