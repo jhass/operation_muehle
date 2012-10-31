@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class Player implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String name;
-	private int color;
+	private SlotStatus color;
 	private int stones;
 	private boolean isAI;
 	private int thinkTime;
@@ -27,9 +27,7 @@ public class Player implements Serializable {
 	 * @param thinkTime Denkzeit der kuenstlichen Intelligenz 
 	 * (Constraint > 0) 
 	 */
-	public Player(String name, int color, boolean isAI, int thinkTime) {
-		if (color != 1 && color !=2) 
-			throw new IllegalArgumentException("Player.Color ungueltig!");
+	public Player(String name, SlotStatus color, boolean isAI, int thinkTime) {
 		if (thinkTime < 0)
 			throw new IllegalArgumentException("Player.Thinktime ungueltig!");
 		this.name = name;
@@ -50,7 +48,7 @@ public class Player implements Serializable {
 	 * hat
 	 * @param phase Spielphase, in der sich der Spieler befindet 
 	 */
-	public Player(String name, int color, boolean isAI, int thinkTime, 
+	public Player(String name, SlotStatus color, boolean isAI, int thinkTime, 
 			       Slot[] stones, int phase) {
 		this.name = name;
 		this.color = color;
@@ -86,7 +84,7 @@ public class Player implements Serializable {
 	 * Getter für die Farbe
 	 * @return int
 	 */
-	public int getColor() {
+	public SlotStatus getColor() {
 		return this.color;
 	}
 	
