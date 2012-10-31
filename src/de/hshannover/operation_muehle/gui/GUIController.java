@@ -71,7 +71,8 @@ public class GUIController implements IObserver {
 	 * 
 	 */
 	public void newGame() {
-		HashMap<String,PlayerOptions> gameOptions = NewGameDialog.getGameOptions();
+		HashMap<String,PlayerOptions> gameOptions;
+		gameOptions = NewGameDialog.getGameOptions(this.mainWindow);
 		
 		if (gameOptions != null) {
 			Facade.getInstance().newGame(gameOptions);
@@ -83,7 +84,7 @@ public class GUIController implements IObserver {
 	 * 
 	 */
 	public void loadGame() {
-		String path = LoadDialog.getPath();
+		String path = LoadDialog.getPath(this.mainWindow);
 		if (path != null) {
 			System.out.println("load to: "+path); //TODO: call facade
 		}
@@ -94,7 +95,7 @@ public class GUIController implements IObserver {
 	 * 
 	 */
 	public void saveGame() {
-		String path = SaveDialog.getPath();
+		String path = SaveDialog.getPath(this.mainWindow);
 		if (path != null) {
 			System.out.println("save to: "+path); // TODO: call facade
 		}
