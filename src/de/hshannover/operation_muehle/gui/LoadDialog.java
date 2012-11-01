@@ -2,7 +2,7 @@ package de.hshannover.operation_muehle.gui;
 
 import java.awt.Component;
 
-/**a dialog to load a saved game
+/** a dialog to load a saved game
  * 
  * @author Julian Haack
  * @author Jonne Haß
@@ -12,15 +12,13 @@ import java.awt.Component;
 public class LoadDialog extends GetPathDialog {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Create the LoadDialog frame.
-	 */
-	
-	public LoadDialog(Component parent) {
+	private LoadDialog(Component parent) {
 		super(parent);
 		returnValue = showOpenDialog(parent);
 	}
 	
+	/** @see GetPathDialog
+	 */
 	public static String getPath(Component parent) {
 		GetPathDialog dialog = new LoadDialog(parent);
 		return doGetPath(dialog);

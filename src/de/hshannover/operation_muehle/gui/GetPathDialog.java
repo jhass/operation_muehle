@@ -1,7 +1,6 @@
 package de.hshannover.operation_muehle.gui;
 
 import java.awt.Component;
-import java.awt.Dialog.ModalityType;
 
 import javax.swing.JFileChooser; 
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -20,14 +19,18 @@ public class GetPathDialog extends JFileChooser {
 	protected int returnValue;
 	protected Component parent;
 	
-	public GetPathDialog(Component parent) {
+	protected GetPathDialog(Component parent) {
 		super();
 		filter = new FileNameExtensionFilter("Save game", "msave");
 		setFileFilter(filter);
 		this.parent = parent;
 	}
 	
-	
+	/** Create a new dialog and return the chosen file.
+	 * 
+	 * @param parent the window which the dialog should be modal for. Can be null
+	 * @return String path
+	 */
 	public static String getPath(Component parent) {
 		GetPathDialog dialog = new GetPathDialog(parent);
 		return doGetPath(dialog);
