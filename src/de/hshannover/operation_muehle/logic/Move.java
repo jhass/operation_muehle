@@ -46,4 +46,9 @@ public class Move implements de.hshannover.inform.muehle.strategy.Move {
 	public Slot toSlot() {
 		return endSlot;
 	}
+	
+	@Override
+	public String toString() {
+		return "["+ this.startSlot + " to " + this.endSlot + "]";
+	}
 }
