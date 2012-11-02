@@ -58,7 +58,8 @@ public class TextureUtils {
 
 		return bilinearScaleOp.filter(
 			image,
-			new BufferedImage(width, height, image.getType()));
+			new BufferedImage(width, height, image.getType())
+		);
 	}
 	
 	/** Round the corners

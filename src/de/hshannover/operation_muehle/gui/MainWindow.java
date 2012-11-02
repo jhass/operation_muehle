@@ -1,7 +1,6 @@
 package de.hshannover.operation_muehle.gui;
 
 import javax.swing.JFrame;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -12,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 
 /** Main window displaying the game and providing access to all other functions.
  * 
@@ -33,17 +34,17 @@ public class MainWindow extends JFrame {
 	private final JButton btnSaveGame = new JButton("Save Game");
 	
 	public MainWindow() {
-		getContentPane().setLayout(new BoxLayout(getContentPane(),
-												 BoxLayout.Y_AXIS));
-		
 		setVisible(true);
+		
+		getContentPane().setLayout(new BorderLayout(0, 0));
+		
 		Board board = new Board();
+		
 		getContentPane().add(board);
 		
 		JPanel buttonContainer = new JPanel();
-		getContentPane().add(buttonContainer);
-		buttonContainer.setLayout(new BoxLayout(buttonContainer,
-												BoxLayout.X_AXIS));
+		getContentPane().add(buttonContainer, BorderLayout.SOUTH);
+		buttonContainer.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		buttonContainer.add(btnToggleLog);
 		buttonContainer.add(btnNewGame);
@@ -53,7 +54,6 @@ public class MainWindow extends JFrame {
 		buttonContainer.add(btnSaveGame);
 		
 		setupListener();
-		
 		setTitle("Mühle");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(500, 500);

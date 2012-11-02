@@ -4,8 +4,12 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -31,10 +35,25 @@ public class Board extends Canvas {
 	
 	public Board() {
 		super();
-	
+		
 		boardTexture = TextureUtils.load("light-wood.jpg");
 		
-		
+		addOfflineRenderBuffersInitializer();
+		addInteractionListeners();
+	}
+
+	private void addOfflineRenderBuffersInitializer() {
+		addHierarchyListener(new HierarchyListener() {
+			@Override
+			public void hierarchyChanged(HierarchyEvent event) {
+				if (event.getChangeFlags() == HierarchyEvent.PARENT_CHANGED) {
+					createBufferStrategy(2);
+				}
+			}
+		});
+	}
+
+	private void addInteractionListeners() {
 		addMouseListener(new MouseAdapter() {
 
 			@Override
@@ -69,7 +88,7 @@ public class Board extends Canvas {
 			}
 		});
 	}
-	
+
 	private void startDragFromPoint(Point source) {
 		for (Spot spot : spots) {
 			if (spot.hasStone() && spot.isCovering(source)) {
@@ -108,6 +127,7 @@ public class Board extends Canvas {
 		}
 	}
 
+	// We redraw everything anyway so no need to clear the whole canvas
 	@Override
 	public void update(Graphics pen) {
 		paint(pen);
@@ -115,7 +135,20 @@ public class Board extends Canvas {
 	
 	@Override
 	public void paint(Graphics pen) {
-		if (width != getWidth() || height != getHeight()) {
+		// Create offline rendering buffer
+		BufferStrategy buffer = getBufferStrategy();
+		pen = buffer.getDrawGraphics();
+		
+		draw(pen);
+		
+		// Display the offline rendering buffer and ensure a redraw
+		pen.dispose();
+		buffer.show();
+		Toolkit.getDefaultToolkit().sync();
+	}
+
+	private void draw(Graphics pen) {
+		if (dimensionChanged()) {
 			width = getWidth();
 			height = getHeight();
 			spacing = (width+height)/20; // TODO: better algorithm, maybe separate border and inner spacing
@@ -127,10 +160,11 @@ public class Board extends Canvas {
 		drawBackground(pen);
 		drawBoard(pen);
 		drawSpots(pen);
-		
-		if (draggedStone != null) {
-			draggedStone.draw(pen);
-		}
+		drawDraggedStone(pen);
+	}
+
+	private boolean dimensionChanged() {
+		return width != getWidth() || height != getHeight();
 	}
 
 	private void recreateSpots() {
@@ -211,10 +245,15 @@ public class Board extends Canvas {
 		pen.drawLine(width/2, height-3*spacing, width/2, height-spacing);
 	}
 
-	// FIXME: this is too slow (flickers)
 	private void drawSpots(Graphics pen) {
 		for (Spot spot : spots) {
 			spot.draw(pen);
+		}
+	}
+
+	private void drawDraggedStone(Graphics pen) {
+		if (draggedStone != null) {
+			draggedStone.draw(pen);
 		}
 	}
 }

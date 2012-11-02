@@ -18,6 +18,12 @@ import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.inform.muehle.strategy.Strategy;
 import de.hshannover.operation_muehle.Facade;
 import de.hshannover.operation_muehle.utils.loader.StrategyLoader;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
+import java.awt.Component;
+import javax.swing.Box;
+import java.awt.Dimension;
+import javax.swing.SwingConstants;
 
 
 /** Panel providing the settings for a single player
@@ -33,9 +39,12 @@ public class PlayerSettingsPanel extends JPanel {
 	private JLabel lblName;
 	private JComboBox aiSelect;
 	private JRadioButton rdbtnAi;
+	private Component rigidArea;
+	private Component rigidArea_1;
 	
 	
 	public PlayerSettingsPanel(String panelLabel) {
+		setBorder(new LineBorder(new Color(0, 0, 0)));
 		setRootLayout();
 		addLabel(panelLabel);
 		addTypeSelect();
@@ -54,20 +63,34 @@ public class PlayerSettingsPanel extends JPanel {
 
 	private void setRootLayout() {
 		GridBagLayout gbl = new GridBagLayout();
-		gbl.columnWidths = new int[]{0, 0, 0};
-		gbl.rowHeights = new int[]{0, 0, 0, 0, 0};
-		gbl.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl.columnWidths = new int[] {0, 0, 0, 0, 0};
+		gbl.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
+		gbl.columnWeights = new double[]{0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE};
+		gbl.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		setLayout(gbl);
 	}
 
 	private void addLabel(String panelLabel) {
+		
+		rigidArea = Box.createRigidArea(new Dimension(10, 10));
+		GridBagConstraints gbc_rigidArea = new GridBagConstraints();
+		gbc_rigidArea.insets = new Insets(0, 0, 5, 5);
+		gbc_rigidArea.gridx = 0;
+		gbc_rigidArea.gridy = 0;
+		add(rigidArea, gbc_rigidArea);
+		
+		rigidArea_1 = Box.createRigidArea(new Dimension(10, 10));
+		GridBagConstraints gbc_rigidArea_1 = new GridBagConstraints();
+		gbc_rigidArea_1.insets = new Insets(0, 0, 5, 0);
+		gbc_rigidArea_1.gridx = 3;
+		gbc_rigidArea_1.gridy = 0;
+		add(rigidArea_1, gbc_rigidArea_1);
 		JLabel lblPlayer = new JLabel(panelLabel);
 		GridBagConstraints gbc_lblplayer = new GridBagConstraints();
 		gbc_lblplayer.gridwidth = 2;
-		gbc_lblplayer.insets = new Insets(0, 0, 5, 0);
-		gbc_lblplayer.gridx = 0;
-		gbc_lblplayer.gridy = 0;
+		gbc_lblplayer.insets = new Insets(0, 0, 5, 5);
+		gbc_lblplayer.gridx = 1;
+		gbc_lblplayer.gridy = 1;
 		add(lblPlayer, gbc_lblplayer);
 	}
 
@@ -78,17 +101,19 @@ public class PlayerSettingsPanel extends JPanel {
 		rdbtnHuman.setSelected(true);
 		GridBagConstraints gbc_rdbtnHuman = new GridBagConstraints();
 		gbc_rdbtnHuman.insets = new Insets(0, 0, 5, 5);
-		gbc_rdbtnHuman.gridx = 0;
-		gbc_rdbtnHuman.gridy = 1;
+		gbc_rdbtnHuman.gridx = 1;
+		gbc_rdbtnHuman.gridy = 2;
 		
 		typeSelect.add(rdbtnHuman);
 		add(rdbtnHuman, gbc_rdbtnHuman);
 		
 		rdbtnAi = new JRadioButton("AI");
+		rdbtnAi.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_rdbtnAi = new GridBagConstraints();
-		gbc_rdbtnAi.insets = new Insets(0, 0, 5, 0);
-		gbc_rdbtnAi.gridx = 1;
-		gbc_rdbtnAi.gridy = 1;
+		gbc_rdbtnAi.anchor = GridBagConstraints.WEST;
+		gbc_rdbtnAi.insets = new Insets(0, 0, 5, 5);
+		gbc_rdbtnAi.gridx = 2;
+		gbc_rdbtnAi.gridy = 2;
 		
 		typeSelect.add(rdbtnAi);
 		add(rdbtnAi, gbc_rdbtnAi);
@@ -117,10 +142,10 @@ public class PlayerSettingsPanel extends JPanel {
 	private JPanel addNameSelectPanel() {
 		JPanel nameSelectPanel = new JPanel();
 		GridBagConstraints gbc_nameSelector = new GridBagConstraints();
-		gbc_nameSelector.fill = GridBagConstraints.BOTH;
-		gbc_nameSelector.insets = new Insets(0, 0, 5, 0);
-		gbc_nameSelector.gridx = 1;
-		gbc_nameSelector.gridy = 2;
+		gbc_nameSelector.fill = GridBagConstraints.VERTICAL;
+		gbc_nameSelector.insets = new Insets(0, 0, 5, 5);
+		gbc_nameSelector.gridx = 2;
+		gbc_nameSelector.gridy = 3;
 		add(nameSelectPanel, gbc_nameSelector);
 		
 		GridBagLayout gbl_nameSelector = new GridBagLayout();
@@ -138,8 +163,8 @@ public class PlayerSettingsPanel extends JPanel {
 		GridBagConstraints gbc_lblName = new GridBagConstraints();
 		gbc_lblName.insets = new Insets(0, 0, 5, 5);
 		gbc_lblName.anchor = GridBagConstraints.EAST;
-		gbc_lblName.gridx = 0;
-		gbc_lblName.gridy = 2;
+		gbc_lblName.gridx = 1;
+		gbc_lblName.gridy = 3;
 		add(lblName, gbc_lblName);
 		
 		humanName = new JTextField();
@@ -164,9 +189,10 @@ public class PlayerSettingsPanel extends JPanel {
 		lblStrength = new JLabel("AI strength");
 		lblStrength.setVisible(false);
 		GridBagConstraints gbc_lblStrength = new GridBagConstraints();
+		gbc_lblStrength.anchor = GridBagConstraints.EAST;
 		gbc_lblStrength.insets = new Insets(0, 0, 0, 5);
-		gbc_lblStrength.gridx = 0;
-		gbc_lblStrength.gridy = 3;
+		gbc_lblStrength.gridx = 1;
+		gbc_lblStrength.gridy = 4;
 		add(lblStrength, gbc_lblStrength);
 		
 		aiStrength = new JSlider();
@@ -178,9 +204,9 @@ public class PlayerSettingsPanel extends JPanel {
 		aiStrength.setMinorTickSpacing(1);
 		aiStrength.setMaximum(10);
 		GridBagConstraints gbc_strength = new GridBagConstraints();
-		gbc_strength.fill = GridBagConstraints.HORIZONTAL;
-		gbc_strength.gridx = 1;
-		gbc_strength.gridy = 3;
+		gbc_strength.insets = new Insets(0, 0, 0, 5);
+		gbc_strength.gridx = 2;
+		gbc_strength.gridy = 4;
 		add(aiStrength, gbc_strength);
 	}
 
