@@ -29,7 +29,6 @@ public class Facade {
 		try {
 			stratload = new StrategyLoader();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -37,7 +36,7 @@ public class Facade {
 	/**
 	 * Creates a Facade if not existent, otherwise returning
 	 * the existing one.
-	 * @return The Facade(SIngelton)
+	 * @return The Facade(Singleton)
 	 */
 	public static Facade getInstance() {
 		if (instance == null) {instance = new Facade(); }
