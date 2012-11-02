@@ -13,7 +13,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import de.hshannover.operation_muehle.utils.TextureUtils;
+import de.hshannover.operation_muehle.gui.board.TextureUtils;
 
 
 /** Provides the canvas to display the current Gameboard
@@ -104,6 +104,7 @@ public class Board extends Canvas {
 		if (draggedStone != null) {
 			for (Spot spot : spots) {
 				if (!spot.hasStone() && spot.isCovering(destination)) {
+					System.out.println("Moved "+draggedStone+" from "+draggedStoneSrc+" to "+spot);
 					spot.setStone(draggedStone);
 					draggedStone = null;
 					break;
@@ -126,7 +127,13 @@ public class Board extends Canvas {
 			repaint();
 		}
 	}
-
+	
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		repaint();
+	}
+	
 	// We redraw everything anyway so no need to clear the whole canvas
 	@Override
 	public void update(Graphics pen) {
@@ -161,6 +168,9 @@ public class Board extends Canvas {
 		drawBoard(pen);
 		drawSpots(pen);
 		drawDraggedStone(pen);
+		if (!isEnabled()) {
+			drawShade(pen);
+		}
 	}
 
 	private boolean dimensionChanged() {
@@ -255,5 +265,10 @@ public class Board extends Canvas {
 		if (draggedStone != null) {
 			draggedStone.draw(pen);
 		}
+	}
+
+	private void drawShade(Graphics pen) {
+		pen.setColor(new Color(0xDD222222, true));
+		pen.fillRect(0, 0, width, height);
 	}
 }

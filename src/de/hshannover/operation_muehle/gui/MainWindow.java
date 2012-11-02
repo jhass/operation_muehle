@@ -32,13 +32,15 @@ public class MainWindow extends JFrame {
 	private final JButton btnToggleLog = new JButton("Toggle Log");
 	private final JButton btnLoadGame = new JButton("Load Game");
 	private final JButton btnSaveGame = new JButton("Save Game");
+
+	private Board board;
 	
 	public MainWindow() {
 		setVisible(true);
 		
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		
-		Board board = new Board();
+		board = new Board();
 		
 		getContentPane().add(board);
 		
@@ -48,15 +50,31 @@ public class MainWindow extends JFrame {
 		
 		buttonContainer.add(btnToggleLog);
 		buttonContainer.add(btnNewGame);
-		
 		buttonContainer.add(btnLoadGame);
-		
 		buttonContainer.add(btnSaveGame);
 		
 		setupListener();
 		setTitle("Mühle");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(500, 500);
+		
+		noGameMode();
+	}
+	
+	/** Set the window into no game mode
+	 * 
+	 */
+	public void noGameMode() {
+		btnSaveGame.setEnabled(false);
+		board.setEnabled(false); 
+	}
+	
+	/** Set the window into game mode
+	 * 
+	 */
+	public void gameMode() {
+		btnSaveGame.setEnabled(true);
+		board.setEnabled(true);
 	}
 	
 	private void setupListener() {

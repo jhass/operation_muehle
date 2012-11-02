@@ -101,6 +101,7 @@ public class Spot {
 		getStone().draw(pen);
 	}
 	
+	@Override
 	public String toString() {
 		String repr = column+""+row;
 		

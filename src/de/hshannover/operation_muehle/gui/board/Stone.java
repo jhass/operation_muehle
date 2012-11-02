@@ -4,7 +4,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-import de.hshannover.operation_muehle.utils.TextureUtils;
+import de.hshannover.operation_muehle.gui.board.TextureUtils;
 
 /** GUI helper class representing the position and color of a Stone
  * 
@@ -108,6 +108,7 @@ class Stone extends Point {
 		return blackStoneTexture;
 	}
 	
+	@Override
 	public String toString() {
 		return color.toString();
 	}

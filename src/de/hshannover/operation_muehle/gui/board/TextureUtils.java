@@ -1,4 +1,4 @@
-package de.hshannover.operation_muehle.utils;
+package de.hshannover.operation_muehle.gui.board;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;

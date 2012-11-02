@@ -75,7 +75,8 @@ public class GUIController implements IObserver {
 		gameOptions = NewGameDialog.getGameOptions(this.mainWindow);
 		
 		if (gameOptions != null) {
-			Facade.getInstance().newGame(gameOptions);
+			//Facade.getInstance().newGame(gameOptions); // TODO: find out why this blocks us
+			mainWindow.gameMode();
 		}
 	}
 	
