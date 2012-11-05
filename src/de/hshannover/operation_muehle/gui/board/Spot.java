@@ -36,6 +36,22 @@ public class Spot {
 	public Stone getStone() {
 		return stone;
 	}
+	
+	/** Get the spots column as integer
+	 * 
+	 * @return
+	 */
+	public int getIntegerColumn() {
+		return this.column-64;
+	}
+	
+	/** Get the spots row
+	 * 
+	 * @return
+	 */
+	public int getRow() {
+		return this.row;
+	}
 
 	/** Set the stone this Spot should hold. 
 	 * 

@@ -145,4 +145,12 @@ public class MainWindow extends JFrame {
 	public void addSaveGameCallback(Runnable callback) {
 		this.saveGameCallbacks.add(callback);
 	}
+
+	/** @see Board.addNewMoveCallback
+	 * 
+	 * @param moveCallback
+	 */
+	public void addNewMoveCallback(MoveCallback moveCallback) {
+		board.addNewMoveCallback(moveCallback);
+	}
 }

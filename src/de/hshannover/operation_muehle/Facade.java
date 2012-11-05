@@ -3,6 +3,7 @@ package de.hshannover.operation_muehle;
 import java.io.IOException;
 import java.util.HashMap;
 
+import de.hshannover.operation_muehle.gui.board.Spot;
 import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.operation_muehle.logic.SaveState;
 import de.hshannover.operation_muehle.logic.Slot;
@@ -25,7 +26,14 @@ public class Facade {
 	 * Simple Constructor.
 	 */
 	private Facade() {
-		appController = new ApplicationController();
+		//FIXME: Make the app controller a Thread so that the constructor can return
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				appController = new ApplicationController();
+			}
+		});
+		
 		try {
 			stratload = new StrategyLoader();
 		} catch (IOException e) {
@@ -48,9 +56,14 @@ public class Facade {
 	 * @param gameOptions The Options.
 	 * @see GUIController
 	 */
-	public void newGame(HashMap<String,PlayerOptions> gameOptions) {
-		appController.initializeNew(gameOptions);
-		appController.playGame();
+	public void newGame(final HashMap<String,PlayerOptions> gameOptions) {
+		//FIXME: Make the app controller a Thread so that the constructor can return
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				appController.initializeNew(gameOptions);
+			}
+		});
 	}
 	
 	/**
@@ -100,10 +113,22 @@ public class Facade {
 	
 	/**
 	 * Gives a Move to the ApplicationController
-	 * @param m The Move thats to be given.
+	 * @param src The spot to move from
+	 * @param dst The spot to move to
 	 */
-	public void giveMove(Move m) {
-		appController.givePlayerMove(m);
+	public void giveMove(Spot src, Spot dst) {
+		Slot srcSlot = null, dstSlot = null;
+		
+		if (src != null) {
+			srcSlot = new Slot(src.getIntegerColumn(), src.getRow());
+		}
+		
+		if (dst != null) {
+			dstSlot = new Slot(dst.getIntegerColumn(), dst.getRow());
+		}
+		
+		Move move = new Move(srcSlot, dstSlot);
+		appController.givePlayerMove(move); // FIXME: appController is null since the constructor doesn't return
 	}
 	
 

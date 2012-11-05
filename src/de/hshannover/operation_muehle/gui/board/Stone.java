@@ -11,13 +11,13 @@ import de.hshannover.operation_muehle.gui.board.TextureUtils;
  * @author Jonne Haß
  *
  */
-class Stone extends Point {
+public class Stone extends Point {
 	/** The color of a stone
 	 * 
 	 * @author Jonne Haß
 	 *
 	 */
-	enum Color {
+	public enum Color {
 		WHITE,
 		BLACK
 	}
@@ -106,6 +106,10 @@ class Stone extends Point {
 		}
 		
 		return blackStoneTexture;
+	}
+	
+	public Color getColor() {
+		return color;
 	}
 	
 	@Override

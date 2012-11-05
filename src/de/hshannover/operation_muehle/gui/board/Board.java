@@ -12,7 +12,9 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
+import de.hshannover.operation_muehle.gui.MoveCallback;
 import de.hshannover.operation_muehle.gui.board.TextureUtils;
 
 
@@ -32,6 +34,7 @@ public class Board extends Canvas {
 	private BufferedImage board;
 	private Stone draggedStone;
 	private Spot draggedStoneSrc;
+	private ArrayList<MoveCallback> newMoveCallbacks = new ArrayList<MoveCallback>();
 	
 	public Board() {
 		super();
@@ -57,6 +60,12 @@ public class Board extends Canvas {
 		addMouseListener(new MouseAdapter() {
 
 			@Override
+			public void mouseClicked(MouseEvent event) {  // TODO: debug output, replace with placement request
+				Point clicked = new Point(event.getX(), event.getY());
+				pointClicked(clicked);
+			}
+
+			@Override
 			public void mousePressed(MouseEvent event) {
 				Point clicked = new Point(event.getX(), event.getY());
 				startDragFromPoint(clicked);
@@ -67,18 +76,6 @@ public class Board extends Canvas {
 				Point released = new Point(event.getX(), event.getY());
 				endDragToPoint(released);
 			}
-
-			@Override
-			public void mouseClicked(MouseEvent event) {  // TODO: debug output, replace with placement request
-				Point clicked = new Point(event.getX(), event.getY());
-				for (Spot spot : spots) {
-					if (spot.isCovering(clicked)) {
-						System.out.printf("Clicked %s\n", spot);
-						return;
-					}
-				}
-				System.out.println("Nothing at "+clicked);
-			}
 		});
 		
 		addMouseMotionListener(new MouseAdapter() {
@@ -87,6 +84,27 @@ public class Board extends Canvas {
 				updatedDraggedStone(event);
 			}
 		});
+	}
+
+	private void pointClicked(Point clicked) {
+		for (Spot spot : spots) {
+			if (spot.isCovering(clicked)) {
+				System.out.printf("Clicked %s\n", spot);
+				for (MoveCallback callback : newMoveCallbacks) {
+					if (spot.hasStone()) {
+						if (!callback.process(null, spot, null)) {
+							break;
+						}
+					} else {
+						if (!callback.process(spot, null, null)) {
+							break;
+						}
+					}
+				}
+				return;
+			}
+		}
+		System.out.println("Nothing at "+clicked);
 	}
 
 	private void startDragFromPoint(Point source) {
@@ -102,9 +120,16 @@ public class Board extends Canvas {
 
 	private void endDragToPoint(Point destination) {
 		if (draggedStone != null) {
-			for (Spot spot : spots) {
+			spotLoop: for (Spot spot : spots) {
+				// TODO: don't check if the spot has a stone, that's app logic
 				if (!spot.hasStone() && spot.isCovering(destination)) {
 					System.out.println("Moved "+draggedStone+" from "+draggedStoneSrc+" to "+spot);
+					for (MoveCallback callback : newMoveCallbacks) {
+						if (!callback.process(draggedStoneSrc, spot,
+											  draggedStone.getColor())) {
+							break spotLoop;
+						}
+					}
 					spot.setStone(draggedStone);
 					draggedStone = null;
 					break;
@@ -270,5 +295,14 @@ public class Board extends Canvas {
 	private void drawShade(Graphics pen) {
 		pen.setColor(new Color(0xDD222222, true));
 		pen.fillRect(0, 0, width, height);
+	}
+
+	/** Callback that's run when any kind of new move is generated, no matter if
+	 *   it's valid currently or not. 
+	 * 
+	 * @param moveCallback
+	 */
+	public void addNewMoveCallback(MoveCallback moveCallback) {
+		this.newMoveCallbacks .add(moveCallback);
 	}
 }

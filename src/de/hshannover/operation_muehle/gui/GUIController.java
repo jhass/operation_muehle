@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import de.hshannover.inform.muehle.strategy.Slot;
 import de.hshannover.operation_muehle.Facade;
+import de.hshannover.operation_muehle.gui.board.Spot;
+import de.hshannover.operation_muehle.gui.board.Stone.Color;
 import de.hshannover.operation_muehle.logic.Player;
 import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.operation_muehle.utils.PerformAsync;
@@ -58,6 +60,13 @@ public class GUIController implements IObserver {
 				close();
 			}
 		});
+		
+		this.mainWindow.addNewMoveCallback(new MoveCallback() {
+			@Override
+			public boolean process(Spot src, Spot dst, Color color) {
+				return newMove(src, dst, color);
+			}
+		});
 	}
 
 	@Override
@@ -75,7 +84,7 @@ public class GUIController implements IObserver {
 		gameOptions = NewGameDialog.getGameOptions(this.mainWindow);
 		
 		if (gameOptions != null) {
-			//Facade.getInstance().newGame(gameOptions); // TODO: find out why this blocks us
+			Facade.getInstance().newGame(gameOptions);
 			mainWindow.gameMode();
 		}
 	}
@@ -109,6 +118,19 @@ public class GUIController implements IObserver {
 		this.logWindow.toggleVisibility();
 	}
 	
+	//	/** ??
+	//	 * 
+	//	 * @param gamestate
+	//	 */
+	//	public void evaluteGameState(Gamestate gamestate) {
+	//		// whatever happens here
+	//	}
+		
+		private boolean newMove(Spot src, Spot dst, Color color) {
+			Facade.getInstance().giveMove(src, dst);
+			return true; //FIXME: define a way to let the Facade/app controller tell us if the move was valid
+		}
+
 	/** Obtain a slot from the user
 	 * 
 	 * @param player
