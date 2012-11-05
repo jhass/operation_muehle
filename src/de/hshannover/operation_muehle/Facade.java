@@ -93,6 +93,14 @@ public class Facade {
 	}
 	
 	/**
+	 * Gives the ApplicationController
+	 * @return The ApplicationController
+	 */
+	public ApplicationController getAppController(){
+		return this.appController;
+	}
+	
+	/**
 	 * Gives the StrategyLoader
 	 * @return The StrategyLoader
 	 * @see StrategyLoader

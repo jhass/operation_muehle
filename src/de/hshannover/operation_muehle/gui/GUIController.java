@@ -24,6 +24,8 @@ public class GUIController implements IObserver {
 		this.mainWindow = new MainWindow();
 		this.logWindow = new LogWindow();
 		
+		Facade.getInstance().getAppController().addObserver(this);
+		
 		this.mainWindow.addToggleLogCallback(new Runnable() {
 			@Override
 			public void run() {
