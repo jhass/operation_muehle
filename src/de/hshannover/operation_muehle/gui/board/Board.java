@@ -60,7 +60,7 @@ public class Board extends Canvas {
 		addMouseListener(new MouseAdapter() {
 
 			@Override
-			public void mouseClicked(MouseEvent event) {  // TODO: debug output, replace with placement request
+			public void mouseClicked(MouseEvent event) {
 				Point clicked = new Point(event.getX(), event.getY());
 				pointClicked(clicked);
 			}

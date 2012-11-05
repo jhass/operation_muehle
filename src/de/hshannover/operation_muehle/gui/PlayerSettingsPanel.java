@@ -52,7 +52,6 @@ public class PlayerSettingsPanel extends JPanel {
 		fillNameSelectPanel(nameSelectPanel);
 		addAIStrenghSelect();
 		
-		// TODO: associate  class names with strategy names and return the classname as value of the box
 		StrategyLoader loader = Facade.getInstance().getStrategyLoader();
 		for (Strategy strategy : loader.getAllStrategies()) {
 			aiSelect.addItem(new StrategyWrapper(strategy));
