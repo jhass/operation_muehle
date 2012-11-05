@@ -2,6 +2,9 @@ package de.hshannover.operation_muehle.logic;
 
 import java.io.Serializable;
 
+import de.hshannover.inform.muehle.strategy.Strategy;
+import de.hshannover.operation_muehle.ki.KI;
+
 /**
  * Diese Klasse realisiert ein Spieler-Objekt. Es handelt sich hierbei um
  * eine reine datentragende Klasse, die alle notwendigen Attribute eines
@@ -17,6 +20,7 @@ public class Player implements Serializable {
 	private boolean isAI;
 	private int thinkTime;
 	private int phase;
+	private Strategy aiStrategy;
 	
 	/**
 	 * Konstruktor fuer Spieler bei einem neuen Spiel.
@@ -36,6 +40,8 @@ public class Player implements Serializable {
 		this.thinkTime = thinkTime;
 		this.stones = 9;
 		this.phase = 1;
+		this.aiStrategy= new KI();
+		//todo: Durch Loader geladene Strategy an dieser Stelle initialisieren...
 	}
 	/**
 	 * Konstruktor fuer Spieler bei einem geladenen Spielstand.

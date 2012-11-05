@@ -123,7 +123,6 @@ public class ApplicationController extends AObservable{
 	 * @return If the Stone is part of a Mill.
 	 */
 	private boolean isInMill(Slot slot) {
-		boolean isInMill = false;
 		Slot[] closeSlotNeighbours = this.gameboard.getNeighbours(slot);
 		boolean checktop = (closeSlotNeighbours[0] != null);
 		boolean checkright = (closeSlotNeighbours[1] != null);
@@ -139,15 +138,17 @@ public class ApplicationController extends AObservable{
 			if (closeSlotNeighbours[0].getStatus() == status &&
 				closeSlotNeighbours[2].getStatus() == status) return true;
 		} else if (checktop) {
-			/* Wenn Feld am unteren Ende eine moeglichen Muehle steht, benoetigte Felder
-			 * holen und auf Muehle pruefen
+			/* Wenn der untere Nachbar leer ist, befindet sich der uebergebene Slot
+			 * am unteren Ende einer Dreierreihe. Es muessen zum Vergleich die beiden
+			 * Nachbarn oberhalb bestimmt werden.
 			 */
-			
+			return checkForMill(slot, closeSlotNeighbours[0],0);
 		} else if (checkbottom) {
-			/* Wenn Feld am oberen Ende eine moeglichen Muehle steht, benoetigte Felder
-			 * holen und auf Muehle pruefen
+			/* Wenn der obere Nachbar leer ist, befindet sich der uebergebene Slot
+			 * am oberen Ende einer Dreierreihe. Es muessen zum Vergleich die beiden
+			 * Nachbarn unterhalb bestimmt werden.
 			 */
-			
+			return checkForMill(slot, closeSlotNeighbours[2],2);
 		}
 		
 		if (checkleft && checkright) {
@@ -159,16 +160,40 @@ public class ApplicationController extends AObservable{
 			if (closeSlotNeighbours[1].getStatus() == status &&
 				closeSlotNeighbours[3].getStatus() == status) return true;
 		} else if (checkleft) {
-			/* Wenn Feld am rechten Ende eine moeglichen Muehle steht, benoetigte Felder
-			 * holen und auf Muehle pruefen
+			/* Wenn der rechte Nachbar leer ist, befindet sich der uebergebene Slot
+			 * am rechten Ende einer Dreierreihe. Es muessen zum Vergleich die beiden
+			 * Nachbarn in linker Richtung bestimmt werden.
 			 */
+			return checkForMill(slot, closeSlotNeighbours[1],1);
 		} else if (checkright) {
-			/* Wenn Feld am linken Ende eine moeglichen Muehle steht, benoetigte Felder
-			 * holen und auf Muehle pruefen
+			/* Wenn der linke Nachbar leer ist, befindet sich der uebergebene Slot
+			 * am linken Ende einer Dreierreihe. Es muessen zum Vergleich die beiden
+			 * Nachbarn in rechter Richtung bestimmt werden.
 			 */
+			return checkForMill(slot, closeSlotNeighbours[3],3);
 		}
-		return isInMill;
+		return false;
 	}
+	
+	/**
+	 * Die Methode nimmt zwei Slots entgegen (die in einer Reihe liegen), bestimmt den
+	 * verbleibenden dritten Slot und prueft die drei Slots auf Statusgleichheit.
+	 * Gibt true zurueck, wenn es eine Muehle ist, gibt falsche zurueck, wenn es keine
+	 * Muehle ist
+	 * @param firstSlot Urspruenglicher Slot
+	 * @param secondSlot Erster Nachbar in Reihe
+	 * @param index Index, an dem der dritte Reihenstein zu finden ist
+	 * @return boolean
+	 */
+	public boolean checkForMill(Slot firstSlot, Slot secondSlot, int index) {
+		Slot[] distantSlotNeighbours= 
+				this.gameboard.getNeighbours(secondSlot);
+		if (firstSlot.getStatus() == secondSlot.getStatus() &&
+			firstSlot.getStatus() == distantSlotNeighbours[index].getStatus())
+			return true;
+		return false;
+	}
+	
 	/**
 	 * Checks if a Stone in a Slot is removable or not.
 	 * @param slot The Slot that contains the Stone in question.
@@ -179,6 +204,4 @@ public class ApplicationController extends AObservable{
 		if(isInMill(slot)) { removable = true; } //replace with something smart
 		return removable;
 	}
-
-
 }
