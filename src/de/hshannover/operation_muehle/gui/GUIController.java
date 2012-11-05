@@ -126,10 +126,10 @@ public class GUIController implements IObserver {
 	//		// whatever happens here
 	//	}
 		
-		private boolean newMove(Spot src, Spot dst, Color color) {
-			Facade.getInstance().giveMove(src, dst);
-			return true; //FIXME: define a way to let the Facade/app controller tell us if the move was valid
-		}
+	private boolean newMove(Spot src, Spot dst, Color color) {
+		Facade.getInstance().giveMove(src, dst);
+		return true; //FIXME: define a way to let the Facade/app controller tell us if the move was valid
+	}
 
 	/** Obtain a slot from the user
 	 * 

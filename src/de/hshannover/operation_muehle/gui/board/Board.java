@@ -3,12 +3,15 @@ package de.hshannover.operation_muehle.gui.board;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -169,28 +172,27 @@ public class Board extends Canvas {
 	public void paint(Graphics pen) {
 		// Create offline rendering buffer
 		BufferStrategy buffer = getBufferStrategy();
-		pen = buffer.getDrawGraphics();
+		Graphics2D enhancedPen = (Graphics2D) buffer.getDrawGraphics();
 		
-		draw(pen);
+		draw(enhancedPen);
 		
 		// Display the offline rendering buffer and ensure a redraw
-		pen.dispose();
+		enhancedPen.dispose();
 		buffer.show();
 		Toolkit.getDefaultToolkit().sync();
 	}
 
-	private void draw(Graphics pen) {
+	private void draw(Graphics2D pen) {
 		if (dimensionChanged()) {
 			width = getWidth();
 			height = getHeight();
 			spacing = (width+height)/20; // TODO: better algorithm, maybe separate border and inner spacing
 		
 			recreateSpots();
-			resizeBoard();
+			recreateBoard();
 		}
 		
-		drawBackground(pen);
-		drawBoard(pen);
+		redrawBoard(pen);
 		drawSpots(pen);
 		drawDraggedStone(pen);
 		if (!isEnabled()) {
@@ -242,11 +244,16 @@ public class Board extends Canvas {
 		}
 	}
 
-	private void resizeBoard() {
+	private void recreateBoard() {
+		Graphics2D pen;
 		try {
-			board = TextureUtils.makeRoundedCorner(
+			board = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			pen = board.createGraphics();
+			drawBackground(pen);
+			pen.drawImage(TextureUtils.makeRoundedCorner(
 					TextureUtils.getScaledImage(boardTexture, width-spacing, height-spacing),
-					30);
+					30), spacing/2, spacing/2, null);
+			drawBoard(pen);
 		} catch (IOException e) {}
 	}
 
@@ -256,9 +263,7 @@ public class Board extends Canvas {
 		pen.fillRect(0, 0, width, height);
 	}
 	
-	private void drawBoard(Graphics pen) {
-		pen.drawImage(board, spacing/2, spacing/2, null);
-		
+	private void drawBoard(Graphics2D pen) {
 		pen.setColor(Color.BLACK);
 		
 		pen.drawRect(spacing, spacing,
@@ -278,9 +283,20 @@ public class Board extends Canvas {
 		pen.drawLine(width-3*spacing, height/2, width-spacing, height/2);
 		pen.drawLine(width/2, spacing, width/2, 3*spacing);
 		pen.drawLine(width/2, height-3*spacing, width/2, height-spacing);
+		
+		pen.setColor(new Color(0xEE222222, true));
+		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		for (Spot spot : spots) {
+			pen.fill(new Ellipse2D.Float(spot.getPosition().x-6,
+										 spot.getPosition().y-6, 12, 12));
+		}
 	}
 
-	private void drawSpots(Graphics pen) {
+	private void redrawBoard(Graphics pen) {
+		pen.drawImage(board, 0, 0, null);
+	}
+
+	private void drawSpots(Graphics2D pen) {
 		for (Spot spot : spots) {
 			spot.draw(pen);
 		}

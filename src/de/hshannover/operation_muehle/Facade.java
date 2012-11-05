@@ -128,7 +128,8 @@ public class Facade {
 		}
 		
 		Move move = new Move(srcSlot, dstSlot);
-		appController.givePlayerMove(move); // FIXME: appController is null since the constructor doesn't return
+		System.out.println(move);
+		//appController.givePlayerMove(move); // FIXME: appController is null since the constructor doesn't return
 	}
 	
 

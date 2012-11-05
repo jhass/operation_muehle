@@ -105,7 +105,7 @@ public class Spot {
 
 	/** Draw the Spot on the given Graphics object.
 	 * 
-	 * If the Spot is holding no stone no action is taken. //TODO: maybe draw a little black circle
+	 * If the Spot is holding no stone no action is taken.
 	 * 
 	 * @param pen
 	 */
