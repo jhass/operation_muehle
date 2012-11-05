@@ -3,6 +3,7 @@ package de.hshannover.operation_muehle.ki;
 import de.hshannover.operation_muehle.logic.Gameboard;
 import de.hshannover.operation_muehle.logic.Move;
 import de.hshannover.operation_muehle.logic.Slot;
+import de.hshannover.operation_muehle.logic.SlotStatus;
 
 import de.hshannover.inform.muehle.strategy.Strategy;
 
@@ -12,9 +13,6 @@ import de.hshannover.inform.muehle.strategy.Strategy;
  * 
  */
 public class KI implements Strategy {
-
-	public static final int WHITE = 1;
-	public static final int BLACK = 2;
 	
 	private MoveGenerator moveGen = new MoveGenerator();
 
@@ -31,7 +29,7 @@ public class KI implements Strategy {
 	/**
 	 * Required for creating Slots and Moves First we think we are black
 	 */
-	private int color = BLACK;
+	private SlotStatus color = SlotStatus.BLACK;
 
 	/**
 	 * Time-Management
@@ -59,10 +57,10 @@ public class KI implements Strategy {
 		return this.time;
 	}
 
-	private int getOpponentColor() {
-		int result = WHITE;
-		if (this.color == WHITE) {
-			result = BLACK;
+	private SlotStatus getOpponentColor() {
+		SlotStatus result = SlotStatus.WHITE;
+		if (this.color == SlotStatus.WHITE) {
+			result = SlotStatus.BLACK;
 		}
 		return result;
 	}
@@ -155,7 +153,7 @@ public class KI implements Strategy {
 			// this case should only come once:
 			// this is the first move or place in that game and we are in action
 			// this means we are white not black
-			this.color = WHITE;
+			this.color = SlotStatus.WHITE;
 		}
 
 		remove(removed);
