@@ -24,6 +24,7 @@ import java.awt.Component;
 import javax.swing.Box;
 import java.awt.Dimension;
 import javax.swing.SwingConstants;
+import java.awt.FlowLayout;
 
 
 /** Panel providing the settings for a single player
@@ -39,8 +40,8 @@ public class PlayerSettingsPanel extends JPanel {
 	private JLabel lblName;
 	private JComboBox aiSelect;
 	private JRadioButton rdbtnAi;
-	private Component rigidArea;
-	private Component rigidArea_1;
+	private Component leftRigidArea;
+	private Component rightRigidArea;
 	
 	
 	public PlayerSettingsPanel(String panelLabel) {
@@ -56,8 +57,6 @@ public class PlayerSettingsPanel extends JPanel {
 		for (Strategy strategy : loader.getAllStrategies()) {
 			aiSelect.addItem(new StrategyWrapper(strategy));
 		}
-		
-		
 	}
 
 	private void setRootLayout() {
@@ -70,20 +69,20 @@ public class PlayerSettingsPanel extends JPanel {
 	}
 
 	private void addLabel(String panelLabel) {
-		
-		rigidArea = Box.createRigidArea(new Dimension(10, 10));
+		leftRigidArea = Box.createRigidArea(new Dimension(10, 10));
 		GridBagConstraints gbc_rigidArea = new GridBagConstraints();
 		gbc_rigidArea.insets = new Insets(0, 0, 5, 5);
 		gbc_rigidArea.gridx = 0;
 		gbc_rigidArea.gridy = 0;
-		add(rigidArea, gbc_rigidArea);
+		add(leftRigidArea, gbc_rigidArea);
 		
-		rigidArea_1 = Box.createRigidArea(new Dimension(10, 10));
+		rightRigidArea = Box.createRigidArea(new Dimension(10, 10));
 		GridBagConstraints gbc_rigidArea_1 = new GridBagConstraints();
 		gbc_rigidArea_1.insets = new Insets(0, 0, 5, 0);
 		gbc_rigidArea_1.gridx = 3;
 		gbc_rigidArea_1.gridy = 0;
-		add(rigidArea_1, gbc_rigidArea_1);
+		add(rightRigidArea, gbc_rigidArea_1);
+		
 		JLabel lblPlayer = new JLabel(panelLabel);
 		GridBagConstraints gbc_lblplayer = new GridBagConstraints();
 		gbc_lblplayer.gridwidth = 2;
@@ -140,19 +139,14 @@ public class PlayerSettingsPanel extends JPanel {
 
 	private JPanel addNameSelectPanel() {
 		JPanel nameSelectPanel = new JPanel();
-		GridBagConstraints gbc_nameSelector = new GridBagConstraints();
-		gbc_nameSelector.fill = GridBagConstraints.VERTICAL;
-		gbc_nameSelector.insets = new Insets(0, 0, 5, 5);
-		gbc_nameSelector.gridx = 2;
-		gbc_nameSelector.gridy = 3;
-		add(nameSelectPanel, gbc_nameSelector);
+		nameSelectPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		
-		GridBagLayout gbl_nameSelector = new GridBagLayout();
-		gbl_nameSelector.columnWidths = new int[]{0, 0};
-		gbl_nameSelector.rowHeights = new int[]{0, 0, 0};
-		gbl_nameSelector.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_nameSelector.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-		nameSelectPanel.setLayout(gbl_nameSelector);
+		GridBagConstraints gbc_nameSelectPanel = new GridBagConstraints();
+		gbc_nameSelectPanel.fill = GridBagConstraints.VERTICAL;
+		gbc_nameSelectPanel.insets = new Insets(0, 0, 5, 5);
+		gbc_nameSelectPanel.gridx = 2;
+		gbc_nameSelectPanel.gridy = 3;
+		add(nameSelectPanel, gbc_nameSelectPanel);
 		
 		return nameSelectPanel;
 	}
@@ -160,28 +154,19 @@ public class PlayerSettingsPanel extends JPanel {
 	private void fillNameSelectPanel(JPanel nameSelectPanel) {
 		lblName = new JLabel("Name");
 		GridBagConstraints gbc_lblName = new GridBagConstraints();
-		gbc_lblName.insets = new Insets(0, 0, 5, 5);
-		gbc_lblName.anchor = GridBagConstraints.EAST;
+		gbc_lblName.insets = new Insets(0, 0, 0, 0);
+		gbc_lblName.anchor = GridBagConstraints.CENTER;
 		gbc_lblName.gridx = 1;
 		gbc_lblName.gridy = 3;
 		add(lblName, gbc_lblName);
 		
 		humanName = new JTextField();
-		GridBagConstraints gbc_humanName = new GridBagConstraints();
-		gbc_humanName.insets = new Insets(0, 0, 5, 0);
-		gbc_humanName.fill = GridBagConstraints.HORIZONTAL;
-		gbc_humanName.gridx = 0;
-		gbc_humanName.gridy = 0;
-		nameSelectPanel.add(humanName, gbc_humanName);
 		humanName.setColumns(10);
+		nameSelectPanel.add(humanName);
 		
 		aiSelect = new JComboBox();
 		aiSelect.setVisible(false);
-		GridBagConstraints gbc_aiSelect = new GridBagConstraints();
-		gbc_aiSelect.fill = GridBagConstraints.HORIZONTAL;
-		gbc_aiSelect.gridx = 0;
-		gbc_aiSelect.gridy = 1;
-		nameSelectPanel.add(aiSelect, gbc_aiSelect);
+		nameSelectPanel.add(aiSelect);
 	}
 
 	private void addAIStrenghSelect() {

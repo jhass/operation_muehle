@@ -6,6 +6,7 @@ import de.hshannover.inform.muehle.strategy.Slot;
 import de.hshannover.operation_muehle.Facade;
 import de.hshannover.operation_muehle.gui.board.Spot;
 import de.hshannover.operation_muehle.gui.board.Stone.Color;
+import de.hshannover.operation_muehle.logic.GameState;
 import de.hshannover.operation_muehle.logic.InvalidMoveException;
 import de.hshannover.operation_muehle.logic.Player;
 import de.hshannover.operation_muehle.logic.PlayerOptions;
@@ -119,13 +120,13 @@ public class GUIController implements IObserver {
 		this.logWindow.toggleVisibility();
 	}
 	
-	//	/** ??
-	//	 * 
-	//	 * @param gamestate
-	//	 */
-	//	public void evaluteGameState(Gamestate gamestate) {
-	//		// whatever happens here
-	//	}
+	/** ??
+	 * 
+	 * @param gamestate
+	 */
+	public void evaluteGameState(GameState gamestate) {
+		// whatever happens here
+	}
 		
 	private boolean newMove(Spot src, Spot dst, Color color) {
 		try {

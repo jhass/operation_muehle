@@ -296,7 +296,7 @@ public class Board extends Canvas {
 		pen.drawImage(board, 0, 0, null);
 	}
 
-	private void drawSpots(Graphics2D pen) {
+	private void drawSpots(Graphics pen) {
 		for (Spot spot : spots) {
 			spot.draw(pen);
 		}
