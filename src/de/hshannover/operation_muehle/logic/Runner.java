@@ -12,7 +12,7 @@ public class Runner {
 		Facade facade = Facade.getInstance();
 		
 		GUIController gui = new GUIController();
-		
+		facade.getAppController().addObserver(gui);
 		
 
 	}
