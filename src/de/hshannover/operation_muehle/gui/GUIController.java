@@ -6,6 +6,7 @@ import de.hshannover.inform.muehle.strategy.Slot;
 import de.hshannover.operation_muehle.Facade;
 import de.hshannover.operation_muehle.gui.board.Spot;
 import de.hshannover.operation_muehle.gui.board.Stone.Color;
+import de.hshannover.operation_muehle.logic.InvalidMoveException;
 import de.hshannover.operation_muehle.logic.Player;
 import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.operation_muehle.utils.PerformAsync;
@@ -127,8 +128,12 @@ public class GUIController implements IObserver {
 	//	}
 		
 	private boolean newMove(Spot src, Spot dst, Color color) {
-		Facade.getInstance().giveMove(src, dst);
-		return true; //FIXME: define a way to let the Facade/app controller tell us if the move was valid
+		try {
+			Facade.getInstance().giveMove(src, dst);
+			return true;
+		} catch (InvalidMoveException e) {
+			return false;
+		}
 	}
 
 	/** Obtain a slot from the user

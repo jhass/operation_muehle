@@ -56,17 +56,25 @@ public class ApplicationController extends AObservable{
 	 * Plays the Game, until it is finished or interrupted.
 	 */
 	public void playGame() {
-		gameStopped = false;
-		while(!gameStopped) {
-			//Do things and such
-		}
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				gameStopped = false;
+				while(!gameStopped) {
+					//Do things and such
+				}
+				
+			}
+			
+		}).start();
 	}
 	
 	/**
 	 * Gives a Move to the Controller. Used for GUI-Interaction
 	 * @param m The Move of the Player.
 	 */
-	public void givePlayerMove(Move m) {
+	public void givePlayerMove(Move m) throws InvalidMoveException {
 		//use the move m
 	}
 	
@@ -113,6 +121,7 @@ public class ApplicationController extends AObservable{
 	 * @param m A VALID(!) Move.
 	 */
 	private void executeMove(Move m) {
+		this.validateMove();
 		gameboard.applyMove(m);
 	}
 	

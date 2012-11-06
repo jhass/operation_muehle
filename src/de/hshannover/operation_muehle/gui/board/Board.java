@@ -95,11 +95,11 @@ public class Board extends Canvas {
 				System.out.printf("Clicked %s\n", spot);
 				for (MoveCallback callback : newMoveCallbacks) {
 					if (spot.hasStone()) {
-						if (!callback.process(null, spot, null)) {
+						if (!callback.process(spot, null, null)) {
 							break;
 						}
 					} else {
-						if (!callback.process(spot, null, null)) {
+						if (!callback.process(null, spot, null)) {
 							break;
 						}
 					}
