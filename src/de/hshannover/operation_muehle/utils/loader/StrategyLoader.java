@@ -38,12 +38,14 @@ public class StrategyLoader extends ClassesLoader {
 	 * @throws IllegalAccessException if the given class can't be accessed
 	 * @throws ClassCastException if the given class is not a strategy
 	 */
-	public Strategy getInstance(String klass)
-		throws ClassNotFoundException,
-		       InstantiationException,
-		       IllegalAccessException,
-		       ClassCastException {
-		return (Strategy) super.getInstance(klass);
+	public Strategy getInstance(String klass) {
+		try {
+			return (Strategy) super.getInstance(klass);
+		} catch (ClassNotFoundException e) {
+		} catch (InstantiationException e) {
+		} catch (IllegalAccessException e) {}
+		
+		return null;
 	}
 	
 	/** Get a list of instances for all available strategies
@@ -54,9 +56,8 @@ public class StrategyLoader extends ClassesLoader {
 		ArrayList<Strategy> strategies = new ArrayList<Strategy>();
 		
 		for (Object strategy : super.getAllInstances()) {
-			try {
+			if (strategy != null) {
 				strategies.add((Strategy) strategy);
-			} catch (ClassCastException e) {
 			}
 		}
 		

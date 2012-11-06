@@ -3,6 +3,7 @@ package de.hshannover.operation_muehle.logic;
 import java.io.Serializable;
 
 import de.hshannover.inform.muehle.strategy.Strategy;
+import de.hshannover.operation_muehle.Facade;
 import de.hshannover.operation_muehle.ki.KI;
 
 /**
@@ -40,9 +41,9 @@ public class Player implements Serializable {
 		this.thinkTime = thinkTime;
 		this.stones = 9;
 		this.phase = 1;
-		this.aiStrategy= new KI();
-		//todo: Durch Loader geladene Strategy an dieser Stelle initialisieren...
+		this.aiStrategy= Facade.getInstance().getStrategyLoader().getInstance(this.name);
 	}
+	
 	/**
 	 * Konstruktor fuer Spieler bei einem geladenen Spielstand.
 	 * @param name Name des Spielers

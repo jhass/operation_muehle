@@ -1,11 +1,10 @@
 package de.hshannover.operation_muehle.gui;
 
+import java.awt.BorderLayout;
+
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 /**LogWindow shows the game log
  * 
@@ -14,8 +13,7 @@ import javax.swing.JList;
 
 public class LogWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
-	
-	private JPanel contentPane;
+	private JTextArea jtxtareaLog;
 
 	/**
 	 * LogWindow Frame
@@ -24,29 +22,19 @@ public class LogWindow extends JFrame {
 	public LogWindow() {
 		setTitle("Log");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		setBounds(100, 100, 200, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		setVisible(false);
+		setBounds(100, 100, 400, 300);
 		
-		JList jlistLog = new JList();
-		GroupLayout gl_contentPane = new GroupLayout(contentPane);
-		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(jlistLog, GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
-					.addContainerGap())
-		);
-		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(jlistLog, GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
-					.addContainerGap())
-		);
-		contentPane.setLayout(gl_contentPane);
+		JScrollPane scrollPane = new JScrollPane();
+		getContentPane().add(scrollPane, BorderLayout.CENTER);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane.setViewportView(scrollPane_1);
+		
+		jtxtareaLog = new JTextArea();
+		jtxtareaLog.setEditable(false);
+		scrollPane_1.setViewportView(jtxtareaLog);
+		setVisible(false);
+				
 	}
 	
 	/**
@@ -58,11 +46,10 @@ public class LogWindow extends JFrame {
 	}
 	
 	/**
-	 * Add Item to JList
-	 * ToDo:
+	 * Add String to textarea
 	 */
 	
-	public void setLog() {
-		
+	public void setLog(String logItem) {		
+		jtxtareaLog.append(logItem + "\n");
 	}
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import de.hshannover.operation_muehle.gui.board.Spot;
+import de.hshannover.operation_muehle.logic.InvalidMoveException;
 import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.operation_muehle.logic.SaveState;
 import de.hshannover.operation_muehle.logic.Slot;
@@ -26,13 +27,7 @@ public class Facade {
 	 * Simple Constructor.
 	 */
 	private Facade() {
-		//FIXME: Make the app controller a Thread so that the constructor can return
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				appController = new ApplicationController();
-			}
-		});
+		appController = new ApplicationController();
 		
 		try {
 			stratload = new StrategyLoader();
@@ -57,13 +52,7 @@ public class Facade {
 	 * @see GUIController
 	 */
 	public void newGame(final HashMap<String,PlayerOptions> gameOptions) {
-		//FIXME: Make the app controller a Thread so that the constructor can return
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				appController.initializeNew(gameOptions);
-			}
-		});
+		appController.initializeNew(gameOptions);
 	}
 	
 	/**
@@ -123,8 +112,9 @@ public class Facade {
 	 * Gives a Move to the ApplicationController
 	 * @param src The spot to move from
 	 * @param dst The spot to move to
+	 * @throws InvalidMoveException 
 	 */
-	public void giveMove(Spot src, Spot dst) {
+	public void giveMove(Spot src, Spot dst) throws InvalidMoveException {
 		Slot srcSlot = null, dstSlot = null;
 		
 		if (src != null) {
@@ -137,9 +127,6 @@ public class Facade {
 		
 		Move move = new Move(srcSlot, dstSlot);
 		System.out.println(move);
-		//appController.givePlayerMove(move); // FIXME: appController is null since the constructor doesn't return
+		appController.givePlayerMove(move);
 	}
-	
-
-
 }
