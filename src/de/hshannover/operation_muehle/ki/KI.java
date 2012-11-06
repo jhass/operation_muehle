@@ -1,5 +1,9 @@
 package de.hshannover.operation_muehle.ki;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.HashMap;
+
 import de.hshannover.operation_muehle.logic.Gameboard;
 import de.hshannover.operation_muehle.logic.Move;
 import de.hshannover.operation_muehle.logic.Slot;
@@ -98,6 +102,26 @@ public class KI implements Strategy {
 					.charToIntCoord(removed.getColumn()), this.color));
 		}
 	}
+	
+	private ArrayList<Slot> getSlotsWith(SlotStatus status){
+		
+		ArrayList<Slot> result = new ArrayList<Slot>();
+		
+		HashMap<Integer,Slot> slots = this.boardIPlayWith.getBoard();
+		
+		Iterator<Integer> iterator = slots.keySet().iterator();
+		Integer i;
+		Slot s;
+		while(iterator.hasNext()){
+			i = iterator.next();
+			s = slots.get(i);
+			if(s.getStatus()==status){
+				result.add(s);
+			}
+		}
+		
+		return result;
+	}
 
 	@Override
 	public int getGroup() {
@@ -113,7 +137,7 @@ public class KI implements Strategy {
 	public Move doMove(de.hshannover.inform.muehle.strategy.Move last,
 			de.hshannover.inform.muehle.strategy.Slot removed, int thinktime) {
 
-		Move result;
+		Move result = null;
 
 		this.initStamp(thinktime);
 
@@ -122,10 +146,19 @@ public class KI implements Strategy {
 
 		this.stamp();
 
-		/*
-		 * TODO Here the algorithm for choosing and creating a move
-		 */
-		result = new Move(new Slot(6,6,this.color));
+
+		ArrayList<Slot> myStones = this.getSlotsWith(this.color);
+		for(int i=0;i<myStones.size();i++){
+			Slot my = myStones.get(i);
+			Slot[] neighbours = this.boardIPlayWith.getNeighbours(my);
+			for(int j=0;j<neighbours.length;j++){
+				Slot neigh = neighbours[j];
+				if(neigh.getStatus()==SlotStatus.EMPTY){
+					result = new Move(new Slot(my.getColumn(),my.getRow()),
+							new Slot(neigh.getColumn(),neigh.getRow()));
+				}
+			}
+		}
 
 		return result;
 	}
@@ -134,7 +167,7 @@ public class KI implements Strategy {
 	public Slot placeStone(de.hshannover.inform.muehle.strategy.Slot last,
 			de.hshannover.inform.muehle.strategy.Slot removed, int thinktime) {
 
-		Slot result;
+		Slot result = null;
 
 		/*
 		 * TODO Man braeuchte noch ein applySlot bei Gameboard, jedenfalls kann
@@ -158,10 +191,11 @@ public class KI implements Strategy {
 
 		remove(removed);
 
-		/*
-		 * TODO ... choosing the Stone, that has to be removed ...
-		 */
-		result = new Slot(5,5,this.color);
+		ArrayList<Slot> emptyPlaces = this.getSlotsWith(SlotStatus.EMPTY);
+		
+		if(emptyPlaces.size()>0){
+			result = emptyPlaces.get(0);
+		}
 
 		return result;
 	}
@@ -169,13 +203,12 @@ public class KI implements Strategy {
 	@Override
 	public Slot removeStone(int thinktime) {
 
-		Slot result;
-		/*
-		 * TODO Hier wird der Algorithmus fuer Auswaehlen berechnet
-		 */
-
-		result = new Slot(4, 4, this.getOpponentColor());
-
+		Slot result = null;
+		
+		ArrayList<Slot> hisStones = this.getSlotsWith(this.getOpponentColor());
+		if(hisStones.size()>0){
+			result = hisStones.get(0);
+		}
 		return result;
 	}
 
