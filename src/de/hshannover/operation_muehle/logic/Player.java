@@ -66,16 +66,24 @@ public class Player implements Serializable {
 	}
 	
 	/**
-	 * Methode zum reduzieren der Speilsteine um 1 (wenn ein Stein vom Feld entfernt wurde)
+	 * Methode zum reduzieren der Spielsteine um 1 (wenn ein Stein vom Feld entfernt wurde)
 	 */
-	public void removeStone() {
+	public void decreaseNumberOfStones() {
 		this.stones--;
+	}
+	
+	/**
+	 * Calls removeStone() on the AI with the thinktime specified in the Object.
+	 * @see Strategy
+	 */
+	public Slot removeStone() {
+		return (Slot) aiStrategy.removeStone(thinkTime);
 	}
 	
 	/**
 	 * Methode zur Aenderung der Spielphase um 1
 	 */
-	public void changePhase() {
+	public void nextPhase() {
 		this.phase++;
 	}
 	
@@ -125,5 +133,9 @@ public class Player implements Serializable {
 	 */
 	public boolean isAI() {
 		return this.isAI;
+	}
+	
+	public Move doMove(Move move, Slot slot) {
+		return (Move) this.aiStrategy.doMove(move, slot, this.thinkTime);
 	}
 }

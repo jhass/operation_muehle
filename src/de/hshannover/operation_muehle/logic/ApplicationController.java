@@ -60,9 +60,26 @@ public class ApplicationController extends AObservable{
 
 			@Override
 			public void run() {
+				Move lastMove = null;
+				Slot lastSlot = null;
 				gameStopped = false;
 				while(!gameStopped) {
-					//Do things and such
+					do {
+						if(players[currentPlayer].isAI()) {
+							lastMove = players[currentPlayer].doMove(lastMove,lastSlot);
+						} else {
+							//Spielerzug
+						}
+					} while (!isValidMove(lastMove));
+					if (isInMill(lastMove.toSlot())) {
+						if (players[currentPlayer].isAI()) { 
+							lastSlot = (Slot) players[currentPlayer].removeStone();
+						} else {
+							//TODO: Bei Mutti in der GUI nachfragen.
+						}
+					} else {
+						//lastSlot= null;
+					}
 				}
 				
 			}
