@@ -41,7 +41,7 @@ public class Player implements Serializable {
 		this.thinkTime = oPlayer.getThinkTime();
 		this.stones = 9;
 		this.phase = 1;
-		this.aiStrategy = Facade.getInstance().getStrategyLoader().getInstance(this.name);
+		if (this.isAI)	this.aiStrategy = Facade.getInstance().getStrategyLoader().getInstance(this.name);
 	}
 	
 	/**

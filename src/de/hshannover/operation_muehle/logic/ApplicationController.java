@@ -64,7 +64,8 @@ public class ApplicationController extends AObservable{
 
 			@Override
 			public void run() {
-				Move lastMove = null;
+				//Move lastMove = null;
+				Move lastMove = new Move(new Slot(1,1), new Slot(1,4));
 				Slot lastSlot = null;
 				gameStopped = false;
 				Player cPlayer;
@@ -152,11 +153,15 @@ public class ApplicationController extends AObservable{
 	private boolean isValidMove(Move m) {
 		Slot startSlot = m.fromSlot();
 		Slot endSlot = m.toSlot();
-		Slot[] startNeighbour = gameboard.getNeighbours(startSlot);
-		
-		for (int i = 0; i <= 3; i++) {
-			if (startNeighbour[i].hashCode() == endSlot.hashCode()
-			 &&  startNeighbour[i].getStatus() == SlotStatus.EMPTY) return true; 
+		if (this.players.get(this.currentPlayer).getPhase() >= 2) {
+			Slot[] startNeighbour = gameboard.getNeighbours(startSlot);
+			
+			for (int i = 0; i <= 3; i++) {
+				if (startNeighbour[i].hashCode() == endSlot.hashCode()
+				 &&  startNeighbour[i].getStatus() == SlotStatus.EMPTY) return true; 
+			}
+		} else if (this.players.get(this.currentPlayer).getPhase() == 1) {
+			if (endSlot.getStatus() == SlotStatus.EMPTY) return true;
 		}
 		
 		return false;
