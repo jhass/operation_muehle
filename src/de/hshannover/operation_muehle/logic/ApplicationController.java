@@ -94,6 +94,7 @@ public class ApplicationController extends AObservable{
 							lastSlot = (Slot) cPlayer.removeStone();
 						} else {
 							//TODO: Bei Mutti in der GUI nachfragen.
+							
 						}
 					} else {
 						lastSlot = null;
@@ -153,14 +154,29 @@ public class ApplicationController extends AObservable{
 	private boolean isValidMove(Move m) {
 		Slot startSlot = m.fromSlot();
 		Slot endSlot = m.toSlot();
-		if (this.players.get(this.currentPlayer).getPhase() >= 2) {
+		
+		/*
+		 * Move-Evaluation fuer Spielzuege in Phase 2: Ist das Endfeld
+		 * Nachbarfeld des Startfeldes und ist das Feld nicht belegt, dann
+		 * ist der Zug gueltig.
+		 */
+		if (this.players.get(this.currentPlayer).getPhase() == 2) {
 			Slot[] startNeighbour = gameboard.getNeighbours(startSlot);
 			
 			for (int i = 0; i <= 3; i++) {
 				if (startNeighbour[i].hashCode() == endSlot.hashCode()
 				 &&  startNeighbour[i].getStatus() == SlotStatus.EMPTY) return true; 
 			}
-		} else if (this.players.get(this.currentPlayer).getPhase() == 1) {
+		/*
+		 * Move-Evaluation fuer das Spielfeld in Phase 1: Ist das Endfeld leer, dann
+		 * darf der Stein in das Feld gesetzt werden. Das Startfeld ist in diesem
+		 * Fall leer.
+		 * Move-Evaluation fuer das Spielfeld in Phase 3: Ist das Endfeld leer, dann
+		 * darf der Stein dorthin gesetzt werden. Das Startfeld ist in diesem Fall nicht
+		 * relevant, da man an ein beliebiges Feld springen darf.
+		 */
+		} else if (this.players.get(this.currentPlayer).getPhase() == 1 ||
+				    this.players.get(this.currentPlayer).getPhase() == 3) {
 			if (endSlot.getStatus() == SlotStatus.EMPTY) return true;
 		}
 		
@@ -260,6 +276,7 @@ public class ApplicationController extends AObservable{
 	 */
 	private boolean canRemove(Slot slot) {
 		boolean removable = true;
+		ArrayList<Slot> pSlot = gameboard.getStonesFromColor(currentPlayer.getOtherPlayer());
 		if(isInMill(slot)) { removable = true; } //replace with something smart
 		return removable;
 	}
