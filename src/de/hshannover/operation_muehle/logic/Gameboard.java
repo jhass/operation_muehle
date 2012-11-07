@@ -2,6 +2,7 @@ package de.hshannover.operation_muehle.logic;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Diese Klasse repraesentiert das Spielfeld. Beim Aufruf des Konstruktors werden 24 
@@ -12,7 +13,7 @@ import java.util.HashMap;
  * @author Benjamin Held
  *
  */
-public class Gameboard implements Serializable {
+public class Gameboard implements Serializable, Iterable<Slot> {
 	private static final long serialVersionUID = 1L;
 	private HashMap<Integer,Slot> board;
 	
@@ -168,6 +169,11 @@ public class Gameboard implements Serializable {
 	 */
 	public Gameboard getGameboard() {
 		return this;
+	}
+	
+	@Override
+	public Iterator<Slot> iterator() {
+		return board.values().iterator();
 	}
 	
 	/**

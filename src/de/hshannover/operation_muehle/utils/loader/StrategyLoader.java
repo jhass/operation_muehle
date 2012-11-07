@@ -42,6 +42,7 @@ public class StrategyLoader extends ClassesLoader {
 		try {
 			return (Strategy) super.getInstance(klass);
 		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		} catch (InstantiationException e) {
 		} catch (IllegalAccessException e) {}
 		
@@ -54,6 +55,7 @@ public class StrategyLoader extends ClassesLoader {
 	 */
 	public ArrayList<Strategy> getAllStrategies() {
 		ArrayList<Strategy> strategies = new ArrayList<Strategy>();
+		
 		
 		for (Object strategy : super.getAllInstances()) {
 			if (strategy != null) {

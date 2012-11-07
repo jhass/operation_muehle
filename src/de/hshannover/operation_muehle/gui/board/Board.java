@@ -19,6 +19,9 @@ import java.util.ArrayList;
 
 import de.hshannover.operation_muehle.gui.MoveCallback;
 import de.hshannover.operation_muehle.gui.board.TextureUtils;
+import de.hshannover.operation_muehle.logic.Gameboard;
+import de.hshannover.operation_muehle.logic.Slot;
+import de.hshannover.operation_muehle.logic.SlotStatus;
 
 
 /** Provides the canvas to display the current Gameboard
@@ -31,6 +34,7 @@ public class Board extends Canvas {
 	private int spacing;
 
 	private Spot spots[];
+	private Gameboard currentGameboard;
 	private int width;
 	private int height;
 	private BufferedImage boardTexture;
@@ -162,6 +166,38 @@ public class Board extends Canvas {
 		repaint();
 	}
 	
+	/** Updates the current Gameboard and triggers a redraw
+	 * 
+	 * @param gameboard
+	 */
+	public void setGameboard(Gameboard gameboard) {
+		this.currentGameboard = gameboard;
+		repopulateStones();
+		repaint();
+	}
+
+	private void repopulateStones() {
+		if (currentGameboard == null) {
+			return;
+		}
+		
+		for (Slot slot : currentGameboard) {
+			for (Spot spot : spots) {
+				if (spot.getRow() == slot.getRow() &&
+					spot.getColumn() == slot.getColumn()) {
+					if (slot.getStatus() == SlotStatus.EMPTY) {
+						spot.setStone(null);
+					} else {
+						spot.setStone(new Stone(
+							spot.getPosition(),
+							Stone.Color.fromSlotStatus(slot.getStatus())
+						));
+					}
+				}
+			}
+		}
+	}
+
 	// We redraw everything anyway so no need to clear the whole canvas
 	@Override
 	public void update(Graphics pen) {
@@ -233,15 +269,7 @@ public class Board extends Canvas {
 				(char) (72-row), 8-row);
 		}
 		
-		//TODO: remove me, draw Gameboard state
-		boolean white = true;
-		boolean skip = true;
-		for (Spot spot : spots) {
-			skip = !skip;
-			if (skip) continue;
-			spot.setStone(new Stone(spot.getPosition(), white ? Stone.Color.WHITE : Stone.Color.BLACK));
-			white = !white;
-		}
+		repopulateStones();
 	}
 
 	private void recreateBoard() {
