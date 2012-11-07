@@ -1,6 +1,7 @@
 package de.hshannover.operation_muehle.logic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Diese Klasse erbt von der Klasse GameState und dient zum Speichern eines Spielstandes
@@ -10,7 +11,7 @@ import java.util.ArrayList;
  */
 public class SaveState extends GameState {
 	private static final long serialVersionUID = 1L;
-	public Player[] players;
+	private HashMap<SlotStatus, Player> players;
 
 	/**
 	 * Konstruktor
@@ -20,9 +21,17 @@ public class SaveState extends GameState {
 	 * @param log Die Notizen (Log) der Spielzuege
 	 * @param players Informationen über die beiden beteiligten Spieler
 	 */
-	public SaveState(Gameboard g, int cp, int w, ArrayList<String> log,
-			          Player[] players) {
+	public SaveState(Gameboard g, SlotStatus cp, SlotStatus w, ArrayList<String> log,
+			          HashMap<SlotStatus, Player> players) {
 		super(g, cp, w, log);
+		this.setPlayers(players);
+	}
+
+	public HashMap<SlotStatus, Player> getPlayers() {
+		return this.players;
+	}
+
+	public void setPlayers(HashMap<SlotStatus, Player> players) {
 		this.players = players;
 	}
 

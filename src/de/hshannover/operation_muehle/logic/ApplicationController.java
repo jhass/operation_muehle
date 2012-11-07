@@ -12,18 +12,18 @@ import de.hshannover.operation_muehle.utils.observer.AObservable;
  *
  */
 public class ApplicationController extends AObservable{
-	private Player[] players;
+	private HashMap<SlotStatus, Player> players;
 	private Logger logger;
 	private Gameboard gameboard;
-	private int currentPlayer;
-	private int winner;
+	private SlotStatus currentPlayer;
+	private SlotStatus winner;
 	private boolean gameStopped;
 	
 	/**
 	 * Simple, basic Constructor.
 	 */
 	public ApplicationController() {
-		players = new Player[2];
+		players = new HashMap<SlotStatus, Player>();
 		logger = new Logger();
 		gameboard = new Gameboard();
 	}
@@ -34,9 +34,12 @@ public class ApplicationController extends AObservable{
 	 * @see SaveState
 	 */
 	public void initializeNew(HashMap<String,PlayerOptions> gameOptions) {
-		//create Players?
-		currentPlayer = 1;
-		winner = -1;
+		PlayerOptions pWhite = gameOptions.get("white");
+		PlayerOptions pBlack = gameOptions.get("black");
+		this.players.put(SlotStatus.WHITE, new Player(pWhite, SlotStatus.WHITE));
+		this.players.put(SlotStatus.BLACK, new Player(pWhite, SlotStatus.BLACK));
+		currentPlayer = SlotStatus.WHITE;
+		winner = SlotStatus.EMPTY;
 		playGame();
 	}
 	
@@ -46,7 +49,7 @@ public class ApplicationController extends AObservable{
 	 * @see SaveState
 	 */
 	public void initializeSaved(SaveState s) {
-		players = s.players;
+		players = s.getPlayers();
 		gameboard = s.currentGB;
 		currentPlayer = s.currentPlayer;
 		playGame();
@@ -63,23 +66,40 @@ public class ApplicationController extends AObservable{
 				Move lastMove = null;
 				Slot lastSlot = null;
 				gameStopped = false;
+				Player cPlayer;
+				
 				while(!gameStopped) {
-					do {
-						if(players[currentPlayer].isAI()) {
-							lastMove = players[currentPlayer].doMove(lastMove,lastSlot);
-						} else {
-							//Spielerzug
+					cPlayer = players.get(currentPlayer);
+					/*
+					 * Schleife zum Simulieren der Spielzuege
+					 */
+					if(cPlayer.isAI()) {
+						lastMove = cPlayer.doMove(lastMove, lastSlot);
+						if (isValidMove(lastMove)) {
+							winner = currentPlayer.getOtherPlayer();
+							break;
 						}
-					} while (!isValidMove(lastMove));
+					} else {
+						//Playermove from GUI
+					}
+					/*
+					 * Pruefung, ob eine Muehle geschlossen wurde. Wenn ja
+					 * entsprechender Aufruf an AI/ GUI zum entfernen eines 
+					 * Spielsteins.
+					 */
 					if (isInMill(lastMove.toSlot())) {
-						if (players[currentPlayer].isAI()) { 
-							lastSlot = (Slot) players[currentPlayer].removeStone();
+						if (cPlayer.isAI()) { 
+							lastSlot = (Slot) cPlayer.removeStone();
 						} else {
 							//TODO: Bei Mutti in der GUI nachfragen.
 						}
 					} else {
-						//lastSlot= null;
+						lastSlot = null;
 					}
+					
+					executeMove(lastMove);
+					winner = checkWinner();
+					gameStopped = true;
 				}
 				
 			}
@@ -92,7 +112,8 @@ public class ApplicationController extends AObservable{
 	 * @param m The Move of the Player.
 	 */
 	public void givePlayerMove(Move m) throws InvalidMoveException {
-		//use the move m
+		if(!isValidMove(m)) throw new InvalidMoveException();
+		//aufwachen, static move setzen
 	}
 	
 	/**
@@ -129,7 +150,15 @@ public class ApplicationController extends AObservable{
 	 * @return If the Move is true or not.
 	 */
 	private boolean isValidMove(Move m) {
-		//Magic.
+		Slot startSlot = m.fromSlot();
+		Slot endSlot = m.toSlot();
+		Slot[] startNeighbour = gameboard.getNeighbours(startSlot);
+		
+		for (int i = 0; i <= 3; i++) {
+			if (startNeighbour[i].hashCode() == endSlot.hashCode()
+			 &&  startNeighbour[i].getStatus() == SlotStatus.EMPTY) return true; 
+		}
+		
 		return false;
 	}
 	
@@ -138,7 +167,6 @@ public class ApplicationController extends AObservable{
 	 * @param m A VALID(!) Move.
 	 */
 	private void executeMove(Move m) {
-		this.validateMove();
 		gameboard.applyMove(m);
 	}
 	
@@ -211,7 +239,7 @@ public class ApplicationController extends AObservable{
 	 * @param index Index, an dem der dritte Reihenstein zu finden ist
 	 * @return boolean
 	 */
-	public boolean checkForMill(Slot firstSlot, Slot secondSlot, int index) {
+	private boolean checkForMill(Slot firstSlot, Slot secondSlot, int index) {
 		Slot[] distantSlotNeighbours= 
 				this.gameboard.getNeighbours(secondSlot);
 		if (firstSlot.getStatus() == secondSlot.getStatus() &&
@@ -229,5 +257,17 @@ public class ApplicationController extends AObservable{
 		boolean removable = true;
 		if(isInMill(slot)) { removable = true; } //replace with something smart
 		return removable;
+	}
+	
+	/**
+	 * Die Methode prueft, ob eine der Siegbedingungen eingetreten ist
+	 * @return boolean
+	 */
+	private SlotStatus checkWinner() {
+		for (SlotStatus cStatus: players.keySet()) {
+			Player cPlayer = players.get(cStatus);
+			if (cPlayer.getStones() < 3) return cPlayer.getColor().getOtherPlayer();
+		}
+		return SlotStatus.EMPTY;
 	}
 }

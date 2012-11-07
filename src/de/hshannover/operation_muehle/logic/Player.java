@@ -24,7 +24,8 @@ public class Player implements Serializable {
 	private Strategy aiStrategy;
 	
 	/**
-	 * Konstruktor fuer Spieler bei einem neuen Spiel.
+	 * Konstruktor fuer Spieler bei einem neuen Spiel. Geandert, um der 
+	 * Initialisierung durch PlayerOptions genuege zu tun.
 	 * @param name Name des Spielers
 	 * @param color Farbe des Spielers (Constraint 1 oder 2)
 	 * @param isAI logischer Wert zur Unterscheidung von menschlichen
@@ -32,16 +33,16 @@ public class Player implements Serializable {
 	 * @param thinkTime Denkzeit der kuenstlichen Intelligenz 
 	 * (Constraint > 0) 
 	 */
-	public Player(String name, SlotStatus color, boolean isAI, int thinkTime) {
+	public Player(PlayerOptions oPlayer, SlotStatus color) {
 		if (thinkTime < 0)
 			throw new IllegalArgumentException("Player.Thinktime ungueltig!");
-		this.name = name;
+		this.name = oPlayer.getName();
 		this.color = color;
-		this.isAI = isAI;
-		this.thinkTime = thinkTime;
+		this.isAI = oPlayer.isAI();
+		this.thinkTime = oPlayer.getThinkTime();
 		this.stones = 9;
 		this.phase = 1;
-		this.aiStrategy= Facade.getInstance().getStrategyLoader().getInstance(this.name);
+		this.aiStrategy = Facade.getInstance().getStrategyLoader().getInstance(this.name);
 	}
 	
 	/**
