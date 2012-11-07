@@ -1,5 +1,6 @@
 package de.hshannover.operation_muehle.logic;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.hshannover.operation_muehle.utils.observer.AObservable;
@@ -37,7 +38,7 @@ public class ApplicationController extends AObservable{
 		PlayerOptions pWhite = gameOptions.get("white");
 		PlayerOptions pBlack = gameOptions.get("black");
 		this.players.put(SlotStatus.WHITE, new Player(pWhite, SlotStatus.WHITE));
-		this.players.put(SlotStatus.BLACK, new Player(pWhite, SlotStatus.BLACK));
+		this.players.put(SlotStatus.BLACK, new Player(pBlack, SlotStatus.BLACK));
 		currentPlayer = SlotStatus.WHITE;
 		winner = SlotStatus.EMPTY;
 		playGame();
@@ -101,7 +102,6 @@ public class ApplicationController extends AObservable{
 					winner = checkWinner();
 					gameStopped = true;
 				}
-				
 			}
 			
 		}).start();
@@ -264,10 +264,27 @@ public class ApplicationController extends AObservable{
 	 * @return boolean
 	 */
 	private SlotStatus checkWinner() {
+		/*
+		 * Gewinnbedingung fuer die Anzahl der Steine (n < 3)
+		 */
 		for (SlotStatus cStatus: players.keySet()) {
 			Player cPlayer = players.get(cStatus);
 			if (cPlayer.getStones() < 3) return cPlayer.getColor().getOtherPlayer();
 		}
-		return SlotStatus.EMPTY;
+		
+		/*
+		 * Gewinnbedingung, wenn kein Zug mehr moeglich ist
+		 */
+		SlotStatus nPlayer = currentPlayer.getOtherPlayer();
+		ArrayList<Slot> slotList = gameboard.getStonesFromColor(nPlayer);
+		
+		for (Slot iteSlot: slotList) {
+			Slot[] neighbours = gameboard.getNeighbours(iteSlot);
+			for (int i = 0; i <= 3; i++) {
+				if (neighbours[i] == null) return SlotStatus.EMPTY;
+			}
+		}
+		
+		return currentPlayer.getOtherPlayer();
 	}
 }

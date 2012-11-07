@@ -1,6 +1,7 @@
 package de.hshannover.operation_muehle.logic;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -167,13 +168,26 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	 * Methode zur Rueckgabe des Spielfeldes
 	 * @return Gameboard
 	 */
-	public Gameboard getGameboard() {
-		return this;
+	public HashMap<Integer, Slot> getGameboard() {
+		return this.board;
 	}
-	
+	/**
+	 * JavaDoc plx!
+	 */
 	@Override
 	public Iterator<Slot> iterator() {
 		return board.values().iterator();
+	}
+	
+	public ArrayList<Slot> getStonesFromColor(SlotStatus status) {
+		ArrayList<Slot> slotList = new ArrayList<Slot>();
+		
+		for (Integer ite: this.board.keySet()) {
+			Slot cSlot = this.board.get(ite);
+			if (cSlot.getStatus() == status) slotList.add(cSlot);
+		}
+		
+		return slotList;
 	}
 	
 	/**
