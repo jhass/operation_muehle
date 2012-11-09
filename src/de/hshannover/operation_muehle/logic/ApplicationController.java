@@ -94,11 +94,11 @@ public class ApplicationController extends AObservable{
 						if (lastMove.toSlot() == null) {
 							players.get(currentPlayer.getOtherPlayer()).decreaseNumberOfStones();
 							gameboard.removeStone(lastMove.fromSlot());
-						} else if (lastMove.fromSlot() == null) {
+						} else if (	players.get(currentPlayer).getPhase() == 1) {
 							cPlayer.increaseStones();
 							gameboard.applySlot(lastMove.toSlot(), currentPlayer);
 							logger.addEntry(lastMove.toSlot().toString());
-						} else {
+						} else if (players.get(currentPlayer).getPhase() > 1) {
 							executeMove(lastMove);
 						}
 						setObservableChanged(true);
@@ -112,13 +112,15 @@ public class ApplicationController extends AObservable{
 						
 						if (isInMill(gameboard.returnSlot(lastMove.toSlot()))) {
 							System.out.println("Muehle: true!");
+							boolean removeableStone = false;
 							if (cPlayer.isAI()) { 
 								lastSlot = (Slot) cPlayer.removeStone();
 							} else {
 								do {
-								//TODO: Bei Mutti in der GUI nachfragen und zu
-								//	entfernenden Stein erfragen.
-								} while (!canRemove(lastSlot));
+//									setObservableChanged(true);
+//									notifyObserver();
+//									removeableStone = canRemove(lastSlot);
+								} while (!removeableStone);
 							}
 						} else {
 							lastSlot = null;
@@ -208,13 +210,17 @@ public class ApplicationController extends AObservable{
 		 * Move-Evaluation fuer das Spielfeld in Phase 1: Ist das Endfeld leer, dann
 		 * darf der Stein in das Feld gesetzt werden. Das Startfeld ist in diesem
 		 * Fall leer.
+		 */
+		} else if (this.players.get(this.currentPlayer).getPhase() == 1) {
+			if (startSlot != null) return false;
+			if (endSlot.getStatus() == SlotStatus.EMPTY) return true;
+		/*
 		 * Move-Evaluation fuer das Spielfeld in Phase 3: Ist das Endfeld leer, dann
 		 * darf der Stein dorthin gesetzt werden. Das Startfeld ist in diesem Fall nicht
 		 * relevant, da man an ein beliebiges Feld springen darf.
 		 */
-		} else if (this.players.get(this.currentPlayer).getPhase() == 1 ||
-				    this.players.get(this.currentPlayer).getPhase() == 3) {
-			if (endSlot.getStatus() == SlotStatus.EMPTY) return true;
+		} else {
+		if (endSlot.getStatus() == SlotStatus.EMPTY) return true;
 		}
 		
 		return false;
