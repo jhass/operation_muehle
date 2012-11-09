@@ -126,7 +126,8 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	public void applyMove(Move move) {
 		Slot start = move.fromSlot();
 		Slot end = move.toSlot();
-		applySlot(end, start.getStatus());
+		applySlot(end,returnSlot(start).getStatus());
+		applySlot(start, SlotStatus.EMPTY);
 	}
 	
 	/**

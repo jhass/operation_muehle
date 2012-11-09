@@ -191,11 +191,12 @@ public class ApplicationController extends AObservable{
 		 * ist der Zug gueltig.
 		 */
 		if (this.players.get(this.currentPlayer).getPhase() == 2) {
-			Slot[] startNeighbour = gameboard.getNeighbours(startSlot);
+			Slot[] slotNeighbour = gameboard.getNeighbours(startSlot);
 			
 			for (int i = 0; i <= 3; i++) {
-				if (startNeighbour[i].hashCode() == endSlot.hashCode()
-				 &&  startNeighbour[i].getStatus() == SlotStatus.EMPTY) return true; 
+				if (slotNeighbour[i] != null &&
+					slotNeighbour[i].hashCode() == endSlot.hashCode() &&
+					slotNeighbour[i].getStatus() == SlotStatus.EMPTY) return true; 
 			}
 		/*
 		 * Move-Evaluation fuer das Spielfeld in Phase 1: Ist das Endfeld leer, dann
@@ -215,10 +216,14 @@ public class ApplicationController extends AObservable{
 	
 	/**
 	 * Executes a Move on the Gameboard. 
-	 * @param m A VALID(!) Move.
+	 * @param move A VALID(!) Move.
 	 */
-	private void executeMove(Move m) {
-		gameboard.applyMove(m);
+	private void executeMove(Move move) {
+		System.out.println("Spielfeld vor Zugausfuehurung.\n");
+		System.out.println(gameboard.toString());
+		gameboard.applyMove(move);
+		System.out.println("Spielfeld nach Zugausfuehurung.\n");
+		System.out.println(gameboard.toString());
 	}
 	
 	/**
@@ -229,6 +234,7 @@ public class ApplicationController extends AObservable{
 	 */
 	private boolean isInMill(Slot slot) {
 		boolean isMill = false;
+		if (slot.getStatus() == SlotStatus.EMPTY) return false;
 		Slot[] closeSlotNeighbours = this.gameboard.getNeighbours(slot);
 		boolean isTopNull = (closeSlotNeighbours[0] == null);
 		boolean isRightNull = (closeSlotNeighbours[1] == null);
