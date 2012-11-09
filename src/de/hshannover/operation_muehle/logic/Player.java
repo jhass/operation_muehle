@@ -21,6 +21,7 @@ public class Player implements Serializable {
 	private int thinkTime;
 	private int phase;
 	private Strategy aiStrategy;
+	private int availableStones= 9;
 	
 	/**
 	 * Konstruktor fuer Spieler bei einem neuen Spiel. Geandert, um der 
@@ -39,7 +40,7 @@ public class Player implements Serializable {
 		this.color = color;
 		this.isAI = oPlayer.isAI();
 		this.thinkTime = oPlayer.getThinkTime();
-		this.stones = 9;
+		this.stones = 0;
 		this.phase = 1;
 		if (this.isAI)	this.aiStrategy = Facade.getInstance().getStrategyLoader().getInstance(this.name);
 	}
@@ -63,6 +64,14 @@ public class Player implements Serializable {
 		this.thinkTime = thinkTime;
 		this.stones = stones.length;
 		this.phase = phase;
+	}
+	
+	public void increaseStones() {
+		this.stones++;
+		this.availableStones--;
+		if (this.availableStones == 0) {
+			this.phase++;
+		}
 	}
 	
 	/**

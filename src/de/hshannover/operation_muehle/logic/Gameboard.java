@@ -66,7 +66,8 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	 * @return Slot[]
 	 */
 	public Slot[] getNeighbours(Slot slot) {
-		Coordinate slotCoordinate = new Coordinate(slot.getRow(),slot.getColumn());
+		Coordinate slotCoordinate = new Coordinate(slot.getRow(),
+				slot.getColumn());
 		Slot[] neighbours = new Slot[4];
 		neighbours[0] = getNeighbourSlot(slotCoordinate,1,0);
 		neighbours[1] = getNeighbourSlot(slotCoordinate,0,1);
@@ -160,8 +161,7 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	 * @return  Slot
 	 */
 	public Slot returnSlot(Slot slot) {
-		Coordinate slotCoordinate = new Coordinate(slot.getRow(),slot.getColumn());
-		return this.board.get(slotCoordinate);
+		return this.board.get(slot.hashCode());
 	}
 	
 	/**
@@ -188,6 +188,15 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 		}
 		
 		return slotList;
+	}
+	
+	@Override
+	public String toString() {
+		String s= "";
+		for (Slot slot: this) {
+			s += slot.toString()+"\n";
+		}
+		return s;
 	}
 	
 	/**
