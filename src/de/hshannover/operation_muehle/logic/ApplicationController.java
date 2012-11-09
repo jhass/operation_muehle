@@ -93,8 +93,10 @@ public class ApplicationController extends AObservable{
 						if (cPlayer.isAI()) { 
 							lastSlot = (Slot) cPlayer.removeStone();
 						} else {
-							//TODO: Bei Mutti in der GUI nachfragen.
-							
+							do {
+							//TODO: Bei Mutti in der GUI nachfragen und zu
+							//	entfernenden Stein erfragen.
+							} while (!canRemove(lastSlot));
 						}
 					} else {
 						lastSlot = null;
@@ -275,10 +277,35 @@ public class ApplicationController extends AObservable{
 	 * @return If the Stone can be removed.
 	 */
 	private boolean canRemove(Slot slot) {
-		boolean removable = true;
-		ArrayList<Slot> pSlot = gameboard.getStonesFromColor(currentPlayer.getOtherPlayer());
-		if(isInMill(slot)) { removable = true; } //replace with something smart
-		return removable;
+		ArrayList<Slot> pSlot = gameboard.getStonesFromColor(
+				                               currentPlayer.getOtherPlayer());
+		ArrayList<Slot> removeableSlots = new ArrayList<Slot>();
+		
+		
+		/*
+		 * Pruefen, ob alle gegnerischen Steine innerhalb einer Muehle sind
+		 * Wenn ein gegnerischer Stein nicht in einer Muehle ist, dann wird der
+		 * Slot in die Liste hinzugefuegt.
+		 */
+		for (Slot hSlot: pSlot) {
+			if (!isInMill(hSlot)) removeableSlots.add(hSlot);
+		}
+		
+		/*
+		 * Gibt true zurueck, wenn der die Liste leer ist, da nun alle Steine
+		 * innherhalb einer Muehle liegen und der Stein erfernt werden darf.
+		 */
+		if (removeableSlots.size() == 0) return true;
+		else {
+			/*
+			 * Wenn in der Liste Elemente sind, gibt es Steine außerhalb
+			 * der Muehle, dann darf der Stein nur entfernt werden, wenn er in der
+			 * Liste enthalten ist.
+			 */
+			if (removeableSlots.contains(slot)) return true;
+		}
+		
+		return false;
 	}
 	
 	/**
