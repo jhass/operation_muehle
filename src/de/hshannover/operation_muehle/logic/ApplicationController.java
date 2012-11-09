@@ -129,7 +129,7 @@ public class ApplicationController extends AObservable{
 						winner = checkWinner();
 						if (winner != SlotStatus.EMPTY) 
 							gameStopped = true;
-						System.out.println(players.get(currentPlayer).getStones());
+						System.out.println(currentPlayer);
 						currentPlayer = currentPlayer.getOtherPlayer();
 					}	
 				}
@@ -185,12 +185,15 @@ public class ApplicationController extends AObservable{
 		Slot startSlot = m.fromSlot();
 		Slot endSlot = m.toSlot();
 		
+		
 		/*
 		 * Move-Evaluation fuer Spielzuege in Phase 2: Ist das Endfeld
 		 * Nachbarfeld des Startfeldes und ist das Feld nicht belegt, dann
 		 * ist der Zug gueltig.
 		 */
 		if (this.players.get(this.currentPlayer).getPhase() == 2) {
+			if (gameboard.returnSlot(startSlot).getStatus() != currentPlayer)
+				return false;
 			Slot[] slotNeighbour = gameboard.getNeighbours(startSlot);
 			
 			for (int i = 0; i <= 3; i++) {
