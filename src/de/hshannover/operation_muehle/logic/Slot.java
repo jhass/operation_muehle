@@ -93,6 +93,6 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	@Override
 	public String toString() {
 		char c= (char) (this.column+64);
-		return "("+c+", "+this.row+")";
+		return "("+c+", "+this.row+", "+this.status+")";
 	}
 }

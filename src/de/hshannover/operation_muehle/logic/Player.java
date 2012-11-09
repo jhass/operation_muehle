@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import de.hshannover.inform.muehle.strategy.Strategy;
 import de.hshannover.operation_muehle.Facade;
-import de.hshannover.operation_muehle.ki.KI;
 
 /**
  * Diese Klasse realisiert ein Spieler-Objekt. Es handelt sich hierbei um
@@ -22,9 +21,11 @@ public class Player implements Serializable {
 	private int thinkTime;
 	private int phase;
 	private Strategy aiStrategy;
+	private int availableStones= 9;
 	
 	/**
-	 * Konstruktor fuer Spieler bei einem neuen Spiel.
+	 * Konstruktor fuer Spieler bei einem neuen Spiel. Geandert, um der 
+	 * Initialisierung durch PlayerOptions genuege zu tun.
 	 * @param name Name des Spielers
 	 * @param color Farbe des Spielers (Constraint 1 oder 2)
 	 * @param isAI logischer Wert zur Unterscheidung von menschlichen
@@ -32,16 +33,16 @@ public class Player implements Serializable {
 	 * @param thinkTime Denkzeit der kuenstlichen Intelligenz 
 	 * (Constraint > 0) 
 	 */
-	public Player(String name, SlotStatus color, boolean isAI, int thinkTime) {
+	public Player(PlayerOptions oPlayer, SlotStatus color) {
 		if (thinkTime < 0)
 			throw new IllegalArgumentException("Player.Thinktime ungueltig!");
-		this.name = name;
+		this.name = oPlayer.getName();
 		this.color = color;
-		this.isAI = isAI;
-		this.thinkTime = thinkTime;
-		this.stones = 9;
+		this.isAI = oPlayer.isAI();
+		this.thinkTime = oPlayer.getThinkTime();
+		this.stones = 0;
 		this.phase = 1;
-		this.aiStrategy= Facade.getInstance().getStrategyLoader().getInstance(this.name);
+		if (this.isAI)	this.aiStrategy = Facade.getInstance().getStrategyLoader().getInstance(this.name);
 	}
 	
 	/**
@@ -65,17 +66,33 @@ public class Player implements Serializable {
 		this.phase = phase;
 	}
 	
+	public void increaseStones() {
+		this.stones++;
+		this.availableStones--;
+		if (this.availableStones == 0) {
+			this.phase++;
+		}
+	}
+	
 	/**
-	 * Methode zum reduzieren der Speilsteine um 1 (wenn ein Stein vom Feld entfernt wurde)
+	 * Methode zum reduzieren der Spielsteine um 1 (wenn ein Stein vom Feld entfernt wurde)
 	 */
-	public void removeStone() {
+	public void decreaseNumberOfStones() {
 		this.stones--;
+	}
+	
+	/**
+	 * Calls removeStone() on the AI with the thinktime specified in the Object.
+	 * @see Strategy
+	 */
+	public Slot removeStone() {
+		return (Slot) aiStrategy.removeStone(thinkTime);
 	}
 	
 	/**
 	 * Methode zur Aenderung der Spielphase um 1
 	 */
-	public void changePhase() {
+	public void nextPhase() {
 		this.phase++;
 	}
 	
@@ -125,5 +142,9 @@ public class Player implements Serializable {
 	 */
 	public boolean isAI() {
 		return this.isAI;
+	}
+	
+	public Move doMove(Move move, Slot slot) {
+		return (Move) this.aiStrategy.doMove(move, slot, this.thinkTime);
 	}
 }

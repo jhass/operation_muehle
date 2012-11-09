@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import de.hshannover.operation_muehle.gui.board.Spot;
+import de.hshannover.operation_muehle.logic.GameState;
 import de.hshannover.operation_muehle.logic.InvalidMoveException;
 import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.operation_muehle.logic.SaveState;
@@ -13,6 +14,7 @@ import de.hshannover.operation_muehle.logic.Player;
 import de.hshannover.operation_muehle.logic.ApplicationController;
 import de.hshannover.operation_muehle.logic.IOOperation;
 import de.hshannover.operation_muehle.utils.loader.StrategyLoader;
+import de.hshannover.operation_muehle.utils.observer.IObserver;
 
 /**
  * Facade for GUI-Interaction
@@ -55,6 +57,10 @@ public class Facade {
 		appController.initializeNew(gameOptions);
 	}
 	
+	public void addApplicationControllerObserver(IObserver observer) {
+		appController.addObserver(observer);
+	}
+	
 	/**
 	 * Saves the Game at the given Path
 	 * @param path The path, where the game is to be saved.
@@ -79,14 +85,6 @@ public class Facade {
 	public void abortGame() {
 		//Threads for the Thread-God, Saves for the Savethrone!
 		appController.endGame();
-	}
-	
-	/**
-	 * Gives the ApplicationController
-	 * @return The ApplicationController
-	 */
-	public ApplicationController getAppController(){
-		return this.appController;
 	}
 	
 	/**
@@ -128,5 +126,13 @@ public class Facade {
 		Move move = new Move(srcSlot, dstSlot);
 		System.out.println(move);
 		appController.givePlayerMove(move);
+	}
+
+	/** Get the current GameState
+	 * 
+	 * @return
+	 */
+	public GameState getGameState() {
+		return appController.getGameState();
 	}
 }

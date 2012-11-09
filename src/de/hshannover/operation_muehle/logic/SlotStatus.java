@@ -8,13 +8,27 @@ package de.hshannover.operation_muehle.logic;
 public enum SlotStatus {
 	/** Slot is used with a white stone
 	 */
-	WHITE,
+	WHITE {
+		public SlotStatus getOtherPlayer() {
+			return BLACK;
+		}
+	},
 	
 	/** Slot is used with a black stone
 	 */
-	BLACK,
-	
+	BLACK {
+		public SlotStatus getOtherPlayer() {
+			return WHITE;
+		}
+	},
+	 
 	/** Slot can take a stone
 	 */
-	EMPTY
+	EMPTY {
+		public SlotStatus getOtherPlayer() {
+			return null;
+		}
+	};
+	
+	abstract SlotStatus getOtherPlayer();
 }

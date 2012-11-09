@@ -2,6 +2,9 @@ package de.hshannover.operation_muehle.utils.loader;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
@@ -34,8 +37,14 @@ public class ClassesLoader {
 		for (File file : files) {
 			if (file.getName().endsWith(".jar")) {
 				JarFile jar = new JarFile(file);
-				JarEntry entry; 
-			
+				JarEntry entry;
+				
+				try {
+					addSoftwareLibrary(file);
+				} catch (Exception e) {
+					continue;
+				}
+				
 				for (Enumeration<JarEntry> entries = jar.entries();
 						entries.hasMoreElements();) {
 					entry = entries.nextElement();
@@ -49,6 +58,12 @@ public class ClassesLoader {
 				jar.close();
 			}
 		}
+	}
+	
+	private void addSoftwareLibrary(File file) throws Exception {
+		Method method = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
+		method.setAccessible(true);
+		method.invoke(ClassLoader.getSystemClassLoader(), new Object[]{file.toURI().toURL()});
 	}
 	
 	/** Get a list of instances for all classes that can
@@ -67,7 +82,6 @@ public class ClassesLoader {
 			} catch (IllegalAccessException e) {
 			}
 		}
-		
 		
 		return instances;
 	}

@@ -1,7 +1,9 @@
 package de.hshannover.operation_muehle.logic;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Diese Klasse repraesentiert das Spielfeld. Beim Aufruf des Konstruktors werden 24 
@@ -12,7 +14,7 @@ import java.util.HashMap;
  * @author Benjamin Held
  *
  */
-public class Gameboard implements Serializable {
+public class Gameboard implements Serializable, Iterable<Slot> {
 	private static final long serialVersionUID = 1L;
 	private HashMap<Integer,Slot> board;
 	
@@ -64,7 +66,8 @@ public class Gameboard implements Serializable {
 	 * @return Slot[]
 	 */
 	public Slot[] getNeighbours(Slot slot) {
-		Coordinate slotCoordinate = new Coordinate(slot.getRow(),slot.getColumn());
+		Coordinate slotCoordinate = new Coordinate(slot.getRow(),
+				slot.getColumn());
 		Slot[] neighbours = new Slot[4];
 		neighbours[0] = getNeighbourSlot(slotCoordinate,1,0);
 		neighbours[1] = getNeighbourSlot(slotCoordinate,0,1);
@@ -123,7 +126,8 @@ public class Gameboard implements Serializable {
 	public void applyMove(Move move) {
 		Slot start = move.fromSlot();
 		Slot end = move.toSlot();
-		applySlot(end, start.getStatus());
+		applySlot(end,returnSlot(start).getStatus());
+		applySlot(start, SlotStatus.EMPTY);
 	}
 	
 	/**
@@ -158,16 +162,51 @@ public class Gameboard implements Serializable {
 	 * @return  Slot
 	 */
 	public Slot returnSlot(Slot slot) {
-		Coordinate slotCoordinate = new Coordinate(slot.getRow(),slot.getColumn());
-		return this.board.get(slotCoordinate);
+		return this.board.get(slot.hashCode());
 	}
 	
 	/**
 	 * Methode zur Rueckgabe des Spielfeldes
 	 * @return Gameboard
 	 */
-	public Gameboard getGameboard() {
-		return this;
+	public HashMap<Integer, Slot> getGameboard() {
+		return this.board;
+	}
+	/**
+	 * JavaDoc plx!
+	 */
+	@Override
+	public Iterator<Slot> iterator() {
+		return board.values().iterator();
+	}
+	
+	/**
+	 * Die Methode sucht alle Slots mit der gegebenen Farbe heraus und 
+	 * gibt diese zurueck.
+	 * @param status Die Farbe, fuer den die Steine gesucht werden sollen
+	 * @return ArrayList<Slot>
+	 */
+	public ArrayList<Slot> getStonesFromColor(SlotStatus status) {
+		ArrayList<Slot> slotList = new ArrayList<Slot>();
+		
+		for (Integer ite: this.board.keySet()) {
+			Slot cSlot = this.board.get(ite);
+			if (cSlot.getStatus() == status) slotList.add(cSlot);
+		}
+		
+		return slotList;
+	}
+	
+	/**
+	 * Einfache toString-Methode zum Debuggen.
+	 */
+	@Override
+	public String toString() {
+		String s= "";
+		for (Slot slot: this) {
+			s += slot.toString()+"\n";
+		}
+		return s;
 	}
 	
 	/**

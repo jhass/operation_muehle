@@ -37,6 +37,14 @@ public class Spot {
 		return stone;
 	}
 	
+	/** Get the spots column
+	 * 
+	 * @return
+	 */
+	public char getColumn() {
+		return this.column;
+	}
+	
 	/** Get the spots column as integer
 	 * 
 	 * @return

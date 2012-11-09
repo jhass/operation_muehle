@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public class GameState implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public Gameboard currentGB;
-	public int currentPlayer;
-	public int winner;
+	public SlotStatus currentPlayer;
+	public SlotStatus winner;
 	public ArrayList<String> log;
 	
 	/**
@@ -22,11 +22,7 @@ public class GameState implements Serializable {
 	 * @param w Der Spieler, der das Spiel gewonnen hat
 	 * @param log Die Notizen (Log) der Spielzuege
 	 */
-	public GameState(Gameboard g, int cp, int w, ArrayList<String> log) {
-		if (cp != 1 && cp !=2) 
-			throw new IllegalArgumentException("GameState.CurrentPlayer ungueltig!");
-		if (winner < 0 || winner > 2) 
-			throw new IllegalArgumentException("GameState.Winner ungueltig!");
+	public GameState(Gameboard g, SlotStatus cp, SlotStatus w, ArrayList<String> log) {
 		this.currentGB = g;
 		this.currentPlayer = cp;
 		this.winner = w;

@@ -69,11 +69,14 @@ public class GUIController implements IObserver {
 				return newMove(src, dst, color);
 			}
 		});
+		
+		Facade.getInstance().addApplicationControllerObserver(this);
 	}
 
 	@Override
 	public void updateObservable() {
-		// TODO Auto-generated method stub
+		GameState state = Facade.getInstance().getGameState();
+		this.mainWindow.drawBoard(state.currentGB);
 		
 	}
 	
@@ -145,14 +148,6 @@ public class GUIController implements IObserver {
 	public Slot selectSlot(Player player) {
 		return null;
 	}
-	
-//	/** ??
-//	 * 
-//	 * @param gamestate
-//	 */
-//	public void evaluteGameState(Gamestate gamestate) {
-//		// whatever happens here
-//	}
 	
 	public void close() {
 		System.exit(0); // -> Facade?
