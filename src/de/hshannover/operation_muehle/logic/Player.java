@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import de.hshannover.inform.muehle.strategy.Strategy;
 import de.hshannover.operation_muehle.Facade;
-import de.hshannover.operation_muehle.ai.AI;
+import de.hshannover.operation_muehle.ki.KI;
 
 /**
  * Diese Klasse realisiert ein Spieler-Objekt. Es handelt sich hierbei um
