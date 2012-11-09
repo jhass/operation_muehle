@@ -180,6 +180,12 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 		return board.values().iterator();
 	}
 	
+	/**
+	 * Die Methode sucht alle Slots mit der gegebenen Farbe heraus und 
+	 * gibt diese zurueck.
+	 * @param status Die Farbe, fuer den die Steine gesucht werden sollen
+	 * @return ArrayList<Slot>
+	 */
 	public ArrayList<Slot> getStonesFromColor(SlotStatus status) {
 		ArrayList<Slot> slotList = new ArrayList<Slot>();
 		
@@ -191,6 +197,9 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 		return slotList;
 	}
 	
+	/**
+	 * Einfache toString-Methode zum Debuggen.
+	 */
 	@Override
 	public String toString() {
 		String s= "";

@@ -176,21 +176,26 @@ public class ApplicationController extends AObservable{
 	
 	/**
 	 * Checks if a Move is a valid one or not.
-	 * @param m The Move to be checked.
+	 * @param move The Move to be checked.
 	 * @return If the Move is true or not.
 	 */
-	private boolean isValidMove(Move m) {
-		Slot startSlot = m.fromSlot();
-		Slot endSlot = m.toSlot();
+	private boolean isValidMove(Move move) {
+		Slot startSlot = move.fromSlot();
+		Slot endSlot = move.toSlot();
 		
 		
 		/*
 		 * Move-Evaluation fuer Spielzuege in Phase 2: Ist das Endfeld
-		 * Nachbarfeld des Startfeldes und ist das Feld nicht belegt, dann
+		 * Nachbarfeld des Startfeldes und ist das Endfeld nicht belegt, dann
 		 * ist der Zug gueltig.
+		 * Abfangen von Einzelklicks auf dem Feld, wenn nur Zug entgegen genommen
+		 * werden soll (sonst NullpointerException).
+		 * Abfangen, wenn ein Spielstein der anderen Farbe verwendet wurde.
 		 */
 		if (this.players.get(this.currentPlayer).getPhase() == 2) {
-			if (gameboard.returnSlot(startSlot).getStatus() != currentPlayer)
+			if (move.fromSlot() == null ||
+				move.toSlot() == null ||
+				gameboard.returnSlot(startSlot).getStatus() != currentPlayer)
 				return false;
 			Slot[] slotNeighbour = gameboard.getNeighbours(startSlot);
 			
@@ -320,7 +325,6 @@ public class ApplicationController extends AObservable{
 		ArrayList<Slot> pSlot = gameboard.getStonesFromColor(
 				                               currentPlayer.getOtherPlayer());
 		ArrayList<Slot> removeableSlots = new ArrayList<Slot>();
-		
 		
 		/*
 		 * Pruefen, ob alle gegnerischen Steine innerhalb einer Muehle sind
