@@ -70,7 +70,6 @@ public class ApplicationController extends AObservable{
 			public void run() {
 				
 				lastMove = null;
-				//Move lastMove = new Move(new Slot(1,1), new Slot(1,4));
 				Slot lastSlot = null;
 				gameStopped = false;
 				Player cPlayer;
@@ -98,6 +97,7 @@ public class ApplicationController extends AObservable{
 						} else if (lastMove.fromSlot() == null) {
 							cPlayer.increaseStones();
 							gameboard.applySlot(lastMove.toSlot(), currentPlayer);
+							logger.addEntry(lastMove.toSlot().toString());
 						} else {
 							executeMove(lastMove);
 						}
@@ -109,8 +109,6 @@ public class ApplicationController extends AObservable{
 						 * entsprechender Aufruf an AI/ GUI zum entfernen eines 
 						 * Spielsteins.
 						 */
-						
-						//System.out.println(gameboard.toString());
 						
 						if (isInMill(gameboard.returnSlot(lastMove.toSlot()))) {
 							System.out.println("Muehle: true!");
@@ -222,11 +220,14 @@ public class ApplicationController extends AObservable{
 	 * @param move A VALID(!) Move.
 	 */
 	private void executeMove(Move move) {
-		System.out.println("Spielfeld vor Zugausfuehurung.\n");
+		System.out.println("Spielfeld vor Zugausfuehrung.\n");
 		System.out.println(gameboard.toString());
 		gameboard.applyMove(move);
-		System.out.println("Spielfeld nach Zugausfuehurung.\n");
+		logger.addEntry(move.toString());
+		System.out.println("Spielfeld nach Zugausfuehrung.\n");
 		System.out.println(gameboard.toString());
+		System.out.println("Logger nach Zugausfuehrung.\n");
+		System.out.println(logger.toString());
 	}
 	
 	/**
