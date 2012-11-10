@@ -21,6 +21,8 @@ public class ApplicationController extends AObservable{
 	private boolean gameStopped;
 	private Move lastMove;
 	private boolean moveAvailable;
+	private boolean closedMill = false;
+	boolean removeableStone = false;
 	
 	/**
 	 * Simple, basic Constructor.
@@ -94,7 +96,9 @@ public class ApplicationController extends AObservable{
 						if (lastMove.toSlot() == null) {
 							players.get(currentPlayer.getOtherPlayer()).decreaseNumberOfStones();
 							gameboard.removeStone(lastMove.fromSlot());
-						} else if (	players.get(currentPlayer).getPhase() == 1) {
+							currentPlayer = currentPlayer.getOtherPlayer();
+						} else if (lastMove.toSlot() != null &&
+								players.get(currentPlayer).getPhase() == 1) {
 							cPlayer.increaseStones();
 							gameboard.applySlot(lastMove.toSlot(), currentPlayer);
 							logger.addEntry(lastMove.toSlot().toString());
@@ -110,18 +114,22 @@ public class ApplicationController extends AObservable{
 						 * Spielsteins.
 						 */
 						
-						if (isInMill(gameboard.returnSlot(lastMove.toSlot()))) {
-							System.out.println("Muehle: true!");
-							boolean removeableStone = false;
+						if (lastMove.toSlot() != null &&
+							isInMill(gameboard.returnSlot(lastMove.toSlot()))) {
+							closedMill = true;
+							System.out.println("Muehle: "+closedMill);
 							if (cPlayer.isAI()) { 
 								lastSlot = (Slot) cPlayer.removeStone();
 							} else {
+								
 								do {
-//									setObservableChanged(true);
-//									notifyObserver();
-//									removeableStone = canRemove(lastSlot);
+									setObservableChanged(true);
+									notifyObserver();
 								} while (!removeableStone);
+								
 							}
+							closedMill = false;
+							removeableStone = false;
 						} else {
 							lastSlot = null;
 						}
@@ -130,6 +138,7 @@ public class ApplicationController extends AObservable{
 						if (winner != SlotStatus.EMPTY) 
 							gameStopped = true;
 						System.out.println(currentPlayer);
+						if (lastMove.toSlot() != null)
 						currentPlayer = currentPlayer.getOtherPlayer();
 					}	
 				}
@@ -185,6 +194,14 @@ public class ApplicationController extends AObservable{
 		Slot startSlot = move.fromSlot();
 		Slot endSlot = move.toSlot();
 		
+		
+		if (closedMill && startSlot != null) {
+			if (canRemove(startSlot)) {
+				removeableStone = true;
+				return true;
+			}
+			return false;
+		}
 		
 		/*
 		 * Move-Evaluation fuer Spielzuege in Phase 2: Ist das Endfeld
@@ -352,7 +369,7 @@ public class ApplicationController extends AObservable{
 			 * der Muehle, dann darf der Stein nur entfernt werden, wenn er in der
 			 * Liste enthalten ist.
 			 */
-			if (removeableSlots.contains(slot)) return true;
+			if (removeableSlots.contains(gameboard.returnSlot(slot))) return true;
 		}
 		
 		return false;

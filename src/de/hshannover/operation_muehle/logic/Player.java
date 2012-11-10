@@ -71,6 +71,7 @@ public class Player implements Serializable {
 		this.availableStones--;
 		if (this.availableStones == 0) {
 			this.phase++;
+			System.out.println("Player "+this.color+" enters Phase "+this.phase);
 		}
 	}
 	
