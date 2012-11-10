@@ -72,6 +72,7 @@ public class Player implements Serializable {
 		if (this.availableStones == 0) {
 			this.phase++;
 			System.out.println("Player "+this.color+" enters Phase "+this.phase);
+			if (this.stones == 3) this.phase++;
 		}
 	}
 	
@@ -80,6 +81,10 @@ public class Player implements Serializable {
 	 */
 	public void decreaseNumberOfStones() {
 		this.stones--;
+		if (this.stones == 3 && this.phase == 2) {
+			this.phase++;
+			System.out.println("Entering Phase " + this.phase);
+		}
 	}
 	
 	/**
