@@ -101,7 +101,7 @@ public class ApplicationController extends AObservable{
 								players.get(currentPlayer).getPhase() == 1) {
 							cPlayer.increaseStones();
 							gameboard.applySlot(lastMove.toSlot(), currentPlayer);
-							logger.addEntry(lastMove.toSlot().toString());
+							logger.addEntry(lastMove.toSlot());
 						} else if (players.get(currentPlayer).getPhase() > 1) {
 							executeMove(lastMove);
 						}
@@ -261,7 +261,7 @@ public class ApplicationController extends AObservable{
 //		System.out.println("Spielfeld vor Zugausfuehrung.\n");
 //		System.out.println(gameboard.toString());
 		gameboard.applyMove(move);
-		logger.addEntry(move.toString());
+		logger.addEntry(move);
 //		System.out.println("Spielfeld nach Zugausfuehrung.\n");
 //		System.out.println(gameboard.toString());
 		System.out.println("Letzter Zug:");
