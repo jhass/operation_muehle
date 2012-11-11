@@ -138,7 +138,7 @@ public class ApplicationController extends AObservable{
 							gameStopped = true;
 							System.out.println("Gewinner: "+winner);
 						}
-						System.out.println(winner);
+//						System.out.println(winner);
 						if (lastMove.toSlot() != null)
 						currentPlayer = currentPlayer.getOtherPlayer();
 					} else {
@@ -202,6 +202,8 @@ public class ApplicationController extends AObservable{
 		Slot startSlot = move.fromSlot();
 		Slot endSlot = move.toSlot();
 		
+		if (startSlot != null && endSlot != null &&
+			startSlot.hashCode() == endSlot.hashCode()) return false;
 		
 		if (closedMill && startSlot != null) {
 			if (canRemove(startSlot)) {
@@ -244,7 +246,7 @@ public class ApplicationController extends AObservable{
 		 * darf der Stein dorthin gesetzt werden. Das Startfeld ist in diesem Fall nicht
 		 * relevant, da man an ein beliebiges Feld springen darf.
 		 */
-		} else {
+		} else if (startSlot != null && endSlot != null){
 		if (endSlot.getStatus() == SlotStatus.EMPTY) return true;
 		}
 		
@@ -256,14 +258,14 @@ public class ApplicationController extends AObservable{
 	 * @param move A VALID(!) Move.
 	 */
 	private void executeMove(Move move) {
-		System.out.println("Spielfeld vor Zugausfuehrung.\n");
-		System.out.println(gameboard.toString());
+//		System.out.println("Spielfeld vor Zugausfuehrung.\n");
+//		System.out.println(gameboard.toString());
 		gameboard.applyMove(move);
 		logger.addEntry(move.toString());
-		System.out.println("Spielfeld nach Zugausfuehrung.\n");
-		System.out.println(gameboard.toString());
-		System.out.println("Logger nach Zugausfuehrung.\n");
-		System.out.println(logger.toString());
+//		System.out.println("Spielfeld nach Zugausfuehrung.\n");
+//		System.out.println(gameboard.toString());
+		System.out.println("Letzter Zug:");
+		System.out.println(logger.getLastEntry());
 	}
 	
 	/**
@@ -402,11 +404,11 @@ public class ApplicationController extends AObservable{
 				winner = SlotStatus.EMPTY;
 			}
 			
-			if (cPlayer.getPhase() > 1) {
+			if (cPlayer.getPhase() == 2) {
 				/*
 				 * Gewinnbedingung, wenn kein Zug mehr moeglich ist
 				 */
-				winner = cStatus;
+				winner = cStatus.getOtherPlayer();
 				ArrayList<Slot> slotList = gameboard.getStonesFromColor(cStatus);
 				
 				for (Slot iteSlot: slotList) {
