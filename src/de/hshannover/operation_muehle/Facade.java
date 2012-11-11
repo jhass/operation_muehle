@@ -109,10 +109,12 @@ public class Facade {
 		return null;
 	}
 	
-	/**
-	 * Gives a Move to the ApplicationController
-	 * @param src The spot to move from
-	 * @param dst The spot to move to
+	/** Gives a Move to the ApplicationController
+	 * 
+	 * 	Either dst or src must be set, both cannot be null
+	 * 
+	 * @param src The spot to move from, if null a stone should be created at dst 
+	 * @param dst The spot to move to, if null a stone should be removed from src
 	 * @throws InvalidMoveException 
 	 */
 	public void giveMove(Spot src, Spot dst) throws InvalidMoveException {

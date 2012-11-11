@@ -5,7 +5,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import de.hshannover.operation_muehle.gui.board.TextureUtils;
-import de.hshannover.operation_muehle.logic.SlotStatus;
+import de.hshannover.operation_muehle.logic.Slot;
 
 /** GUI helper class representing the position and color of a Stone
  * 
@@ -22,7 +22,7 @@ public class Stone extends Point {
 		WHITE,
 		BLACK;
 
-		public static Color fromSlotStatus(SlotStatus status) {
+		public static Color fromSlotStatus(Slot.Status status) {
 			switch (status) {
 			case WHITE: return Color.WHITE;
 			case BLACK: return Color.BLACK;

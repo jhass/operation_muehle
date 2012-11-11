@@ -1,5 +1,6 @@
 package de.hshannover.operation_muehle.gui;
 
+import java.awt.EventQueue;
 import java.util.HashMap;
 
 import de.hshannover.inform.muehle.strategy.Slot;
@@ -75,9 +76,13 @@ public class GUIController implements IObserver {
 
 	@Override
 	public void updateObservable() {
-		GameState state = Facade.getInstance().getGameState();
-		this.mainWindow.drawBoard(state.currentGB);
-		
+		final GameState state = Facade.getInstance().getGameState();
+		mainWindow.drawBoard(state.currentGB);
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+			}
+		});
 	}
 	
 	

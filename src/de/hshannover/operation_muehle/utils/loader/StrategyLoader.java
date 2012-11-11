@@ -43,7 +43,9 @@ public class StrategyLoader extends ClassesLoader {
 			return (Strategy) super.getInstance(klass);
 		} catch (ClassNotFoundException e) {
 		} catch (InstantiationException e) {
-		} catch (IllegalAccessException e) {}
+		} catch (IllegalAccessException e) {
+		} catch (ClassCastException e) {
+		} catch (NoClassDefFoundError e) {}
 		
 		return null;
 	}
