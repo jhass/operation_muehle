@@ -1,15 +1,12 @@
 package de.hshannover.operation_muehle.gui;
 
-import java.awt.EventQueue;
 import java.util.HashMap;
 
-import de.hshannover.inform.muehle.strategy.Slot;
 import de.hshannover.operation_muehle.Facade;
 import de.hshannover.operation_muehle.gui.board.Spot;
 import de.hshannover.operation_muehle.gui.board.Stone.Color;
 import de.hshannover.operation_muehle.logic.GameState;
 import de.hshannover.operation_muehle.logic.InvalidMoveException;
-import de.hshannover.operation_muehle.logic.Player;
 import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.operation_muehle.utils.PerformAsync;
 import de.hshannover.operation_muehle.utils.observer.IObserver;
@@ -78,11 +75,6 @@ public class GUIController implements IObserver {
 	public void updateObservable() {
 		final GameState state = Facade.getInstance().getGameState();
 		mainWindow.drawBoard(state.currentGB);
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-			}
-		});
 	}
 	
 	
@@ -127,14 +119,6 @@ public class GUIController implements IObserver {
 	public void toggleLog() {
 		this.logWindow.toggleVisibility();
 	}
-	
-	/** ??
-	 * 
-	 * @param gamestate
-	 */
-	public void evaluteGameState(GameState gamestate) {
-		// whatever happens here
-	}
 		
 	private boolean newMove(Spot src, Spot dst, Color color) {
 		try {
@@ -144,17 +128,9 @@ public class GUIController implements IObserver {
 			return false;
 		}
 	}
-
-	/** Obtain a slot from the user
-	 * 
-	 * @param player
-	 * @return
-	 */
-	public Slot selectSlot(Player player) {
-		return null;
-	}
 	
 	public void close() {
-		System.exit(0); // -> Facade?
+		Facade.getInstance().abortGame();
+		System.exit(0); // TODO: -> Facade?
 	}
 }

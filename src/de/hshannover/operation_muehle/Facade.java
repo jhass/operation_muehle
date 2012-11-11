@@ -10,7 +10,6 @@ import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.operation_muehle.logic.SaveState;
 import de.hshannover.operation_muehle.logic.Slot;
 import de.hshannover.operation_muehle.logic.Move;
-import de.hshannover.operation_muehle.logic.Player;
 import de.hshannover.operation_muehle.logic.ApplicationController;
 import de.hshannover.operation_muehle.logic.IOOperation;
 import de.hshannover.operation_muehle.utils.loader.StrategyLoader;
@@ -73,7 +72,7 @@ public class Facade {
 	}
 	/**
 	 * Loads the Game from the given Path
-	 * @param path Ye Pathe of thy saveth Game.
+	 * @param path the path of the saved game.
 	 * @throws ClassNotFoundException 
 	 * @throws IOException 
 	 */
@@ -97,16 +96,6 @@ public class Facade {
 	 */
 	public StrategyLoader getStrategyLoader() {
 		return stratload;
-	}
-	
-	/**
-	 * What was this for again?
-	 * replace with giveSlot (like giveMove)?
-	 * @param player
-	 * @return
-	 */
-	public Slot getSlot(Player player) {
-		return null;
 	}
 	
 	/** Gives a Move to the ApplicationController
