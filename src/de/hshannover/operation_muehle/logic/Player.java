@@ -126,6 +126,10 @@ public class Player implements Serializable {
 		return this.stones;
 	}
 	
+	public int getAvailableStones() {
+		return this.availableStones;
+	}
+	
 	/**
 	 * Getter für die Spielphase
 	 * @return int
@@ -141,7 +145,7 @@ public class Player implements Serializable {
 	public int getThinkTime() {
 		return this.thinkTime;
 	}
-	
+
 	/**
 	 * Getter für die Information, um was fuer einen Spieler es sich handelt
 	 * @return boolean

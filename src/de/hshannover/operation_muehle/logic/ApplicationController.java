@@ -135,8 +135,10 @@ public class ApplicationController extends AObservable{
 						}
 						
 						winner = checkWinner();
-						if (winner != SlotStatus.EMPTY) 
+						if (winner != SlotStatus.EMPTY) { 
 							gameStopped = true;
+							System.out.println("Gewinner: "+currentPlayer);
+						}
 						System.out.println(currentPlayer);
 						if (lastMove.toSlot() != null)
 						currentPlayer = currentPlayer.getOtherPlayer();
@@ -380,28 +382,39 @@ public class ApplicationController extends AObservable{
 	 * @return boolean
 	 */
 	private SlotStatus checkWinner() {
-		/*
-		 * Gewinnbedingung fuer die Anzahl der Steine (n < 3)
-		 */
+		SlotStatus winner = SlotStatus.EMPTY;
+		
 		for (SlotStatus cStatus: players.keySet()) {
 			Player cPlayer = players.get(cStatus);
-			if (cPlayer.getPhase() == 1) return SlotStatus.EMPTY;
-			if (cPlayer.getStones() < 3) return cPlayer.getColor().getOtherPlayer();
-		}
-		
-		/*
-		 * Gewinnbedingung, wenn kein Zug mehr moeglich ist
-		 */
-		SlotStatus nPlayer = currentPlayer.getOtherPlayer();
-		ArrayList<Slot> slotList = gameboard.getStonesFromColor(nPlayer);
-		
-		for (Slot iteSlot: slotList) {
-			Slot[] neighbours = gameboard.getNeighbours(iteSlot);
-			for (int i = 0; i <= 3; i++) {
-				if (neighbours[i] == null) return SlotStatus.EMPTY;
+			
+			/*
+			 * Gewinnbedingung fuer die Anzahl der Steine (n < 3)
+			 */
+			if (cPlayer.getStones() < 3 && cPlayer.getPhase() > 1) {
+				winner = cPlayer.getColor().getOtherPlayer();
+			} else {
+				winner = SlotStatus.EMPTY;
+			}
+			
+			if (cPlayer.getPhase() > 1) {
+				/*
+				 * Gewinnbedingung, wenn kein Zug mehr moeglich ist
+				 */
+				winner = currentPlayer;
+				SlotStatus nPlayer = currentPlayer.getOtherPlayer();
+				ArrayList<Slot> slotList = gameboard.getStonesFromColor(nPlayer);
+				
+				for (Slot iteSlot: slotList) {
+					Slot[] neighbours = gameboard.getNeighbours(iteSlot);
+					for (int i = 0; i <= 3; i++) {
+						if (neighbours[i] != null && 
+							neighbours[i].getStatus() == SlotStatus.EMPTY) 
+							winner = SlotStatus.EMPTY;
+					}
+				}
 			}
 		}
 		
-		return currentPlayer.getOtherPlayer();
+		return winner;
 	}
 }
