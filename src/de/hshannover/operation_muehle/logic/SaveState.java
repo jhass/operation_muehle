@@ -21,7 +21,7 @@ public class SaveState extends GameState {
 	 * @param log Die Notizen (Log) der Spielzuege
 	 * @param players Informationen über die beiden beteiligten Spieler
 	 */
-	public SaveState(Gameboard g, Player.Color cp, Player.Color w, ArrayList<String> log,
+	public SaveState(Gameboard g, Player cp, Player w, ArrayList<String> log,
 			          HashMap<Player.Color, Player> players) {
 		super(g, cp, w, log);
 		this.setPlayers(players);

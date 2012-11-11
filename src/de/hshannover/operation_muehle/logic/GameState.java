@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public class GameState implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public Gameboard currentGB;
-	public Player.Color currentPlayer;
-	public Player.Color winner;
+	public Player currentPlayer;
+	public Player winner;
 	public ArrayList<String> log;
 	
 	/**
@@ -22,8 +22,8 @@ public class GameState implements Serializable {
 	 * @param winner Der Spieler, der das Spiel gewonnen hat
 	 * @param log Die Notizen (Log) der Spielzuege
 	 */
-	public GameState(Gameboard gameboard, Player.Color currentPlayer,
-				     Player.Color winner, ArrayList<String> log) {
+	public GameState(Gameboard gameboard, Player currentPlayer,
+				     Player winner, ArrayList<String> log) {
 		this.currentGB = gameboard;
 		this.currentPlayer = currentPlayer;
 		this.winner = winner;

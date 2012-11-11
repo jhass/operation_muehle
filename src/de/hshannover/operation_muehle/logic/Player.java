@@ -20,7 +20,7 @@ public class Player implements Serializable {
 			}
 			
 			public Slot.Status getSlotStatus() {
-				return Slot.Status.BLACK;
+				return Slot.Status.WHITE;
 			}
 		},
 		BLACK {
@@ -29,7 +29,7 @@ public class Player implements Serializable {
 			}
 			
 			public Slot.Status getSlotStatus() {
-				return Slot.Status.WHITE;
+				return Slot.Status.BLACK;
 			}
 
 			
@@ -102,7 +102,7 @@ public class Player implements Serializable {
 			this.phase++;
 			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			System.out.println("Player "+this.color+" enters Phase "+this.phase);
-			if (this.stones == 3) this.phase++;
+			if (this.stones == 3) this.phase++; //??
 		}
 	}
 	
@@ -122,8 +122,8 @@ public class Player implements Serializable {
 	 * Calls removeStone() on the AI with the thinktime specified in the Object.
 	 * @see Strategy
 	 */
-	public Move removeStone() {
-		return new Move((Slot)aiStrategy.removeStone(thinkTime),null);
+	public Slot removeStone() {
+		return (Slot)aiStrategy.removeStone(thinkTime);
 	}
 	
 	/**
@@ -185,7 +185,23 @@ public class Player implements Serializable {
 		return this.isAI;
 	}
 	
-	public Move doMove(Move move, Slot slot) {
-		return (Move) this.aiStrategy.doMove(move, slot, this.thinkTime);
+	/**
+	 * Calls doMove on AI
+	 * @param last Last Move.
+	 * @param removed Last removed Stone. Null if nothing has been removed.
+	 * @return
+	 */
+	public Move doMove(Move last, Slot removed ) {
+		return (Move) this.aiStrategy.doMove(last, removed , this.thinkTime);
+	}
+	
+	/**
+	 * Calls placeStone on the AI.
+	 * @param last Last placed Stone.
+	 * @param removed Last removed Stone. Null if nothing has been removed.
+	 * @return
+	 */
+	public Slot placeStone(Slot last, Slot removed) {
+		return (Slot) this.aiStrategy.placeStone(last, removed, this.thinkTime);
 	}
 }
