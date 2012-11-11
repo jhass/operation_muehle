@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project operation_muehle">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="export/operation_muehle.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="de.hshannover.operation_muehle.logic.Runner"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="bin/" includes="de/hshannover/operation_muehle/**/*.class"/>
+            <fileset dir="./" includes="res/**"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/strategyInterfaces.jar"/>
+        </jar>
+    </target>
+</project>

@@ -22,19 +22,14 @@ import de.hshannover.operation_muehle.utils.observer.IObserver;
 public class Facade {
 	private static Facade instance;
 	private ApplicationController appController;
-	private StrategyLoader stratload;
+	private StrategyLoader strategyLoader;
 	
 	/**
 	 * Simple Constructor.
 	 */
 	private Facade() {
 		appController = new ApplicationController();
-		
-		try {
-			stratload = new StrategyLoader();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		strategyLoader = StrategyLoader.getDefaultInstanceOrMock();
 	}
 	
 	/**
@@ -95,7 +90,7 @@ public class Facade {
 	 * @see StrategyLoader
 	 */
 	public StrategyLoader getStrategyLoader() {
-		return stratload;
+		return strategyLoader;
 	}
 	
 	/** Gives a Move to the ApplicationController

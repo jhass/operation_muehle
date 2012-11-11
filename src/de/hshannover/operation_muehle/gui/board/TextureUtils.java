@@ -11,6 +11,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -31,7 +32,11 @@ public class TextureUtils {
 	 */
 	public static BufferedImage load(String filename) {
 		try {
-			return ImageIO.read(new File("res/textures/"+filename));
+			InputStream file = TextureUtils.class.getResourceAsStream("/res/textures/"+filename);
+			if (file == null) {
+				return ImageIO.read(new File("res/textures/"+filename));
+			}
+			return ImageIO.read(file);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
