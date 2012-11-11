@@ -64,17 +64,20 @@ public class Facade {
 	/**
 	 * Saves the Game at the given Path
 	 * @param path The path, where the game is to be saved.
+	 * @throws IOException 
 	 * @see IOOperation
 	 */
-	public void saveGame(String path) {
+	public void saveGame(String path) throws IOException {
 		SaveState save = appController.getSaveState();
 		IOOperation.saveGameInfo(path, save);
 	}
 	/**
 	 * Loads the Game from the given Path
 	 * @param path Ye Pathe of thy saveth Game.
+	 * @throws ClassNotFoundException 
+	 * @throws IOException 
 	 */
-	public void loadGame(String path) {
+	public void loadGame(String path) throws IOException, ClassNotFoundException {
 		SaveState save = IOOperation.loadGameInfo(path);
 		appController.initializeSaved(save);
 	}

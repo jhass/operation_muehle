@@ -398,11 +398,8 @@ public class ApplicationController extends AObservable{
 			/*
 			 * Gewinnbedingung fuer die Anzahl der Steine (n < 3)
 			 */
-			if (cPlayer.getStones() < 3 && cPlayer.getPhase() > 1) {
+			if (cPlayer.getStones() < 3 && cPlayer.getPhase() > 1)
 				return cPlayer.getColor().getOtherPlayer();
-			} else {
-				winner = SlotStatus.EMPTY;
-			}
 			
 			if (cPlayer.getPhase() == 2) {
 				/*
