@@ -125,8 +125,7 @@ public class ApplicationController extends AObservable{
 								do {
 									setObservableChanged(true);
 									notifyObserver();
-								} while (!removeableStone);
-								
+								} while (!removeableStone);								
 							}
 							closedMill = false;
 							removeableStone = false;
@@ -139,7 +138,7 @@ public class ApplicationController extends AObservable{
 							gameStopped = true;
 							System.out.println("Gewinner: "+currentPlayer);
 						}
-						System.out.println(currentPlayer);
+						System.out.println(winner);
 						if (lastMove.toSlot() != null)
 						currentPlayer = currentPlayer.getOtherPlayer();
 					} else {
@@ -407,9 +406,8 @@ public class ApplicationController extends AObservable{
 				/*
 				 * Gewinnbedingung, wenn kein Zug mehr moeglich ist
 				 */
-				winner = currentPlayer;
-				SlotStatus nPlayer = currentPlayer.getOtherPlayer();
-				ArrayList<Slot> slotList = gameboard.getStonesFromColor(nPlayer);
+				winner = cStatus;
+				ArrayList<Slot> slotList = gameboard.getStonesFromColor(cStatus);
 				
 				for (Slot iteSlot: slotList) {
 					Slot[] neighbours = gameboard.getNeighbours(iteSlot);
@@ -420,6 +418,7 @@ public class ApplicationController extends AObservable{
 					}
 				}
 			}
+			if (winner != SlotStatus.EMPTY) return winner;
 		}
 		
 		return winner;
