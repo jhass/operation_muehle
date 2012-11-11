@@ -399,14 +399,14 @@ public class ApplicationController extends AObservable{
 			if (cPlayer.getStones() < 3 && cPlayer.getPhase() > 1) {
 				return cPlayer.getColor().getOtherPlayer();
 			} else {
-				winner = SlotStatus.EMPTY;
+				winner = SlotStatus.EMPTY; //TODO: find out if needed
 			}
 			
 			if (cPlayer.getPhase() > 1) {
 				/*
 				 * Gewinnbedingung, wenn kein Zug mehr moeglich ist
 				 */
-				winner = cStatus;
+				winner = cStatus; //FIXME: problem here, needs opposite colour.
 				ArrayList<Slot> slotList = gameboard.getStonesFromColor(cStatus);
 				
 				for (Slot iteSlot: slotList) {

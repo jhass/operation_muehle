@@ -21,8 +21,12 @@ public class Logger {
 	 * @see Slot
 	 * @see Move
 	 */
-	public void addEntry(Object o) {
-		log.add(o.toString()); //TODO How to handle Objects of a false class...
+	public void addEntry(Object o) throws IllegalArgumentException{
+		if(o instanceof Move || o instanceof Slot) {
+		log.add(o.toString());
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 	
 	/**
