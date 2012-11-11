@@ -23,6 +23,7 @@ public class ApplicationController extends AObservable{
 	private boolean moveAvailable;
 	private boolean closedMill = false;
 	boolean removeableStone = false;
+	private Thread gameThread;
 	
 	/**
 	 * Simple, basic Constructor.
@@ -65,9 +66,7 @@ public class ApplicationController extends AObservable{
 	 * Plays the Game, until it is finished or interrupted.
 	 */
 	public void playGame() {
-		new Thread(new Runnable() {
-
-
+		gameThread = new Thread() {
 			@Override
 			public void run() {
 				
@@ -83,6 +82,7 @@ public class ApplicationController extends AObservable{
 					 */
 					if(cPlayer.isAI()) {
 						lastMove = cPlayer.doMove(lastMove, lastSlot);
+						moveAvailable = true;
 						if (isValidMove(lastMove)) {
 							winner = currentPlayer.getOtherPlayer();
 							break;
@@ -142,11 +142,17 @@ public class ApplicationController extends AObservable{
 						System.out.println(currentPlayer);
 						if (lastMove.toSlot() != null)
 						currentPlayer = currentPlayer.getOtherPlayer();
-					}	
+					} else {
+						try {
+							sleep(100);
+						} catch (InterruptedException e) {}
+					}
 				}
 			}
 			
-		}).start();
+		};
+		
+		gameThread.start();
 	}
 	
 	/**
@@ -157,6 +163,7 @@ public class ApplicationController extends AObservable{
 		if(!isValidMove(move)) throw new InvalidMoveException();
 		lastMove = move;
 		this.moveAvailable = true;
+		gameThread.interrupt();
 	}
 	
 	/**
