@@ -136,7 +136,7 @@ public class ApplicationController extends AObservable{
 						winner = checkWinner();
 						if (winner != SlotStatus.EMPTY) { 
 							gameStopped = true;
-							System.out.println("Gewinner: "+currentPlayer);
+							System.out.println("Gewinner: "+winner);
 						}
 						System.out.println(winner);
 						if (lastMove.toSlot() != null)
@@ -397,7 +397,7 @@ public class ApplicationController extends AObservable{
 			 * Gewinnbedingung fuer die Anzahl der Steine (n < 3)
 			 */
 			if (cPlayer.getStones() < 3 && cPlayer.getPhase() > 1) {
-				winner = cPlayer.getColor().getOtherPlayer();
+				return cPlayer.getColor().getOtherPlayer();
 			} else {
 				winner = SlotStatus.EMPTY;
 			}
