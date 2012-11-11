@@ -21,7 +21,6 @@ import de.hshannover.operation_muehle.gui.MoveCallback;
 import de.hshannover.operation_muehle.gui.board.TextureUtils;
 import de.hshannover.operation_muehle.logic.Gameboard;
 import de.hshannover.operation_muehle.logic.Slot;
-import de.hshannover.operation_muehle.logic.SlotStatus;
 
 
 /** Provides the canvas to display the current Gameboard
@@ -185,7 +184,7 @@ public class Board extends Canvas {
 			for (Spot spot : spots) {
 				if (spot.getRow() == slot.getRow() &&
 					spot.getColumn() == slot.getColumn()) {
-					if (slot.getStatus() == SlotStatus.EMPTY) {
+					if (slot.getStatus() == Slot.Status.EMPTY) {
 						spot.setStone(null);
 					} else {
 						spot.setStone(new Stone(

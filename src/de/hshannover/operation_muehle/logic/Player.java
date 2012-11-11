@@ -13,9 +13,38 @@ import de.hshannover.operation_muehle.Facade;
  *
  */
 public class Player implements Serializable {
+	public enum Color {
+		WHITE {
+			public Color getOpponent() {
+				return BLACK;
+			}
+			
+			public Slot.Status getSlotStatus() {
+				return Slot.Status.BLACK;
+			}
+		},
+		BLACK {
+			public Color getOpponent() {
+				return WHITE;
+			}
+			
+			public Slot.Status getSlotStatus() {
+				return Slot.Status.WHITE;
+			}
+
+			
+		};
+		
+		abstract public Color getOpponent();
+		abstract public Slot.Status getSlotStatus();
+		public boolean hasStoneOn(Slot slot) {
+			return slot.getStatus() == getSlotStatus();
+		}
+	}
+	
 	private static final long serialVersionUID = 1L;
 	private String name;
-	private SlotStatus color;
+	private Color color;
 	private int stones;
 	private boolean isAI;
 	private int thinkTime;
@@ -33,7 +62,7 @@ public class Player implements Serializable {
 	 * @param thinkTime Denkzeit der kuenstlichen Intelligenz 
 	 * (Constraint > 0) 
 	 */
-	public Player(PlayerOptions oPlayer, SlotStatus color) {
+	public Player(PlayerOptions oPlayer, Color color) {
 		if (thinkTime < 0)
 			throw new IllegalArgumentException("Player.Thinktime ungueltig!");
 		this.name = oPlayer.getName();
@@ -56,7 +85,7 @@ public class Player implements Serializable {
 	 * hat
 	 * @param phase Spielphase, in der sich der Spieler befindet 
 	 */
-	public Player(String name, SlotStatus color, boolean isAI, int thinkTime, 
+	public Player(String name, Color color, boolean isAI, int thinkTime, 
 			       Slot[] stones, int phase) {
 		this.name = name;
 		this.color = color;
@@ -116,7 +145,7 @@ public class Player implements Serializable {
 	 * Getter für die Farbe
 	 * @return int
 	 */
-	public SlotStatus getColor() {
+	public Color getColor() {
 		return this.color;
 	}
 	

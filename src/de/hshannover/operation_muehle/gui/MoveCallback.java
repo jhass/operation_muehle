@@ -10,7 +10,7 @@ import de.hshannover.operation_muehle.gui.board.Stone;
  */
 public interface MoveCallback {
 	/** Implementers should handle three cases:
-	 * 	1) src and dst are set: move Stone from src to dst
+	 *  1) src and dst are set: move Stone from src to dst
 	 *  2) src is null, dst is set: Stone should be created
 	 *  3) src is set, dst is null: Stone should be removed
 	 * 
