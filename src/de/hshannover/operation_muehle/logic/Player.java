@@ -93,8 +93,8 @@ public class Player implements Serializable {
 	 * Calls removeStone() on the AI with the thinktime specified in the Object.
 	 * @see Strategy
 	 */
-	public Slot removeStone() {
-		return (Slot) aiStrategy.removeStone(thinkTime);
+	public Move removeStone() {
+		return new Move((Slot)aiStrategy.removeStone(thinkTime),null);
 	}
 	
 	/**

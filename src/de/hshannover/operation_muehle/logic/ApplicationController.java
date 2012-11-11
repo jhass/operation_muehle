@@ -75,10 +75,14 @@ public class ApplicationController extends AObservable{
 				gameStopped = false;
 				Player cPlayer;
 				
+				/*
+				 * Schleife zum Simulieren der Spielzuege
+				 */
 				while(!gameStopped) {
 					cPlayer = players.get(currentPlayer);
+					
 					/*
-					 * Schleife zum Simulieren der Spielzuege
+					 * Spielzug von der AI holen und auf Gueltigkeit pruefen.
 					 */
 					if(cPlayer.isAI()) {
 						lastMove = cPlayer.doMove(lastMove, lastSlot);
@@ -87,21 +91,35 @@ public class ApplicationController extends AObservable{
 							winner = currentPlayer.getOtherPlayer();
 							break;
 						}
-					} else {
-						//Playermove from GUI
 					}
 					
+					/*
+					 * Wenn ein Zug vorhanden ist (egal, ob vom Spieler oder
+					 * der AI, wird hier fortgefahren.
+					 */
 					if (moveAvailable) {
 						moveAvailable = false;
+						
+						/*
+						 * Bedingung: Zug, der Spielsteinentfernung durchfuehrt
+						 */
 						if (lastMove.toSlot() == null) {
 							players.get(currentPlayer.getOtherPlayer()).decreaseNumberOfStones();
 							gameboard.removeStone(lastMove.fromSlot());
 							currentPlayer = currentPlayer.getOtherPlayer();
+							
+						/*
+						 * Bedingung: Setzphase, Stein wird gesetzt
+						 */
 						} else if (lastMove.toSlot() != null &&
 								players.get(currentPlayer).getPhase() == 1) {
 							cPlayer.increaseStones();
 							gameboard.applySlot(lastMove.toSlot(), currentPlayer);
 							logger.addEntry(lastMove.toSlot());
+							
+						/*
+						 * Bedingung: Zugphase der Spielphasen 2 oder 3.
+						 */
 						} else if (players.get(currentPlayer).getPhase() > 1) {
 							executeMove(lastMove);
 						}
@@ -113,32 +131,39 @@ public class ApplicationController extends AObservable{
 						 * entsprechender Aufruf an AI/ GUI zum entfernen eines 
 						 * Spielsteins.
 						 */
-						
 						if (lastMove.toSlot() != null &&
 							isInMill(gameboard.returnSlot(lastMove.toSlot()))) {
 							closedMill = true;
 							System.out.println("Muehle: "+closedMill);
+							/*
+							 * Reaktion der AI, wenn sie eine Muehle schließt.
+							 */
 							if (cPlayer.isAI()) { 
-								lastSlot = (Slot) cPlayer.removeStone();
+								lastMove = cPlayer.removeStone();
 							} else {
-								
+								/*
+								 * Warten, dass der Spieler einen gueltigen
+								 * Stein entfernt.
+								 */
 								do {
 									setObservableChanged(true);
 									notifyObserver();
-								} while (!removeableStone);								
+								} while (!removeableStone);	
 							}
 							closedMill = false;
 							removeableStone = false;
-						} else {
-							lastSlot = null;
-						}
+						} 
 						
+						/*
+						 * Gewinnbedingung pruefen, bei Eintritt wird die
+						 * Spielzugschleife beendet.
+						 */
 						winner = checkWinner();
 						if (winner != SlotStatus.EMPTY) { 
 							gameStopped = true;
 							System.out.println("Gewinner: "+winner);
 						}
-//						System.out.println(winner);
+
 						if (lastMove.toSlot() != null)
 						currentPlayer = currentPlayer.getOtherPlayer();
 					} else {
@@ -148,6 +173,7 @@ public class ApplicationController extends AObservable{
 					}
 				}
 			}
+			//TODO: Aufraumen, Spiel beenden.
 			
 		};
 		
