@@ -76,6 +76,7 @@ public class ApplicationController extends AObservable{
 				
 				lastMove = null;
 				Slot removed = null;
+				Slot lastSlot = null;
 				gameStopped = false;
 				Player cPlayer;
 				
@@ -86,11 +87,18 @@ public class ApplicationController extends AObservable{
 					 */
 					if(cPlayer.isAI()) {
 						if (cPlayer.getPhase() == 1) {
-							lastMove = new Move(null,cPlayer.placeStone(lastMove.toSlot(), removed));
+							if(lastMove != null) {
+								lastSlot = lastMove.toSlot();
+							}
+							de.hshannover.inform.muehle.strategy.Slot slota = cPlayer.placeStone(lastSlot, removed);
+							Slot slotb = new Slot(slota.getRow(),slota.getColumn());
+							lastMove = new Move(null,(Slot) slotb);
 						}
-						lastMove = cPlayer.doMove(lastMove, removed);
+						else {
+							lastMove = cPlayer.doMove(lastMove, removed);
+						}
 						moveAvailable = true;
-						if (isValidMove(lastMove)) {
+						if (!isValidMove(lastMove)) {
 							winner = players.get(currentPlayer.getColor().getOpponent());
 							break;
 						}
@@ -123,14 +131,16 @@ public class ApplicationController extends AObservable{
 							isInMill(gameboard.returnSlot(lastMove.toSlot()))) {
 							closedMill = true;
 							System.out.println("Muehle: "+closedMill);
-							if (cPlayer.isAI()) { 
-								removed = (Slot) cPlayer.removeStone();
+							if (cPlayer.isAI()) {
+								de.hshannover.inform.muehle.strategy.Slot slota =cPlayer.removeStone();
+								removed = new Slot(slota.getRow(),slota.getColumn());
+								
 							} else {
 								
 								do {
 									setObservableChanged(true);
 									notifyObserver();
-								} while (!removeableStone);								
+								} while (!removeableStone);
 							}
 							closedMill = false;
 							removeableStone = false;

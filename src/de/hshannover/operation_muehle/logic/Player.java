@@ -122,8 +122,8 @@ public class Player implements Serializable {
 	 * Calls removeStone() on the AI with the thinktime specified in the Object.
 	 * @see Strategy
 	 */
-	public Slot removeStone() {
-		return (Slot)aiStrategy.removeStone(thinkTime);
+	public de.hshannover.inform.muehle.strategy.Slot removeStone() {
+		return aiStrategy.removeStone(thinkTime);
 	}
 	
 	/**
@@ -192,7 +192,7 @@ public class Player implements Serializable {
 	 * @return
 	 */
 	public Move doMove(Move last, Slot removed ) {
-		return (Move) this.aiStrategy.doMove(last, removed , this.thinkTime);
+		return (Move) this.aiStrategy.doMove(last, (de.hshannover.inform.muehle.strategy.Slot)removed , this.thinkTime);
 	}
 	
 	/**
@@ -201,7 +201,9 @@ public class Player implements Serializable {
 	 * @param removed Last removed Stone. Null if nothing has been removed.
 	 * @return
 	 */
-	public Slot placeStone(Slot last, Slot removed) {
-		return (Slot) this.aiStrategy.placeStone(last, removed, this.thinkTime);
+	public de.hshannover.inform.muehle.strategy.Slot placeStone(Slot last, Slot removed) {
+		return (de.hshannover.inform.muehle.strategy.Slot)this.aiStrategy.placeStone(
+					(de.hshannover.inform.muehle.strategy.Slot)last, 
+					(de.hshannover.inform.muehle.strategy.Slot)removed, this.thinkTime);
 	}
 }
