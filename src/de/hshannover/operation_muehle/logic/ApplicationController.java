@@ -91,10 +91,13 @@ public class ApplicationController extends AObservable{
 								lastSlot = lastMove.toSlot();
 							}
 							de.hshannover.inform.muehle.strategy.Slot slota = cPlayer.placeStone(lastSlot, removed);
-							Slot slotb = new Slot(slota.getRow(),slota.getColumn());
+							Slot slotb = new Slot(slota.getRow(),(int)slota.getColumn() - 64);
 							lastMove = new Move(null,(Slot) slotb);
 						}
 						else {
+							if(lastMove.fromSlot() == null) {
+								lastMove = null;
+							}
 							lastMove = cPlayer.doMove(lastMove, removed);
 						}
 						moveAvailable = true;
@@ -133,7 +136,7 @@ public class ApplicationController extends AObservable{
 							System.out.println("Muehle: "+closedMill);
 							if (cPlayer.isAI()) {
 								de.hshannover.inform.muehle.strategy.Slot slota =cPlayer.removeStone();
-								removed = new Slot(slota.getRow(),slota.getColumn());
+								removed = new Slot(slota.getRow(),(int)slota.getColumn() - 64);
 								
 							} else {
 								
@@ -162,7 +165,7 @@ public class ApplicationController extends AObservable{
 							sleep(100);
 						} catch (InterruptedException e) {}
 					}
-				}
+				}System.out.println("Winner " + winner.getColor().toString());
 			}
 			
 		};

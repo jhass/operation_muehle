@@ -28,7 +28,7 @@ public class AIGameBoard extends Gameboard {
 				= new ArrayList<de.hshannover.operation_muehle.logic.Slot>();
 		
 		for(int i = 0; i < myStones.size(); i++) {
-			if(freeSlotsaround(getMyStones().get(i))) {
+			if(freeSlotsaround(myStones.get(i))) {
 				movableStones.add(myStones.get(i));
 			}
 		}
@@ -40,8 +40,10 @@ public class AIGameBoard extends Gameboard {
 		Slot[] neighbours = getNeighbours(slot);
 		
 		for(int i = 0; i < neighbours.length; i++) {
-			if(returnSlot(neighbours[i]).getStatus() == Slot.Status.EMPTY) {
+			if(neighbours[i] != null) {
+				if(returnSlot(neighbours[i]).getStatus() == Slot.Status.EMPTY) {
 				return true;
+				}
 			}
 		}
 		return false;

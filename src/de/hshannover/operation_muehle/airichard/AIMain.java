@@ -43,6 +43,7 @@ public class AIMain implements Strategy {
 		Slot mySlot = freeSlots.get(freeSlots.size()/2);
 		gameboard.applySlot((de.hshannover.operation_muehle.logic.Slot) mySlot, 
 				me.getSlotStatus());
+		System.out.println(mySlot.toString());
 		return mySlot;
 	}
 	
@@ -60,19 +61,21 @@ public class AIMain implements Strategy {
 		
 		de.hshannover.operation_muehle.logic.Slot startSlot = null;
 		de.hshannover.operation_muehle.logic.Slot endSlot = null;
-		for(int i = myStones.size(); i > 0; i--){
+		for(int i = myStones.size()-1; i >= 0; i--){
 			Slot[] neighbours = gameboard.getNeighbours(myStones.get(i)); 
 			for(int j = 0; j < neighbours.length; j++){
-				if(gameboard.returnSlot((de.hshannover.operation_muehle.logic.Slot) neighbours[j]).getStatus()
-						== de.hshannover.operation_muehle.logic.Slot.Status.EMPTY) {
-					startSlot = myStones.get(i);
-					endSlot = (de.hshannover.operation_muehle.logic.Slot) neighbours[j];
+				if(neighbours[j] != null){
+					if(gameboard.returnSlot((de.hshannover.operation_muehle.logic.Slot) neighbours[j]).getStatus()
+							== de.hshannover.operation_muehle.logic.Slot.Status.EMPTY) {
+						startSlot = myStones.get(i);
+						endSlot = (de.hshannover.operation_muehle.logic.Slot) neighbours[j];
+					}
 				}
 			}
 		}
 		Move myMove = new de.hshannover.operation_muehle.logic.Move(startSlot,endSlot);
 		gameboard.applyMove((de.hshannover.operation_muehle.logic.Move) myMove);
-		
+		System.out.println(myMove);
 		return myMove; 
 	}
 
@@ -80,7 +83,9 @@ public class AIMain implements Strategy {
 	public Slot removeStone(int thinkTime) {
 		ArrayList<de.hshannover.operation_muehle.logic.Slot> oppositeStones 
 			= gameboard.getOppositeStones();
-		return oppositeStones.get(oppositeStones.size()/2);
+		Slot remove = oppositeStones.get(oppositeStones.size()/2);
+		gameboard.removeStone((de.hshannover.operation_muehle.logic.Slot) remove);
+		return remove;
 	}
 
 }
