@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import de.hshannover.inform.muehle.strategy.Strategy;
 import de.hshannover.operation_muehle.Facade;
+import de.hshannover.operation_muehle.logic.Slot.Status;
 
 /**
  * Diese Klasse realisiert ein Spieler-Objekt. Es handelt sich hierbei um
@@ -42,7 +43,12 @@ public class Player implements Serializable {
 		}
 	}
 	
+	public static final int PLACE_PHASE = 1;
+	public static final int MOVE_PHASE  = 2;
+	public static final int JUMP_PHASE  = 3;
+	
 	private static final long serialVersionUID = 1L;
+	
 	private String name;
 	private Color color;
 	private int stones;
@@ -70,7 +76,7 @@ public class Player implements Serializable {
 		this.isAI = oPlayer.isAI();
 		this.thinkTime = oPlayer.getThinkTime();
 		this.stones = 0;
-		this.phase = 1;
+		this.phase = PLACE_PHASE;
 		if (this.isAI)	this.aiStrategy = Facade.getInstance().getStrategyLoader().getInstance(this.name);
 	}
 	
@@ -99,10 +105,13 @@ public class Player implements Serializable {
 		this.stones++;
 		this.availableStones--;
 		if (this.availableStones == 0) {
-			this.phase++;
+			this.phase = MOVE_PHASE;
 			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			System.out.println("Player "+this.color+" enters Phase "+this.phase);
-			if (this.stones == 3) this.phase++; //??
+			if (this.stones == 3) {
+				System.out.println("OMFG, THIS IS REALLY POSSIBLE?!"); //TODO: I'm lazy, remove this entire block if it's never seen in the next month
+				this.phase = JUMP_PHASE; //??
+			}
 		}
 	}
 	
@@ -111,8 +120,8 @@ public class Player implements Serializable {
 	 */
 	public void decreaseNumberOfStones() {
 		this.stones--;
-		if (this.stones == 3 && this.phase == 2) {
-			this.phase++;
+		if (this.stones == 3 && this.phase == 2) { //FIXME: and condition seems bogus/a hack for the hack above
+			this.phase = JUMP_PHASE;
 			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			System.out.println("Entering Phase " + this.phase);
 		}
@@ -124,13 +133,6 @@ public class Player implements Serializable {
 	 */
 	public de.hshannover.inform.muehle.strategy.Slot removeStone() {
 		return aiStrategy.removeStone(thinkTime);
-	}
-	
-	/**
-	 * Methode zur Aenderung der Spielphase um 1
-	 */
-	public void nextPhase() {
-		this.phase++;
 	}
 	
 	/**
@@ -205,5 +207,21 @@ public class Player implements Serializable {
 		return (de.hshannover.inform.muehle.strategy.Slot)this.aiStrategy.placeStone(
 					(de.hshannover.inform.muehle.strategy.Slot)last, 
 					(de.hshannover.inform.muehle.strategy.Slot)removed, this.thinkTime);
+	}
+
+	/** Returns the opponent color
+	 * 
+	 * @return
+	 */
+	public Color getOpponentColor() {
+		return color.getOpponent();
+	}
+
+	/** Returns the matching SlotStatus for the player
+	 * 
+	 * @return
+	 */
+	public Status getSlotStatus() {
+		return color.getSlotStatus();
 	}
 }

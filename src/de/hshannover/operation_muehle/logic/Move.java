@@ -51,4 +51,24 @@ public class Move implements de.hshannover.inform.muehle.strategy.Move {
 	public String toString() {
 		return "["+ this.startSlot + " to " + this.endSlot + "]";
 	}
+
+	public boolean isRemoval() {
+		return toSlot() == null;
+	}
+	
+	public boolean isNoRemoval() {
+		return !isRemoval();
+	}
+
+	public boolean isPlacement() {
+		return fromSlot() == null;
+	}
+	
+	public boolean isNoPlacement() {
+		return !isPlacement();
+	}
+
+	public boolean isMove() {
+		return isNoPlacement() && isNoRemoval();
+	}
 }

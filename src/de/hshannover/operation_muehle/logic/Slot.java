@@ -45,13 +45,41 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	 * @param row Zeilenindex (Constraint >0)
 	 */
 	public Slot(int column, int row) {
-		if (row<0) 
+		if (row <= 0) 
 			throw new IllegalArgumentException("Slot.Row ungueltig!");
-		if (column<0) 
+		if (column <= 0) 
 			throw new IllegalArgumentException("Slot.Column ungueltig!");
 		this.status = Status.EMPTY;
 		this.row = row;
 		this.column = column;
+	}
+	
+	/** Constructor for a Slot from interface parameters
+	 * 
+	 * @param column
+	 * @param row
+	 */
+	public Slot(char column, int row) {
+		if (row <= 0) {
+			throw new IllegalArgumentException("Slot.Row ungueltig!");
+		}
+		
+		if (column < 'A') {
+			throw new IllegalArgumentException("Slot.Column ungueltig!");
+		}
+		
+		this.status = Status.EMPTY;
+		this.row = row;
+		this.column = column-64; // TODO: converter function
+	}
+	
+	
+	/** Constructor to create a new Slot from the interface Slot
+	 * 
+	 * @param slot
+	 */
+	public Slot(de.hshannover.inform.muehle.strategy.Slot slot) {
+		this(slot.getColumn(), slot.getRow());
 	}
 	
 	/**
@@ -92,6 +120,11 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	@Override
 	public int hashCode() {
 		return this.column*10+this.row;
+	}
+	
+	
+	public boolean isEmpty() {
+		return status == Status.EMPTY;
 	}
 	
 	@Override
