@@ -108,7 +108,7 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	 * des Slots
 	 * @param slot
 	 */
-	public void applySlot(Slot slot, Slot.Status status) {
+	public synchronized void applySlot(Slot slot, Slot.Status status) {
 		if (this.board.containsKey(slot.hashCode())) {
 			Slot appSlot = this.board.get(slot.hashCode());
 			appSlot.setStatus(status);
@@ -123,7 +123,7 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	 * des Move-Objektes.
 	 * @param move Das Move-Objekt, aus dem die Aenderungen uebernommen werde sollen
 	 */
-	public void applyMove(Move move) {
+	public synchronized void applyMove(Move move) {
 		Slot start = move.fromSlot();
 		Slot end = move.toSlot();
 		applySlot(end,returnSlot(start).getStatus());
@@ -152,7 +152,7 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	 * uebergebene Feld
 	 * @param toRemove Spielfeld, aus dem der Stein entfernt wird
 	 */
-	public void removeStone(Slot toRemove) { 
+	public synchronized void removeStone(Slot toRemove) { 
 		returnSlot(toRemove).setStatus(Slot.Status.EMPTY);
 	}
 	
