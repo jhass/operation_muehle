@@ -80,10 +80,7 @@ public class ApplicationController extends AObservable{
 				
 				gameStopped = false;
 				
-				Player oPlayer;
-				
 				while(!gameStopped) {
-					oPlayer = players.get(currentPlayer.getColor().getOpponent());
 					
 					if(currentPlayer.isAI()) {
 						if(currentPlayer.getPhase() < 2) {
@@ -96,7 +93,7 @@ public class ApplicationController extends AObservable{
 							lastMove = currentPlayer.doMove(lastMove, removed);
 							moveAvailable = true;
 							if (!isValidMove(lastMove)) {
-								winner = oPlayer;
+								winner = players.get(currentPlayer.getColor().getOpponent());
 								break;
 							}
 						}
@@ -113,7 +110,7 @@ public class ApplicationController extends AObservable{
 						/*
 						 * Bedingung: Setzphase, Stein wird gesetzt
 						 */
-						if (playerMove.fromSlot() == null &&
+						if (lastMove.fromSlot() == null &&
 							currentPlayer.getPhase() == 1) {
 							currentPlayer.increaseStones();
 							gameboard.applySlot(lastMove.toSlot(), currentPlayer.getColor().getSlotStatus());
@@ -143,15 +140,13 @@ public class ApplicationController extends AObservable{
 							 */
 							if (currentPlayer.isAI()) { 
 								reMove = new Move(currentPlayer.removeStone(),null);
-								if(!canRemove(reMove.toSlot())) {
-									winner = oPlayer;
+								if(!canRemove(gameboard.returnSlot(reMove.fromSlot()))) {
+									winner = players.get(currentPlayer.getColor().getOpponent());
 									break;
 								}
 							} else {
 								Boolean noStoneRemoved = true;
 								do {
-									setObservableChanged(true);
-									notifyObserver();
 									while(!moveAvailable) {
 										try {
 											sleep(100);
@@ -160,16 +155,17 @@ public class ApplicationController extends AObservable{
 									moveAvailable = false;
 									reMove = playerMove;
 									playerMove = null;
-									if(canRemove(reMove.fromSlot())) {
-										gameboard.removeStone(reMove.fromSlot());
+									if(canRemove(gameboard.returnSlot(reMove.fromSlot()))) {
+										removed = reMove.fromSlot();
+										gameboard.removeStone(removed);
 										noStoneRemoved = false;
+										setObservableChanged(true);
+										notifyObserver();
 									}
-								} while (noStoneRemoved);	
+								} while (noStoneRemoved);
 							}
-							removed = reMove.fromSlot();
-							gameboard.removeStone(removed);
+							reMove = null;
 							closedMill = false;
-							removeableStone = false;
 						} 
 						
 						/*
@@ -184,7 +180,7 @@ public class ApplicationController extends AObservable{
 
 						setObservableChanged(true);
 						notifyObserver();
-						currentPlayer = players.get(oPlayer.getColor());
+						currentPlayer = players.get(currentPlayer.getColor().getOpponent());
 					} else {
 						try {
 							sleep(100);
@@ -246,8 +242,8 @@ public class ApplicationController extends AObservable{
 	private boolean isValidMove(Move move) {
 		Slot startSlot = move.fromSlot();
 		Slot endSlot = move.toSlot();
-		if(closedMill) {
-			return move.fromSlot() != null;
+		if(closedMill && startSlot != null) {
+			return true;
 		}
 		
 		if (startSlot != null && endSlot != null &&
