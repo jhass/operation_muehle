@@ -13,13 +13,13 @@ import de.hshannover.operation_muehle.utils.observer.AObservable;
  *
  */
 public class ApplicationController extends AObservable{
-	private HashMap<Player.Color, Player> players;
+	private HashMap<SlotStatus, Player> players;
 	private Logger logger;
 	private Gameboard gameboard;
-	private Player currentPlayer;
-	private Player winner;
+	private SlotStatus currentPlayer;
+	private SlotStatus winner;
 	private boolean gameStopped;
-	private Move playerMove;
+	private Move lastMove;
 	private boolean moveAvailable;
 	private boolean closedMill = false;
 	boolean removeableStone = false;
@@ -29,7 +29,7 @@ public class ApplicationController extends AObservable{
 	 * Simple, basic Constructor.
 	 */
 	public ApplicationController() {
-		players = new HashMap<Player.Color, Player>();
+		players = new HashMap<SlotStatus, Player>();
 		logger = new Logger();
 		gameboard = new Gameboard();
 		this.moveAvailable = false;
@@ -43,12 +43,10 @@ public class ApplicationController extends AObservable{
 	public void initializeNew(HashMap<String,PlayerOptions> gameOptions) {
 		PlayerOptions pWhite = gameOptions.get("white");
 		PlayerOptions pBlack = gameOptions.get("black");
-		this.players.put(Player.Color.WHITE, new Player(pWhite, Player.Color.WHITE));
-		this.players.put(Player.Color.BLACK, new Player(pBlack, Player.Color.BLACK));
-		currentPlayer = players.get(Player.Color.WHITE);
-		winner = null;
-		setObservableChanged(true);
-		notifyObserver();
+		this.players.put(SlotStatus.WHITE, new Player(pWhite, SlotStatus.WHITE));
+		this.players.put(SlotStatus.BLACK, new Player(pBlack, SlotStatus.BLACK));
+		currentPlayer = SlotStatus.WHITE;
+		winner = SlotStatus.EMPTY;
 		playGame();
 	}
 	
@@ -61,8 +59,6 @@ public class ApplicationController extends AObservable{
 		players = s.getPlayers();
 		gameboard = s.currentGB;
 		currentPlayer = s.currentPlayer;
-		setObservableChanged(true);
-		notifyObserver();
 		playGame();
 	}
 	
@@ -74,52 +70,40 @@ public class ApplicationController extends AObservable{
 			@Override
 			public void run() {
 				
-				Move lastMove = new Move(null, null);
-				Move reMove = null;
+				lastMove = null;
 				Slot removed = null;
-				
 				gameStopped = false;
+				Player cPlayer;
 				
 				while(!gameStopped) {
-					
-					if(currentPlayer.isAI()) {
-						if(currentPlayer.getPhase() < 2) {
-							lastMove = new Move(null,currentPlayer.placeStone(lastMove.toSlot(), removed));
+					cPlayer = players.get(currentPlayer);
+					/*
+					 * Schleife zum Simulieren der Spielzuege
+					 */
+					if(cPlayer.isAI()) {
+						if (cPlayer.getPhase() == 1) {
+							lastMove = new Move(null,cPlayer.placeStone(lastMove.toSlot(), removed));
 						}
-						if(currentPlayer.getPhase() > 1) {
-							if(lastMove.fromSlot() == null) {
-								lastMove = null;
-							}
-							lastMove = currentPlayer.doMove(lastMove, removed);
-							moveAvailable = true;
-							if (!isValidMove(lastMove)) {
-								winner = players.get(currentPlayer.getColor().getOpponent());
-								break;
-							}
+						lastMove = cPlayer.doMove(lastMove, removed);
+						moveAvailable = true;
+						if (isValidMove(lastMove)) {
+							winner = currentPlayer.getOtherPlayer();
+							break;
 						}
 					}
 					
-					/*
-					 * Wenn ein Zug vorhanden ist (egal, ob vom Spieler oder
-					 * der AI, wird hier fortgefahren.
-					 */
 					if (moveAvailable) {
 						moveAvailable = false;
-						lastMove = playerMove;
-						playerMove = null;
-						/*
-						 * Bedingung: Setzphase, Stein wird gesetzt
-						 */
-						if (lastMove.fromSlot() == null &&
-							currentPlayer.getPhase() == 1) {
-							currentPlayer.increaseStones();
-							gameboard.applySlot(lastMove.toSlot(), currentPlayer.getColor().getSlotStatus());
-							logger.addEntry(lastMove.toSlot());
-							
-						/*
-						 * Bedingung: Zugphase der Spielphasen 2 oder 3.
-						 */
-						} else if (currentPlayer.getPhase() > 1) {
+						if (lastMove.toSlot() == null) {
+							players.get(currentPlayer.getOtherPlayer()).decreaseNumberOfStones();
+							gameboard.removeStone(lastMove.fromSlot());
+							currentPlayer = currentPlayer.getOtherPlayer();
+						} else if (lastMove.toSlot() != null &&
+								players.get(currentPlayer).getPhase() == 1) {
+							cPlayer.increaseStones();
+							gameboard.applySlot(lastMove.toSlot(), currentPlayer);
+							logger.addEntry(lastMove.toSlot().toString());
+						} else if (players.get(currentPlayer).getPhase() > 1) {
 							executeMove(lastMove);
 						}
 						setObservableChanged(true);
@@ -130,57 +114,35 @@ public class ApplicationController extends AObservable{
 						 * entsprechender Aufruf an AI/ GUI zum entfernen eines 
 						 * Spielsteins.
 						 */
+						
 						if (lastMove.toSlot() != null &&
 							isInMill(gameboard.returnSlot(lastMove.toSlot()))) {
 							closedMill = true;
-							
 							System.out.println("Muehle: "+closedMill);
-							/*
-							 * Reaktion der AI, wenn sie eine Muehle schließt.
-							 */
-							if (currentPlayer.isAI()) { 
-								reMove = new Move(currentPlayer.removeStone(),null);
-								if(!canRemove(gameboard.returnSlot(reMove.fromSlot()))) {
-									winner = players.get(currentPlayer.getColor().getOpponent());
-									break;
-								}
+							if (cPlayer.isAI()) { 
+								removed = (Slot) cPlayer.removeStone();
 							} else {
-								Boolean noStoneRemoved = true;
+								
 								do {
-									while(!moveAvailable) {
-										try {
-											sleep(100);
-										} catch (InterruptedException e) {}
-									}
-									moveAvailable = false;
-									reMove = playerMove;
-									playerMove = null;
-									if(canRemove(gameboard.returnSlot(reMove.fromSlot()))) {
-										removed = reMove.fromSlot();
-										gameboard.removeStone(removed);
-										noStoneRemoved = false;
-										setObservableChanged(true);
-										notifyObserver();
-									}
-								} while (noStoneRemoved);
+									setObservableChanged(true);
+									notifyObserver();
+								} while (!removeableStone);								
 							}
-							reMove = null;
 							closedMill = false;
-						} 
+							removeableStone = false;
+						} else {
+							removed = null;
+						}
 						
-						/*
-						 * Gewinnbedingung pruefen, bei Eintritt wird die
-						 * Spielzugschleife beendet.
-						 */
-						checkWinner();
-						if (winner != null) { 
+						winner = checkWinner();
+						if (winner != SlotStatus.EMPTY) { 
 							gameStopped = true;
 							System.out.println("Gewinner: "+winner);
 						}
 
-						setObservableChanged(true);
-						notifyObserver();
-						currentPlayer = players.get(currentPlayer.getColor().getOpponent());
+						if (lastMove.toSlot() != null)
+						currentPlayer = currentPlayer.getOtherPlayer();
+						System.out.println(currentPlayer);
 					} else {
 						try {
 							sleep(100);
@@ -188,7 +150,6 @@ public class ApplicationController extends AObservable{
 					}
 				}
 			}
-			//TODO: Aufraumen, Spiel beenden.
 			
 		};
 		
@@ -201,7 +162,7 @@ public class ApplicationController extends AObservable{
 	 */
 	public void givePlayerMove(Move move) throws InvalidMoveException {
 		if(!isValidMove(move)) throw new InvalidMoveException();
-		playerMove = move;
+		lastMove = move;
 		this.moveAvailable = true;
 		gameThread.interrupt();
 	}
@@ -242,12 +203,18 @@ public class ApplicationController extends AObservable{
 	private boolean isValidMove(Move move) {
 		Slot startSlot = move.fromSlot();
 		Slot endSlot = move.toSlot();
-		if(closedMill && startSlot != null) {
-			return true;
-		}
 		
 		if (startSlot != null && endSlot != null &&
 			startSlot.hashCode() == endSlot.hashCode()) return false;
+		
+		if (closedMill && startSlot != null && endSlot == null) {
+			if (canRemove(startSlot)) {
+				removeableStone = true;
+				return true;
+			}
+			return false;
+		}
+		
 		/*
 		 * Move-Evaluation fuer Spielzuege in Phase 2: Ist das Endfeld
 		 * Nachbarfeld des Startfeldes und ist das Endfeld nicht belegt, dann
@@ -256,33 +223,35 @@ public class ApplicationController extends AObservable{
 		 * werden soll (sonst NullpointerException).
 		 * Abfangen, wenn ein Spielstein der anderen Farbe verwendet wurde.
 		 */
-		if (currentPlayer.getPhase() == 2) {
+		if (this.players.get(this.currentPlayer).getPhase() == 2) {
 			if (move.fromSlot() == null ||
 				move.toSlot() == null ||
-				!currentPlayer.getColor().hasStoneOn(gameboard.returnSlot(startSlot)))
+				gameboard.returnSlot(startSlot).getStatus() != currentPlayer)
 				return false;
 			Slot[] slotNeighbour = gameboard.getNeighbours(startSlot);
 			
 			for (int i = 0; i <= 3; i++) {
 				if (slotNeighbour[i] != null &&
 					slotNeighbour[i].hashCode() == endSlot.hashCode() &&
-					slotNeighbour[i].getStatus() == Slot.Status.EMPTY) return true; 
+					slotNeighbour[i].getStatus() == SlotStatus.EMPTY) return true; 
 			}
 		/*
 		 * Move-Evaluation fuer das Spielfeld in Phase 1: Ist das Endfeld leer, dann
 		 * darf der Stein in das Feld gesetzt werden. Das Startfeld ist in diesem
 		 * Fall leer.
 		 */
-		} else if (currentPlayer.getPhase() == 1) {
+		} else if (this.players.get(this.currentPlayer).getPhase() == 1) {
 			if (startSlot != null) return false;
-			if (endSlot.getStatus() == Slot.Status.EMPTY) return true;
+			if (endSlot.getStatus() == SlotStatus.EMPTY) return true;
 		/*
 		 * Move-Evaluation fuer das Spielfeld in Phase 3: Ist das Endfeld leer, dann
 		 * darf der Stein dorthin gesetzt werden. Das Startfeld ist in diesem Fall nicht
 		 * relevant, da man an ein beliebiges Feld springen darf.
 		 */
-		} else if (startSlot != null && endSlot != null){
-		if (endSlot.getStatus() == Slot.Status.EMPTY) return true;
+		} else if (this.players.get(this.currentPlayer).getPhase() == 3 &&
+				   startSlot != null && endSlot != null) {
+		if (this.gameboard.returnSlot(startSlot).getStatus() == currentPlayer &&
+			endSlot.getStatus() == SlotStatus.EMPTY) return true;
 		}
 		
 		return false;
@@ -296,10 +265,10 @@ public class ApplicationController extends AObservable{
 //		System.out.println("Spielfeld vor Zugausfuehrung.\n");
 //		System.out.println(gameboard.toString());
 		gameboard.applyMove(move);
-		logger.addEntry(move);
+		logger.addEntry(move.toString());
 //		System.out.println("Spielfeld nach Zugausfuehrung.\n");
 //		System.out.println(gameboard.toString());
-		System.out.println("Letzter Zug:");
+		System.out.println("Letzter Zug: \n");
 		System.out.println(logger.getLastEntry());
 	}
 	
@@ -311,7 +280,7 @@ public class ApplicationController extends AObservable{
 	 */
 	private boolean isInMill(Slot slot) {
 		boolean isMill = false;
-		if (slot.getStatus() == Slot.Status.EMPTY) return false;
+		if (slot.getStatus() == SlotStatus.EMPTY) return false;
 		Slot[] closeSlotNeighbours = this.gameboard.getNeighbours(slot);
 		boolean isTopNull = (closeSlotNeighbours[0] == null);
 		boolean isRightNull = (closeSlotNeighbours[1] == null);
@@ -323,7 +292,7 @@ public class ApplicationController extends AObservable{
 			 * pruefe, ob eine Muehle geschlossen ist
 			 */
 			
-			Slot.Status status = slot.getStatus(); //Status des zu preufenden Feldes
+			SlotStatus status = slot.getStatus(); //Status des zu preufenden Feldes
 			if (closeSlotNeighbours[0].getStatus() == status &&
 				closeSlotNeighbours[2].getStatus() == status) isMill = true;
 		} else if (isBottomNull) {
@@ -346,7 +315,7 @@ public class ApplicationController extends AObservable{
 			 * pruefe, ob eine Muehle geschlossen ist
 			 */
 			
-			Slot.Status status = slot.getStatus(); //Status des zu preufenden Feldes
+			SlotStatus status = slot.getStatus(); //Status des zu preufenden Feldes
 			if (closeSlotNeighbours[1].getStatus() == status &&
 				closeSlotNeighbours[3].getStatus() == status) isMill = true;
 		} else if (isLeftNull) {
@@ -391,7 +360,7 @@ public class ApplicationController extends AObservable{
 	 */
 	private boolean canRemove(Slot slot) {
 		ArrayList<Slot> pSlot = gameboard.getStonesFromColor(
-				                               currentPlayer.getColor().getOpponent().getSlotStatus());
+				                               currentPlayer.getOtherPlayer());
 		ArrayList<Slot> removeableSlots = new ArrayList<Slot>();
 		
 		/*
@@ -424,39 +393,40 @@ public class ApplicationController extends AObservable{
 	 * Die Methode prueft, ob eine der Siegbedingungen eingetreten ist
 	 * @return boolean
 	 */
-	private void checkWinner() {
-		if (winner != null ) return;  //fugly.....
-		winner = null;
+	private SlotStatus checkWinner() {
+		SlotStatus winner = SlotStatus.EMPTY;
 		
-		for (Player.Color player: players.keySet()) {
-			Player cPlayer = players.get(player);
+		for (SlotStatus cStatus: players.keySet()) {
+			Player cPlayer = players.get(cStatus);
 			
 			/*
 			 * Gewinnbedingung fuer die Anzahl der Steine (n < 3)
 			 */
 			if (cPlayer.getStones() < 3 && cPlayer.getPhase() > 1) {
-				winner = players.get(cPlayer.getColor().getOpponent());
-				break;
+				return cPlayer.getColor().getOtherPlayer();
+			} else {
+				winner = SlotStatus.EMPTY;
 			}
 			
 			if (cPlayer.getPhase() == 2) {
 				/*
 				 * Gewinnbedingung, wenn kein Zug mehr moeglich ist
 				 */
-				winner = players.get(player.getOpponent());
-				ArrayList<Slot> slotList = gameboard.getStonesFromColor(player.getSlotStatus());
+				winner = cStatus.getOtherPlayer();
+				ArrayList<Slot> slotList = gameboard.getStonesFromColor(cStatus);
 				
 				for (Slot iteSlot: slotList) {
 					Slot[] neighbours = gameboard.getNeighbours(iteSlot);
 					for (int i = 0; i <= 3; i++) {
 						if (neighbours[i] != null && 
-							neighbours[i].getStatus() == Slot.Status.EMPTY) 
-							winner = null;
+							neighbours[i].getStatus() == SlotStatus.EMPTY) 
+							winner = SlotStatus.EMPTY;
 					}
 				}
 			}
-			if (winner != null) break;
+			if (winner != SlotStatus.EMPTY) return winner;
 		}
 		
+		return winner;
 	}
 }
