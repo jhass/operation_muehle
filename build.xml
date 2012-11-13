@@ -10,6 +10,14 @@
         <fileset dir="bin/" includes="de/hshannover/operation_muehle/ai/**/*.class"/>
       </jar>
     </target>
+    <target name="create_richard_ai_jar">
+      <jar destfile="lib/RichardAI.jar">
+        <manifest>
+          <attribute name="Class-Path" value="."/>
+        </manifest>
+        <fileset dir="bin/" includes="de/hshannover/operation_muehle/airichard/**/*.class"/>
+      </jar>
+    </target>
     <target name="create_run_jar">
         <jar destfile="export/operation_muehle.jar" filesetmanifest="mergewithoutmain">
             <manifest>
