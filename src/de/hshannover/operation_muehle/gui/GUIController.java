@@ -18,7 +18,8 @@ import de.hshannover.operation_muehle.utils.observer.IObserver;
  */
 public class GUIController implements IObserver {
 	private MainWindow mainWindow;
-	private final LogWindow logWindow;
+	//private final LogWindow logWindow;
+	public LogWindow logWindow;
 	
 	public GUIController() {
 		this.mainWindow = new MainWindow();

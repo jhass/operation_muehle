@@ -5,20 +5,19 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import java.util.ArrayList;
 
 /**LogWindow shows the game log
  * 
  * @author Julian Haack
  */
-
 public class LogWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JTextArea jtxtareaLog;
 
 	/**
 	 * LogWindow Frame
-	 */
-	
+	 */	
 	public LogWindow() {
 		setTitle("Log");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -39,17 +38,18 @@ public class LogWindow extends JFrame {
 	
 	/**
 	 * Toggle visibility of the window
-	 */
-	
+	 */	
 	public void toggleVisibility() {
 		setVisible(!isVisible());
 	}
 	
 	/**
-	 * Add String to textarea
+	 * Delete log and fill it again with an ArayList
 	 */
-	
-	public void setLog(String logItem) {		
-		jtxtareaLog.append(logItem + "\n");
+	public void setLog(ArrayList<String> logList) {
+		jtxtareaLog.setText("");
+		for(int i = 0; i < logList.size(); i++){
+            jtxtareaLog.append((String)logList.get(i));
+        }
 	}
 }

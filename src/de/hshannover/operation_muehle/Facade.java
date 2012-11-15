@@ -14,6 +14,7 @@ import de.hshannover.operation_muehle.logic.ApplicationController;
 import de.hshannover.operation_muehle.logic.IOOperation;
 import de.hshannover.operation_muehle.utils.loader.StrategyLoader;
 import de.hshannover.operation_muehle.utils.observer.IObserver;
+import de.hshannover.operation_muehle.gui.GUIController;
 
 /**
  * Facade for GUI-Interaction
@@ -123,5 +124,14 @@ public class Facade {
 	 */
 	public GameState getGameState() {
 		return appController.getGameState();
+	}	
+	
+	/**
+	 * getting the complete log (ArryList) from logger and add to the log. will replace the old one
+	 * 
+	 * TODO: dont know why this isnt working. heeeelp meeee!
+	 */
+	public void log() {
+		//GUIController.logWindow.setLog(appController.logger.getLog());
 	}
 }
