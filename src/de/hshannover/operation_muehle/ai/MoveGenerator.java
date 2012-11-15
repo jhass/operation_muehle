@@ -1,24 +1,14 @@
 package de.hshannover.operation_muehle.ai;
 
 import de.hshannover.inform.muehle.strategy.Move;
+import de.hshannover.inform.muehle.strategy.Slot;
 
-
-public class MoveGenerator {
-
-	public MoveGenerator(){
-	}
+public interface MoveGenerator {
 	
-	public Move generateMove(AIBoard board){
-		Move result = null;
-		
-		return result;
-	}
-	
-	public boolean validateMove(Move move){
-		
-		return false;
-	}
+	public Move generateMove(AIBoard board);
+	public Move generateJump(AIBoard board);
+	public Slot generatePlace(AIBoard board);
+	public Slot generateRemove(AIBoard board);
 	
 	
-
 }

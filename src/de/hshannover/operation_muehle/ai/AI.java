@@ -13,7 +13,7 @@ import de.hshannover.inform.muehle.strategy.Strategy;
  */
 public class AI implements Strategy {
 
-	private MoveGenerator moveGen = new MoveGenerator();
+	protected MoveGenerator moveGen = new FirstValidGenerator();
 
 	/**
 	 * NIKI for 'Nicht Intelligente KI'
@@ -40,6 +40,7 @@ public class AI implements Strategy {
 	 */
 	public AI() {
 		this.boardIPlayWith = new AIBoard();
+		moveGen = new FirstValidGenerator();
 	}
 
 	private void initStamp(long time) {
@@ -94,34 +95,11 @@ public class AI implements Strategy {
 		if (this.stonesPlaced >= AI.MAXSTONES
 				&& myStones.size() <= AI.MINSTONES) {
 
-			HashMap<Integer, Status> emptyPlaces = this.boardIPlayWith
-					.getFieldsWith(Status.EMPTY);
-
-			for (int key : myStones.keySet()) {
-				for (int empt : emptyPlaces.keySet()) {
-					result = new G2Move(
-							this.boardIPlayWith.generateSlotByAddress(key),
-							this.boardIPlayWith.generateSlotByAddress(empt));
-					break;
-				}
-				break;
-			}
+			result = this.moveGen.generateJump(this.boardIPlayWith);
 
 		} else {
 
-			for (int key : myStones.keySet()) {
-				HashMap<Integer, Status> neighbours = this.boardIPlayWith
-						.getNeighbours(this.boardIPlayWith
-								.generateSlotByAddress(key));
-				for (int neigh : neighbours.keySet()) {
-					if (neighbours.get(neigh) == Status.EMPTY) {
-						result = new G2Move(
-								this.boardIPlayWith.generateSlotByAddress(key),
-								this.boardIPlayWith
-										.generateSlotByAddress(neigh));
-					}
-				}
-			}
+			result = this.moveGen.generateMove(this.boardIPlayWith);
 
 		}
 
@@ -150,14 +128,8 @@ public class AI implements Strategy {
 
 		this.stamp();
 
-		HashMap<Integer, Status> emptyPlaces = this.boardIPlayWith
-				.getFieldsWith(Status.EMPTY);
-
-		for (int key : emptyPlaces.keySet()) {
-			result = this.boardIPlayWith.generateSlotByAddress(key);
-			break;
-		}
-
+		result = this.moveGen.generatePlace(this.boardIPlayWith);
+		
 		this.boardIPlayWith.placeStone(result, Status.MYSTONE);
 
 		if (result == null) {
@@ -177,18 +149,7 @@ public class AI implements Strategy {
 
 		this.stamp();
 
-		HashMap<Integer, Status> opponentStones = this.boardIPlayWith
-				.getFieldsWith(Status.FOREIGNSTONE);
-
-		if (opponentStones == null) {
-			throw new IllegalArgumentException(
-					"There are no stones from opponent to remove.");
-		}
-
-		for (int key : opponentStones.keySet()) {
-			result = this.boardIPlayWith.generateSlotByAddress(key);
-			break;
-		}
+		result = this.moveGen.generateRemove(this.boardIPlayWith);
 
 		this.boardIPlayWith.removeStone(result);
 
