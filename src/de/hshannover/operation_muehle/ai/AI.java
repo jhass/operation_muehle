@@ -60,76 +60,81 @@ public class AI implements Strategy {
 	public String getStrategyName() {
 		return this.strategyName;
 	}
-	
-	public AIBoard getBoard(){
+
+	public AIBoard getBoard() {
 		return this.boardIPlayWith;
 	}
 
 	@Override
 	public Move doMove(Move last, Slot removed, int thinktime) {
-
 		Move result = null;
 
 		this.initStamp(thinktime);
 
-		this.boardIPlayWith.moveStone(last,Status.FOREIGNSTONE);
+		last = this.normalizeMove(last);
+		removed = this.normalizeSlot(removed);
+
+		this.boardIPlayWith.moveStone(last, Status.FOREIGNSTONE);
 		this.boardIPlayWith.removeStone(removed);
 
 		this.stamp();
 
-		HashMap<Integer,Status> myStones = this.boardIPlayWith.getFieldsWith(Status.MYSTONE);
+		HashMap<Integer, Status> myStones = this.boardIPlayWith
+				.getFieldsWith(Status.MYSTONE);
 
-		if(myStones == null){
-		throw new IllegalArgumentException(
-				"I have no more Stones to move.");
+		if (myStones == null) {
+			throw new IllegalArgumentException("I have no more Stones to move.");
 		}
-		
+
 		for (int key : myStones.keySet()) {
-			HashMap<Integer,Status> neighbours = this.boardIPlayWith.getNeighbours(
-					this.boardIPlayWith.generateSlotByAddress(key));
-			for (int neigh: neighbours.keySet()) {
+			HashMap<Integer, Status> neighbours = this.boardIPlayWith
+					.getNeighbours(this.boardIPlayWith
+							.generateSlotByAddress(key));
+			for (int neigh : neighbours.keySet()) {
 				if (neighbours.get(neigh) == Status.EMPTY) {
-					result = new G2Move(this.boardIPlayWith.generateSlotByAddress(key),
+					result = new G2Move(
+							this.boardIPlayWith.generateSlotByAddress(key),
 							this.boardIPlayWith.generateSlotByAddress(neigh));
 				}
 			}
 		}
-		
-		this.boardIPlayWith.moveStone(result,Status.MYSTONE);
 
-		if(result == null){
-		throw new IllegalArgumentException(
-				"I have no more places to move.");
+		this.boardIPlayWith.moveStone(result, Status.MYSTONE);
+
+		if (result == null) {
+			throw new IllegalArgumentException("I have no more places to move.");
 		}
 
 		return result;
 	}
 
 	@Override
-	public Slot placeStone(Slot last,Slot removed, int thinktime) {
-
+	public Slot placeStone(Slot last, Slot removed, int thinktime) {
 		Slot result = null;
 
 		this.initStamp(thinktime);
+
+		last = this.normalizeSlot(last);
+		removed = this.normalizeSlot(removed);
 
 		this.boardIPlayWith.placeStone(last, Status.FOREIGNSTONE);
 		this.boardIPlayWith.removeStone(removed);
 
 		this.stamp();
 
-		HashMap<Integer,Status> emptyPlaces = this.boardIPlayWith.getFieldsWith(Status.EMPTY);
+		HashMap<Integer, Status> emptyPlaces = this.boardIPlayWith
+				.getFieldsWith(Status.EMPTY);
 
 		for (int key : emptyPlaces.keySet()) {
 			result = this.boardIPlayWith.generateSlotByAddress(key);
 			break;
 		}
-		
-		this.boardIPlayWith.placeStone(result, Status.MYSTONE);
-		
 
-		if(result == null){
-		throw new IllegalArgumentException(
-				"There are no empty Fields available!");
+		this.boardIPlayWith.placeStone(result, Status.MYSTONE);
+
+		if (result == null) {
+			throw new IllegalArgumentException(
+					"There are no empty Fields available!");
 		}
 
 		return result;
@@ -144,21 +149,46 @@ public class AI implements Strategy {
 
 		this.stamp();
 
-		HashMap<Integer,Status> opponentStones = 
-				this.boardIPlayWith.getFieldsWith(Status.FOREIGNSTONE);
-		
-		if(opponentStones == null){
-		throw new IllegalArgumentException(
-				"There are no stones from opponent to remove.");
+		HashMap<Integer, Status> opponentStones = this.boardIPlayWith
+				.getFieldsWith(Status.FOREIGNSTONE);
+
+		if (opponentStones == null) {
+			throw new IllegalArgumentException(
+					"There are no stones from opponent to remove.");
 		}
-		
+
 		for (int key : opponentStones.keySet()) {
 			result = this.boardIPlayWith.generateSlotByAddress(key);
 			break;
 		}
-		
+
 		this.boardIPlayWith.removeStone(result);
 
+		return result;
+	}
+
+	public Slot normalizeSlot(Slot slot) {
+		Slot result = slot;
+		char col = slot.getColumn();
+		if (col > 'Z') {
+			result = new G2Slot((char) (col - G2Slot.UPPERCASEDIFF),
+					slot.getRow());
+		}
+
+		return result;
+	}
+	
+	public Move normalizeMove(Move move){
+		Move result = move;
+		
+		Slot from = move.fromSlot();
+		Slot to = move.toSlot();
+		Slot fromNormal = this.normalizeSlot(from);
+		Slot toNormal = this.normalizeSlot(to);
+		
+		if(from != fromNormal || to != toNormal){
+			result = new G2Move(fromNormal,toNormal);
+		}		
 		
 		return result;
 	}

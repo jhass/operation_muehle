@@ -6,6 +6,7 @@ public class G2Slot implements Slot{
 	
 	private char col;
 	private int row;
+	public static final int UPPERCASEDIFF = (int)('a'-'A');  
 	
 	public G2Slot(char col,int row){
 		this.row = row;
@@ -20,6 +21,10 @@ public class G2Slot implements Slot{
 	@Override
 	public int getRow() {
 		return this.row;
+	}
+	
+	public void setColumn(char col){
+		this.col = col;
 	}
 	
 	@Override
