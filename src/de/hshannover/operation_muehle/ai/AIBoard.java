@@ -209,10 +209,6 @@ public class AIBoard {
 
 	}
 
-	public Status getField(G2Slot slot) {
-		return this.fields.get(this.generateAddress(slot));
-	}
-
 	public HashMap<Integer, Status> getNeighbours(Slot slot) {
 		HashMap<Integer, Status> result = new HashMap<Integer, Status>();
 
