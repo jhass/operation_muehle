@@ -197,10 +197,13 @@ public class AI implements Strategy {
 
 	public Slot normalizeSlot(Slot slot) {
 		Slot result = slot;
-		char col = slot.getColumn();
-		if (col > 'Z') {
-			result = new G2Slot((char) (col - G2Slot.UPPERCASEDIFF),
-					slot.getRow());
+
+		if (slot != null) {
+			char col = slot.getColumn();
+			if (col > 'Z') {
+				result = new G2Slot((char) (col - G2Slot.UPPERCASEDIFF),
+						slot.getRow());
+			}
 		}
 
 		return result;
@@ -209,13 +212,15 @@ public class AI implements Strategy {
 	public Move normalizeMove(Move move) {
 		Move result = move;
 
-		Slot from = move.fromSlot();
-		Slot to = move.toSlot();
-		Slot fromNormal = this.normalizeSlot(from);
-		Slot toNormal = this.normalizeSlot(to);
+		if (move != null) {
+			Slot from = move.fromSlot();
+			Slot to = move.toSlot();
+			Slot fromNormal = this.normalizeSlot(from);
+			Slot toNormal = this.normalizeSlot(to);
 
-		if (from != fromNormal || to != toNormal) {
-			result = new G2Move(fromNormal, toNormal);
+			if (from != fromNormal || to != toNormal) {
+				result = new G2Move(fromNormal, toNormal);
+			}
 		}
 
 		return result;
