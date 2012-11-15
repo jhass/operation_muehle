@@ -191,8 +191,8 @@ public class Player implements Serializable {
 	 * @param removed Last removed Stone. Null if nothing has been removed.
 	 * @return
 	 */
-	public Move doMove(Move last, Slot removed ) {
-		return (Move) this.aiStrategy.doMove(last, (de.hshannover.inform.muehle.strategy.Slot)removed , this.thinkTime);
+	public de.hshannover.inform.muehle.strategy.Move doMove(Move last, Slot removed ) {
+		return this.aiStrategy.doMove(last, (de.hshannover.inform.muehle.strategy.Slot)removed , this.thinkTime);
 	}
 	
 	/**

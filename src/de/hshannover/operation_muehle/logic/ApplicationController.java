@@ -19,7 +19,9 @@ public class ApplicationController extends AObservable{
 	private Player currentPlayer;
 	private Player winner;
 	private boolean gameStopped;
+	private Move playerMove;
 	private Move lastMove;
+	private Slot reMove;
 	private boolean moveAvailable;
 	private boolean closedMill = false;
 	boolean removeableStone = false;
@@ -75,7 +77,8 @@ public class ApplicationController extends AObservable{
 			public void run() {
 				
 				lastMove = null;
-				Slot removed = null;
+				reMove = null;
+				playerMove = new Move(null,null);
 				Slot lastSlot = null;
 				gameStopped = false;
 				Player cPlayer;
@@ -90,30 +93,35 @@ public class ApplicationController extends AObservable{
 							if(lastMove != null) {
 								lastSlot = lastMove.toSlot();
 							}
-							de.hshannover.inform.muehle.strategy.Slot slota = cPlayer.placeStone(lastSlot, removed);
-							Slot slotb = new Slot(slota.getRow(),(int)slota.getColumn() - 64);
-							lastMove = new Move(null,(Slot) slotb);
+							de.hshannover.inform.muehle.strategy.Slot slota = cPlayer.placeStone(lastSlot, reMove);
+							Slot slotb = new Slot(slota.getColumn(),slota.getRow());
+							playerMove = new Move(null,(Slot) slotb);
 						}
 						else {
-							if(lastMove.fromSlot() == null) {
-								lastMove = null;
-							}
-							lastMove = cPlayer.doMove(lastMove, removed);
+							 de.hshannover.inform.muehle.strategy.Move aMove = cPlayer.doMove(lastMove, reMove);
+							 de.hshannover.inform.muehle.strategy.Slot fromSlot = new Slot(aMove.fromSlot().getColumn(),aMove.fromSlot().getRow());
+							 de.hshannover.inform.muehle.strategy.Slot toSlot = new Slot(aMove.toSlot().getColumn(),aMove.toSlot().getRow());
+
+							 
+							 playerMove = new Move((Slot)fromSlot,(Slot)toSlot); // I put on my Robe and my Wizard Hat <:|
 						}
 						moveAvailable = true;
-						if (!isValidMove(lastMove)) {
+						if (!isValidMove(playerMove)) {
 							winner = players.get(currentPlayer.getColor().getOpponent());
+							System.out.println("Invalid Move from AI: "+ playerMove.toString());
 							break;
 						}
+					} else {
+						do {
+							try {
+								sleep(100);
+							} catch (InterruptedException e) {}
+						} while (!moveAvailable);
 					}
-					
-					if (moveAvailable) {
-						moveAvailable = false;
-						if (lastMove.toSlot() == null) {
-							players.get(currentPlayer.getColor().getOpponent()).decreaseNumberOfStones();
-							gameboard.removeStone(lastMove.fromSlot());
-							currentPlayer = players.get(currentPlayer.getColor().getOpponent());
-						} else if (lastMove.toSlot() != null &&
+					reMove = null;
+					lastMove = playerMove;
+
+						if (lastMove.toSlot() != null &&
 								currentPlayer.getPhase() == 1) {
 							cPlayer.increaseStones();
 							gameboard.applySlot(lastMove.toSlot(), currentPlayer.getColor().getSlotStatus());
@@ -136,35 +144,45 @@ public class ApplicationController extends AObservable{
 							System.out.println("Muehle: "+closedMill);
 							if (cPlayer.isAI()) {
 								de.hshannover.inform.muehle.strategy.Slot slota =cPlayer.removeStone();
-								removed = new Slot(slota.getRow(),(int)slota.getColumn() - 64);
-								
+								playerMove = new Move (new Slot(slota.getColumn(),slota.getRow()),null);
+								if(!isValidMove(playerMove)) {
+									winner = players.get(currentPlayer.getColor().getOpponent());
+									System.out.println("Invalid Move from AI: "+ playerMove.toString());
+									break;
+								}
 							} else {
 								
+								setObservableChanged(true);
+								notifyObserver();
 								do {
-									setObservableChanged(true);
-									notifyObserver();
+									try {
+										sleep(100);
+									} catch (InterruptedException e) {}
 								} while (!removeableStone);
 							}
+							reMove = playerMove.fromSlot();
 							closedMill = false;
 							removeableStone = false;
 						} else {
-							removed = null;
+							reMove = null;
 						}
 						
+						if (reMove != null) {
+							players.get(currentPlayer.getColor().getOpponent()).decreaseNumberOfStones();
+							gameboard.removeStone(reMove);
+							System.out.println("Stein entfernt: " + reMove.toString());
+						}
+						setObservableChanged(true);
+						notifyObserver();
 						winner = checkWinner();
 						if (winner != null) { 
 							gameStopped = true;
 							System.out.println("Gewinner: "+winner);
 						}
-
-						if (lastMove.toSlot() != null)
+						moveAvailable = false;
 						currentPlayer = players.get(currentPlayer.getColor().getOpponent());
-						System.out.println(currentPlayer);
-					} else {
-						try {
-							sleep(100);
-						} catch (InterruptedException e) {}
-					}
+						System.out.println(currentPlayer.getColor());
+					
 				}System.out.println("Winner " + winner.getColor().toString());
 			}
 			
@@ -179,7 +197,7 @@ public class ApplicationController extends AObservable{
 	 */
 	public void givePlayerMove(Move move) throws InvalidMoveException {
 		if(!isValidMove(move)) throw new InvalidMoveException();
-		lastMove = move;
+		playerMove = move;
 		this.moveAvailable = true;
 		gameThread.interrupt();
 	}

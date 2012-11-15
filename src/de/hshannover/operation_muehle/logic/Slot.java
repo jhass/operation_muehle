@@ -45,13 +45,24 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	 * @param row Zeilenindex (Constraint >0)
 	 */
 	public Slot(int column, int row) {
-		if (row<0) 
+		if (row < 0) 
 			throw new IllegalArgumentException("Slot.Row ungueltig!");
-		if (column<0) 
+		if (column < 0) 
 			throw new IllegalArgumentException("Slot.Column ungueltig!");
 		this.status = Status.EMPTY;
 		this.row = row;
 		this.column = column;
+	}
+	
+	public Slot (char column, int row) {
+		int realColumn = (int)(Character.toUpperCase(column) - 64);
+		if (row < 0) 
+			throw new IllegalArgumentException("Slot.Row ungueltig!");
+		if (realColumn < 0) 
+			throw new IllegalArgumentException("Slot.Column ungueltig!");
+		this.status = Status.EMPTY;
+		this.row = row;
+		this.column = realColumn;
 	}
 	
 	/**
