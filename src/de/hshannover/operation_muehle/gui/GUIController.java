@@ -105,7 +105,7 @@ public class GUIController implements IObserver {
 			} catch (IOException e) {
 				// TODO display dialog
 			} catch (ClassNotFoundException e) {
-				// TODO disply dialog about incompatible save file
+				// TODO display dialog about incompatible save file
 			}
 		}
 	}

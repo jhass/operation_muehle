@@ -33,8 +33,6 @@ public class ApplicationController extends AObservable{
 	public ApplicationController() {
 		players = new HashMap<Player.Color, Player>();
 		logger = new Logger();
-		gameboard = new Gameboard();
-		this.moveAvailable = false;
 	}
 	
 	/**
@@ -43,12 +41,18 @@ public class ApplicationController extends AObservable{
 	 * @see SaveState
 	 */
 	public void initializeNew(HashMap<String,PlayerOptions> gameOptions) {
+		if(gameThread != null) {
+			endGame();
+			gameThread.interrupt();
+		}
 		PlayerOptions pWhite = gameOptions.get("white");
 		PlayerOptions pBlack = gameOptions.get("black");
 		this.players.put(Player.Color.WHITE, new Player(pWhite, Player.Color.WHITE));
 		this.players.put(Player.Color.BLACK, new Player(pBlack, Player.Color.BLACK));
 		currentPlayer = players.get(Player.Color.WHITE);
 		winner = null;
+		gameboard = new Gameboard();
+		this.moveAvailable = false;
 		setObservableChanged(true);
 		notifyObserver();
 		playGame();
