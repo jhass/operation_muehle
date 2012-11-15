@@ -49,7 +49,7 @@ public class LogWindow extends JFrame {
 	public void setLog(ArrayList<String> logList) {
 		jtxtareaLog.setText("");
 		for(int i = 0; i < logList.size(); i++){
-            jtxtareaLog.append((String)logList.get(i));
+            jtxtareaLog.append((String)logList.get(i) + "\n");
         }
 	}
 }

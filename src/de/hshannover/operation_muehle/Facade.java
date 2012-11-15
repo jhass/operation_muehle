@@ -129,9 +129,8 @@ public class Facade {
 	/**
 	 * getting the complete log (ArryList) from logger and add to the log. will replace the old one
 	 * 
-	 * TODO: dont know why this isnt working. heeeelp meeee!
 	 */
 	public void log() {
-		//GUIController.logWindow.setLog(appController.logger.getLog());
+		GUIController.logWindow.setLog(appController.logger.getLog());
 	}
 }
