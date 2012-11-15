@@ -1,4 +1,5 @@
 bin/
+lib/*.jar
 export/*.jar
 export/lib/*.jar
 
