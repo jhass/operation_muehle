@@ -49,7 +49,7 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	 * @param row Wert der Zeile
 	 */
 	public void generateNewPair(int column, int row) {
-		Slot slot = new Slot(row, column, SlotStatus.EMPTY);
+		Slot slot = new Slot(row, column, Slot.Status.EMPTY);
 		int hashValue = slot.hashCode(); 
 		this.board.put(hashValue, slot);
 	}
@@ -108,7 +108,7 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	 * des Slots
 	 * @param slot
 	 */
-	public void applySlot(Slot slot, SlotStatus status) {
+	public synchronized void applySlot(Slot slot, Slot.Status status) {
 		if (this.board.containsKey(slot.hashCode())) {
 			Slot appSlot = this.board.get(slot.hashCode());
 			appSlot.setStatus(status);
@@ -123,11 +123,11 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	 * des Move-Objektes.
 	 * @param move Das Move-Objekt, aus dem die Aenderungen uebernommen werde sollen
 	 */
-	public void applyMove(Move move) {
+	public synchronized void applyMove(Move move) {
 		Slot start = move.fromSlot();
 		Slot end = move.toSlot();
 		applySlot(end,returnSlot(start).getStatus());
-		applySlot(start, SlotStatus.EMPTY);
+		applySlot(start, Slot.Status.EMPTY);
 	}
 	
 	/**
@@ -137,7 +137,7 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	 * @param status Die Farbe der Steine, die gesucht werden soll
 	 * @return int
 	 */
-	public int getNumberStones(SlotStatus status) {
+	public int getNumberStones(Slot.Status status) {
 		int count = 0;
 		for (Slot slot: this.board.values()) {
 			if (slot.getStatus() == status) {
@@ -152,8 +152,8 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	 * uebergebene Feld
 	 * @param toRemove Spielfeld, aus dem der Stein entfernt wird
 	 */
-	public void removeStone(Slot toRemove) { 
-		returnSlot(toRemove).setStatus(SlotStatus.EMPTY);
+	public synchronized void removeStone(Slot toRemove) { 
+		returnSlot(toRemove).setStatus(Slot.Status.EMPTY);
 	}
 	
 	/**
@@ -186,7 +186,7 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	 * @param status Die Farbe, fuer den die Steine gesucht werden sollen
 	 * @return ArrayList<Slot>
 	 */
-	public ArrayList<Slot> getStonesFromColor(SlotStatus status) {
+	public ArrayList<Slot> getStonesFromColor(Slot.Status status) {
 		ArrayList<Slot> slotList = new ArrayList<Slot>();
 		
 		for (Integer ite: this.board.keySet()) {

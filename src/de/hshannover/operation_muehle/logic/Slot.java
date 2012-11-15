@@ -13,8 +13,12 @@ import java.io.Serializable;
  */
 public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
                                 Serializable {
+	public enum Status {
+		WHITE, BLACK, EMPTY
+	}
+	
 	private static final long serialVersionUID = 1L;
-	private SlotStatus status;
+	private Status status;
 	private int row;
 	private int column;
 	
@@ -25,7 +29,7 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	 * @param status Attribut zur Beschreibung des Spielfeldinhaltes
 	 *         (0= empty, 1= white, 2=black)
 	 */
-	public Slot(int column, int row, SlotStatus status) {
+	public Slot(int column, int row, Status status) {
 		if (row <= 0) 
 			throw new IllegalArgumentException("Slot.Row ungueltig!");
 		if (column <= 0) 
@@ -45,7 +49,7 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 			throw new IllegalArgumentException("Slot.Row ungueltig!");
 		if (column<0) 
 			throw new IllegalArgumentException("Slot.Column ungueltig!");
-		this.status = SlotStatus.EMPTY;
+		this.status = Status.EMPTY;
 		this.row = row;
 		this.column = column;
 	}
@@ -54,7 +58,7 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	 * Setzen bzw. Aendern eines Feldzustandes
 	 * @param status Statusindex
 	 */
-	public void setStatus(SlotStatus status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 	
@@ -62,7 +66,7 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 	 * Get-Methode fuer den Feldzustand
 	 * @return int 
 	 */
-	public SlotStatus getStatus() {
+	public Status getStatus() {
 		return this.status;
 	}
 	

@@ -1,12 +1,14 @@
 ﻿Operation Mühle
 ================
 
-Programmierprojekt im dritten Semester an der FH Hannover.
+Programmierprojekt im dritten Semester an der HS Hannover im Wintersemester 2012/2013.
 
-
-toller text
 
 # Mitarbeiter
 
+* Benjamin Held
+* Richard Pump
 * Jonne Haß
+* Julian Haack
+* Alexander Sirotin
 

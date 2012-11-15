@@ -10,7 +10,6 @@ import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.operation_muehle.logic.SaveState;
 import de.hshannover.operation_muehle.logic.Slot;
 import de.hshannover.operation_muehle.logic.Move;
-import de.hshannover.operation_muehle.logic.Player;
 import de.hshannover.operation_muehle.logic.ApplicationController;
 import de.hshannover.operation_muehle.logic.IOOperation;
 import de.hshannover.operation_muehle.utils.loader.StrategyLoader;
@@ -23,19 +22,14 @@ import de.hshannover.operation_muehle.utils.observer.IObserver;
 public class Facade {
 	private static Facade instance;
 	private ApplicationController appController;
-	private StrategyLoader stratload;
+	private StrategyLoader strategyLoader;
 	
 	/**
 	 * Simple Constructor.
 	 */
 	private Facade() {
 		appController = new ApplicationController();
-		
-		try {
-			stratload = new StrategyLoader();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		strategyLoader = StrategyLoader.getDefaultInstanceOrMock();
 	}
 	
 	/**
@@ -64,17 +58,20 @@ public class Facade {
 	/**
 	 * Saves the Game at the given Path
 	 * @param path The path, where the game is to be saved.
+	 * @throws IOException 
 	 * @see IOOperation
 	 */
-	public void saveGame(String path) {
+	public void saveGame(String path) throws IOException {
 		SaveState save = appController.getSaveState();
 		IOOperation.saveGameInfo(path, save);
 	}
 	/**
 	 * Loads the Game from the given Path
-	 * @param path Ye Pathe of thy saveth Game.
+	 * @param path the path of the saved game.
+	 * @throws ClassNotFoundException 
+	 * @throws IOException 
 	 */
-	public void loadGame(String path) {
+	public void loadGame(String path) throws IOException, ClassNotFoundException {
 		SaveState save = IOOperation.loadGameInfo(path);
 		appController.initializeSaved(save);
 	}
@@ -93,23 +90,15 @@ public class Facade {
 	 * @see StrategyLoader
 	 */
 	public StrategyLoader getStrategyLoader() {
-		return stratload;
+		return strategyLoader;
 	}
 	
-	/**
-	 * What was this for again?
-	 * replace with giveSlot (like giveMove)?
-	 * @param player
-	 * @return
-	 */
-	public Slot getSlot(Player player) {
-		return null;
-	}
-	
-	/**
-	 * Gives a Move to the ApplicationController
-	 * @param src The spot to move from
-	 * @param dst The spot to move to
+	/** Gives a Move to the ApplicationController
+	 * 
+	 * 	Either dst or src must be set, both cannot be null
+	 * 
+	 * @param src The spot to move from, if null a stone should be created at dst 
+	 * @param dst The spot to move to, if null a stone should be removed from src
 	 * @throws InvalidMoveException 
 	 */
 	public void giveMove(Spot src, Spot dst) throws InvalidMoveException {

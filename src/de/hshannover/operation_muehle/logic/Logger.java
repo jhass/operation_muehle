@@ -17,12 +17,16 @@ public class Logger {
 	
 	/**
 	 * Adds the given Object to the Log
-	 * @param o The Object to Log, must be Slot, Move
+	 * @param aSlotOrMoveToBeSaved The Object to Log, must be Slot, Move
 	 * @see Slot
 	 * @see Move
 	 */
-	public void addEntry(Object o) {
-		log.add(o.toString()); //TODO How to handle Objects of a false class...
+	public void addEntry(Object aSlotOrMoveToBeSaved) throws IllegalArgumentException{
+		if(aSlotOrMoveToBeSaved instanceof Move || aSlotOrMoveToBeSaved instanceof Slot) {
+		log.add(aSlotOrMoveToBeSaved.toString());
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 	
 	/**

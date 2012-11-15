@@ -30,6 +30,21 @@ public class StrategyLoader extends ClassesLoader {
 		super(searchPath);
 	}
 	
+	public static StrategyLoader getDefaultInstanceOrMock() {
+		try {
+			return new StrategyLoader();
+		} catch (IOException e) {
+		} catch (IllegalArgumentException e) {}
+		
+		System.err.println("WARNING: Can't find or read default search path directory (./lib) to look for foreign AIs!");
+		
+		try {
+			return new StategyLoaderMock();
+		} catch (IOException wontHappen) {}
+		
+		return null;
+	}
+	
 	/** If possible returns an instance of the given Strategy using the default
 	 *  constructor.
 	 * 
@@ -42,9 +57,10 @@ public class StrategyLoader extends ClassesLoader {
 		try {
 			return (Strategy) super.getInstance(klass);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		} catch (InstantiationException e) {
-		} catch (IllegalAccessException e) {}
+		} catch (IllegalAccessException e) {
+		} catch (ClassCastException e) {
+		} catch (NoClassDefFoundError e) {}
 		
 		return null;
 	}
@@ -64,5 +80,17 @@ public class StrategyLoader extends ClassesLoader {
 		}
 		
 		return strategies;
+	}
+}
+
+class StategyLoaderMock extends StrategyLoader {
+
+	public StategyLoaderMock() throws IOException {
+		super(".");
+	}
+	
+	@Override
+	public Strategy getInstance(String klass) {
+		return null;
 	}
 }

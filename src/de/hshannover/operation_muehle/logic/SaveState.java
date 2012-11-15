@@ -11,7 +11,7 @@ import java.util.HashMap;
  */
 public class SaveState extends GameState {
 	private static final long serialVersionUID = 1L;
-	private HashMap<SlotStatus, Player> players;
+	private HashMap<Player.Color, Player> players;
 
 	/**
 	 * Konstruktor
@@ -21,17 +21,17 @@ public class SaveState extends GameState {
 	 * @param log Die Notizen (Log) der Spielzuege
 	 * @param players Informationen über die beiden beteiligten Spieler
 	 */
-	public SaveState(Gameboard g, SlotStatus cp, SlotStatus w, ArrayList<String> log,
-			          HashMap<SlotStatus, Player> players) {
+	public SaveState(Gameboard g, Player cp, Player w, ArrayList<String> log,
+			          HashMap<Player.Color, Player> players) {
 		super(g, cp, w, log);
 		this.setPlayers(players);
 	}
 
-	public HashMap<SlotStatus, Player> getPlayers() {
+	public HashMap<Player.Color, Player> getPlayers() {
 		return this.players;
 	}
 
-	public void setPlayers(HashMap<SlotStatus, Player> players) {
+	public void setPlayers(HashMap<Player.Color, Player> players) {
 		this.players = players;
 	}
 

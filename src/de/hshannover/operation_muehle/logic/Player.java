@@ -13,9 +13,38 @@ import de.hshannover.operation_muehle.Facade;
  *
  */
 public class Player implements Serializable {
+	public enum Color {
+		WHITE {
+			public Color getOpponent() {
+				return BLACK;
+			}
+			
+			public Slot.Status getSlotStatus() {
+				return Slot.Status.WHITE;
+			}
+		},
+		BLACK {
+			public Color getOpponent() {
+				return WHITE;
+			}
+			
+			public Slot.Status getSlotStatus() {
+				return Slot.Status.BLACK;
+			}
+
+			
+		};
+		
+		abstract public Color getOpponent();
+		abstract public Slot.Status getSlotStatus();
+		public boolean hasStoneOn(Slot slot) {
+			return slot.getStatus() == getSlotStatus();
+		}
+	}
+	
 	private static final long serialVersionUID = 1L;
 	private String name;
-	private SlotStatus color;
+	private Color color;
 	private int stones;
 	private boolean isAI;
 	private int thinkTime;
@@ -33,7 +62,7 @@ public class Player implements Serializable {
 	 * @param thinkTime Denkzeit der kuenstlichen Intelligenz 
 	 * (Constraint > 0) 
 	 */
-	public Player(PlayerOptions oPlayer, SlotStatus color) {
+	public Player(PlayerOptions oPlayer, Color color) {
 		if (thinkTime < 0)
 			throw new IllegalArgumentException("Player.Thinktime ungueltig!");
 		this.name = oPlayer.getName();
@@ -56,7 +85,7 @@ public class Player implements Serializable {
 	 * hat
 	 * @param phase Spielphase, in der sich der Spieler befindet 
 	 */
-	public Player(String name, SlotStatus color, boolean isAI, int thinkTime, 
+	public Player(String name, Color color, boolean isAI, int thinkTime, 
 			       Slot[] stones, int phase) {
 		this.name = name;
 		this.color = color;
@@ -71,6 +100,9 @@ public class Player implements Serializable {
 		this.availableStones--;
 		if (this.availableStones == 0) {
 			this.phase++;
+			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("Player "+this.color+" enters Phase "+this.phase);
+			if (this.stones == 3) this.phase++; //??
 		}
 	}
 	
@@ -79,14 +111,19 @@ public class Player implements Serializable {
 	 */
 	public void decreaseNumberOfStones() {
 		this.stones--;
+		if (this.stones == 3 && this.phase == 2) {
+			this.phase++;
+			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			System.out.println("Entering Phase " + this.phase);
+		}
 	}
 	
 	/**
 	 * Calls removeStone() on the AI with the thinktime specified in the Object.
 	 * @see Strategy
 	 */
-	public Slot removeStone() {
-		return (Slot) aiStrategy.removeStone(thinkTime);
+	public de.hshannover.inform.muehle.strategy.Slot removeStone() {
+		return aiStrategy.removeStone(thinkTime);
 	}
 	
 	/**
@@ -108,7 +145,7 @@ public class Player implements Serializable {
 	 * Getter für die Farbe
 	 * @return int
 	 */
-	public SlotStatus getColor() {
+	public Color getColor() {
 		return this.color;
 	}
 	
@@ -118,6 +155,10 @@ public class Player implements Serializable {
 	 */
 	public int getStones() {
 		return this.stones;
+	}
+	
+	public int getAvailableStones() {
+		return this.availableStones;
 	}
 	
 	/**
@@ -135,7 +176,7 @@ public class Player implements Serializable {
 	public int getThinkTime() {
 		return this.thinkTime;
 	}
-	
+
 	/**
 	 * Getter für die Information, um was fuer einen Spieler es sich handelt
 	 * @return boolean
@@ -144,7 +185,25 @@ public class Player implements Serializable {
 		return this.isAI;
 	}
 	
-	public Move doMove(Move move, Slot slot) {
-		return (Move) this.aiStrategy.doMove(move, slot, this.thinkTime);
+	/**
+	 * Calls doMove on AI
+	 * @param last Last Move.
+	 * @param removed Last removed Stone. Null if nothing has been removed.
+	 * @return
+	 */
+	public Move doMove(Move last, Slot removed ) {
+		return (Move) this.aiStrategy.doMove(last, (de.hshannover.inform.muehle.strategy.Slot)removed , this.thinkTime);
+	}
+	
+	/**
+	 * Calls placeStone on the AI.
+	 * @param last Last placed Stone.
+	 * @param removed Last removed Stone. Null if nothing has been removed.
+	 * @return
+	 */
+	public de.hshannover.inform.muehle.strategy.Slot placeStone(Slot last, Slot removed) {
+		return (de.hshannover.inform.muehle.strategy.Slot)this.aiStrategy.placeStone(
+					(de.hshannover.inform.muehle.strategy.Slot)last, 
+					(de.hshannover.inform.muehle.strategy.Slot)removed, this.thinkTime);
 	}
 }
