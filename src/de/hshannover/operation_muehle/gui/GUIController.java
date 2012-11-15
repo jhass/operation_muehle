@@ -1,5 +1,6 @@
 package de.hshannover.operation_muehle.gui;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import de.hshannover.operation_muehle.Facade;
@@ -98,7 +99,14 @@ public class GUIController implements IObserver {
 	public void loadGame() {
 		String path = LoadDialog.getPath(this.mainWindow);
 		if (path != null) {
-			System.out.println("load to: "+path); //TODO: call facade
+			try {
+				Facade.getInstance().loadGame(path);
+				mainWindow.gameMode();
+			} catch (IOException e) {
+				// TODO display dialog
+			} catch (ClassNotFoundException e) {
+				// TODO disply dialog about incompatible save file
+			}
 		}
 	}
 	
@@ -109,7 +117,13 @@ public class GUIController implements IObserver {
 	public void saveGame() {
 		String path = SaveDialog.getPath(this.mainWindow);
 		if (path != null) {
-			System.out.println("save to: "+path); // TODO: call facade
+			try {
+				Facade.getInstance().saveGame(path);
+				mainWindow.gameMode();
+			} catch (IOException e) {
+				// TODO display dialog
+			}
+			
 		}
 	}
 	
