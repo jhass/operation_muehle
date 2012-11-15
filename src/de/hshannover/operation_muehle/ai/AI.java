@@ -25,6 +25,10 @@ public class AI implements Strategy {
 	private int group = 2;
 	private AIBoard boardIPlayWith;
 
+	private int stonesPlaced = 0;
+	public static final int MAXSTONES = 9;
+	public static final int MINSTONES = 3;
+
 	/**
 	 * Time-Management
 	 */
@@ -86,17 +90,39 @@ public class AI implements Strategy {
 			throw new IllegalArgumentException("I have no more Stones to move.");
 		}
 
-		for (int key : myStones.keySet()) {
-			HashMap<Integer, Status> neighbours = this.boardIPlayWith
-					.getNeighbours(this.boardIPlayWith
-							.generateSlotByAddress(key));
-			for (int neigh : neighbours.keySet()) {
-				if (neighbours.get(neigh) == Status.EMPTY) {
+		// condition for Jumping. Else AI will move a Stone
+		if (this.stonesPlaced >= AI.MAXSTONES
+				&& myStones.size() <= AI.MINSTONES) {
+
+			HashMap<Integer, Status> emptyPlaces = this.boardIPlayWith
+					.getFieldsWith(Status.EMPTY);
+
+			for (int key : myStones.keySet()) {
+				for (int empt : emptyPlaces.keySet()) {
 					result = new G2Move(
 							this.boardIPlayWith.generateSlotByAddress(key),
-							this.boardIPlayWith.generateSlotByAddress(neigh));
+							this.boardIPlayWith.generateSlotByAddress(empt));
+					break;
+				}
+				break;
+			}
+
+		} else {
+
+			for (int key : myStones.keySet()) {
+				HashMap<Integer, Status> neighbours = this.boardIPlayWith
+						.getNeighbours(this.boardIPlayWith
+								.generateSlotByAddress(key));
+				for (int neigh : neighbours.keySet()) {
+					if (neighbours.get(neigh) == Status.EMPTY) {
+						result = new G2Move(
+								this.boardIPlayWith.generateSlotByAddress(key),
+								this.boardIPlayWith
+										.generateSlotByAddress(neigh));
+					}
 				}
 			}
+
 		}
 
 		this.boardIPlayWith.moveStone(result, Status.MYSTONE);
@@ -116,6 +142,8 @@ public class AI implements Strategy {
 
 		last = this.normalizeSlot(last);
 		removed = this.normalizeSlot(removed);
+
+		this.stonesPlaced++;
 
 		this.boardIPlayWith.placeStone(last, Status.FOREIGNSTONE);
 		this.boardIPlayWith.removeStone(removed);
@@ -177,19 +205,19 @@ public class AI implements Strategy {
 
 		return result;
 	}
-	
-	public Move normalizeMove(Move move){
+
+	public Move normalizeMove(Move move) {
 		Move result = move;
-		
+
 		Slot from = move.fromSlot();
 		Slot to = move.toSlot();
 		Slot fromNormal = this.normalizeSlot(from);
 		Slot toNormal = this.normalizeSlot(to);
-		
-		if(from != fromNormal || to != toNormal){
-			result = new G2Move(fromNormal,toNormal);
-		}		
-		
+
+		if (from != fromNormal || to != toNormal) {
+			result = new G2Move(fromNormal, toNormal);
+		}
+
 		return result;
 	}
 
