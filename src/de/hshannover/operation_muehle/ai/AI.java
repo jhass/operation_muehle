@@ -18,7 +18,7 @@ public class AI implements Strategy {
 	/**
 	 * NIKI for 'Nicht Intelligente KI'
 	 */
-	protected String strategyName = "NIKI";
+	protected String strategyName = "NIKI2.0";
 	/**
 	 * we are the second group
 	 */
