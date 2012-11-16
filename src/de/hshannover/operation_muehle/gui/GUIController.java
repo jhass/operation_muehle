@@ -76,6 +76,7 @@ public class GUIController implements IObserver {
 	public void updateObservable() {
 		final GameState state = Facade.getInstance().getGameState();
 		mainWindow.drawBoard(state.currentGB);
+		logWindow.setLog(Facade.getInstance().getLog());
 	}
 	
 	

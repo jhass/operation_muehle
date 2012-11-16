@@ -3,8 +3,9 @@ package de.hshannover.operation_muehle.gui;
 import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 
 /**LogWindow shows the game log
  * 
@@ -13,7 +14,8 @@ import javax.swing.JTextArea;
 
 public class LogWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private JTextArea jtxtareaLog;
+	private JTextPane textPane;
+	private JScrollBar verticalScrollbar;
 
 	/**
 	 * LogWindow Frame
@@ -23,16 +25,15 @@ public class LogWindow extends JFrame {
 		setTitle("Log");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 400, 300);
+		getContentPane().setLayout(new BorderLayout(0, 0));
 		
 		JScrollPane scrollPane = new JScrollPane();
-		getContentPane().add(scrollPane, BorderLayout.CENTER);
+		verticalScrollbar = scrollPane.getVerticalScrollBar();
 		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane.setViewportView(scrollPane_1);
-		
-		jtxtareaLog = new JTextArea();
-		jtxtareaLog.setEditable(false);
-		scrollPane_1.setViewportView(jtxtareaLog);
+		textPane = new JTextPane();
+		textPane.setEditable(false);
+		scrollPane.setViewportView(textPane);
+		getContentPane().add(scrollPane);
 		setVisible(false);
 				
 	}
@@ -49,7 +50,8 @@ public class LogWindow extends JFrame {
 	 * Add String to textarea
 	 */
 	
-	public void setLog(String logItem) {		
-		jtxtareaLog.append(logItem + "\n");
+	public void setLog(String log) {
+		textPane.setText(log);
+		verticalScrollbar.setValue(verticalScrollbar.getMaximum());
 	}
 }

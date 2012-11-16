@@ -116,6 +116,21 @@ public class Facade {
 		System.out.println(move);
 		appController.givePlayerMove(move);
 	}
+	
+	/** Returns the current log as string
+	 * 
+	 * @return
+	 */
+	public String getLog() { //FIXME: maybe move this into the logger?
+		StringBuilder builder = new StringBuilder();
+		
+		for (Object entry : appController.getLogger().getLog()) {
+			builder.append(entry.toString());
+			builder.append("\n");
+		}
+		
+		return builder.toString();
+	}
 
 	/** Get the current GameState
 	 * 

@@ -468,4 +468,12 @@ public class ApplicationController extends AObservable{
 		
 		return winner;
 	}
+	
+	/** Getter for the Logger object
+	 * 
+	 * @return
+	 */
+	public Logger getLogger() {
+		return logger;
+	}
 }
