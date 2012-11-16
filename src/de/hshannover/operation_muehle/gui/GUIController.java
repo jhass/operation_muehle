@@ -18,12 +18,11 @@ import de.hshannover.operation_muehle.utils.observer.IObserver;
  */
 public class GUIController implements IObserver {
 	private MainWindow mainWindow;
-	//private final LogWindow logWindow;
-	public static LogWindow logWindow;
+	private final LogWindow logWindow;
 	
 	public GUIController() {
 		this.mainWindow = new MainWindow();
-		logWindow = new LogWindow();
+		this.logWindow = new LogWindow();
 		
 		this.mainWindow.addToggleLogCallback(new Runnable() {
 			@Override
@@ -118,7 +117,7 @@ public class GUIController implements IObserver {
 	 * 
 	 */
 	public void toggleLog() {
-		logWindow.toggleVisibility();
+		this.logWindow.toggleVisibility();
 	}
 		
 	private boolean newMove(Spot src, Spot dst, Color color) {

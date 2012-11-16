@@ -14,8 +14,7 @@ import de.hshannover.operation_muehle.utils.observer.AObservable;
  */
 public class ApplicationController extends AObservable{
 	private HashMap<Player.Color, Player> players;
-	//private Logger logger;
-	public Logger logger;
+	private Logger logger;
 	private Gameboard gameboard;
 	private Player currentPlayer;
 	private Player winner;
