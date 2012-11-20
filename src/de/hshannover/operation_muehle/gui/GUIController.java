@@ -1,5 +1,6 @@
 package de.hshannover.operation_muehle.gui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.hshannover.operation_muehle.Facade;
@@ -18,11 +19,11 @@ import de.hshannover.operation_muehle.utils.observer.IObserver;
  */
 public class GUIController implements IObserver {
 	private MainWindow mainWindow;
-	private final LogWindow logWindow;
+	private static LogWindow logWindow;
 	
 	public GUIController() {
 		this.mainWindow = new MainWindow();
-		this.logWindow = new LogWindow();
+		logWindow = new LogWindow();
 		
 		this.mainWindow.addToggleLogCallback(new Runnable() {
 			@Override
@@ -117,7 +118,7 @@ public class GUIController implements IObserver {
 	 * 
 	 */
 	public void toggleLog() {
-		this.logWindow.toggleVisibility();
+		logWindow.toggleVisibility();
 	}
 		
 	private boolean newMove(Spot src, Spot dst, Color color) {
@@ -132,5 +133,12 @@ public class GUIController implements IObserver {
 	public void close() {
 		Facade.getInstance().abortGame();
 		System.exit(0); // TODO: -> Facade?
+	}
+	
+	/**
+	 * gives the current log to logWindow
+	 */
+	public static void doLog(ArrayList<String> logList) {
+		logWindow.setLog(logList);
 	}
 }

@@ -3,6 +3,7 @@ package de.hshannover.operation_muehle.logic;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import de.hshannover.operation_muehle.gui.GUIController;
 import de.hshannover.operation_muehle.utils.observer.AObservable;
 
 /**
@@ -118,6 +119,7 @@ public class ApplicationController extends AObservable{
 							cPlayer.increaseStones();
 							gameboard.applySlot(lastMove.toSlot(), currentPlayer.getColor().getSlotStatus());
 							logger.addEntry(lastMove.toSlot());
+							GUIController.doLog(logger.getLog());
 						} else if (currentPlayer.getPhase() > 1) {
 							executeMove(lastMove);
 						}
@@ -283,6 +285,7 @@ public class ApplicationController extends AObservable{
 //		System.out.println(gameboard.toString());
 		gameboard.applyMove(move);
 		logger.addEntry(move);
+		GUIController.doLog(logger.getLog());
 //		System.out.println("Spielfeld nach Zugausfuehrung.\n");
 //		System.out.println(gameboard.toString());
 		System.out.println("Letzter Zug: \n");

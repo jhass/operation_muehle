@@ -1,6 +1,7 @@
 package de.hshannover.operation_muehle.gui;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -46,10 +47,14 @@ public class LogWindow extends JFrame {
 	}
 	
 	/**
-	 * Add String to textarea
+	 * Replace log entries with new ones
 	 */
 	
-	public void setLog(String logItem) {		
-		jtxtareaLog.append(logItem + "\n");
+	public void setLog(ArrayList<String> logList) {
+		jtxtareaLog.setText("");
+		for(int i = 0; i < logList.size(); i++){
+		jtxtareaLog.append((String)logList.get(i) + "\n");
+		}
 	}
+
 }
