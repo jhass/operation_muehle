@@ -81,7 +81,6 @@ public class ApplicationController extends AObservable{
 
 			@Override
 			public void run() {
-				//TODO: restore from SaveState or serialize whole thread into saveState
 				Move lastMove = null;
 				lastRemovedStone = null;
 				gameRunning = true;
@@ -136,8 +135,8 @@ public class ApplicationController extends AObservable{
 						)
 					);
 				} else {
-					//FIXME: interface seems incorrectly used, if it's the first move of white in MOVE_PHASE, lastMove should be (null, lastPlacedStoneOfBlack)
-					//Yes, the interface is a complete mindfuck.
+					// lastMove is already correctly set in the transition
+					// special case since we internally handle remove that way.
 					currentMove = players.getCurrent().doMove(lastMove,
 															  lastRemovedStone);
 				}
