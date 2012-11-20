@@ -13,8 +13,6 @@ import de.hshannover.operation_muehle.utils.observer.AObservable;
  * @author Jonne Haß
  *
  */
-// REFACTOR TODO
-//TODO: test load/save
 
 public class ApplicationController extends AObservable{
 	private PlayerManager players;
@@ -224,6 +222,14 @@ public class ApplicationController extends AObservable{
 	public GameState getGameState() {
 		return new GameState(gameboard, players.getCurrent(), 
 									winner, logger.getLog());
+	}
+	
+	/** Returns the current logger object
+	 * 
+	 * @return
+	 */
+	public Logger getLogger() {
+		return logger;
 	}
 	
 	/**
