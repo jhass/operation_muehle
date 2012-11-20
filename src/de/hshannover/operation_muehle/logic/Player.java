@@ -194,7 +194,7 @@ public class Player implements Serializable {
 	 * @return
 	 */
 	public Move doMove(Move last, Slot removed ) {
-		return (Move) this.aiStrategy.doMove(last, (de.hshannover.inform.muehle.strategy.Slot)removed , this.thinkTime);
+		return new Move(this.aiStrategy.doMove(last, removed , this.thinkTime));
 	}
 	
 	/**
@@ -204,9 +204,7 @@ public class Player implements Serializable {
 	 * @return
 	 */
 	public de.hshannover.inform.muehle.strategy.Slot placeStone(Slot last, Slot removed) {
-		return (de.hshannover.inform.muehle.strategy.Slot)this.aiStrategy.placeStone(
-					(de.hshannover.inform.muehle.strategy.Slot)last, 
-					(de.hshannover.inform.muehle.strategy.Slot)removed, this.thinkTime);
+		return this.aiStrategy.placeStone(last, removed, this.thinkTime);
 	}
 
 	/** Returns the opponent color

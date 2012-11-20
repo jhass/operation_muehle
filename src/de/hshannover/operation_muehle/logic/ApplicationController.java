@@ -14,8 +14,8 @@ import de.hshannover.operation_muehle.utils.observer.AObservable;
  *
  */
 // REFACTOR TODO
-//TODO: test PvAI
 //TODO: test AIvAI
+//TODO: test load/save
 
 public class ApplicationController extends AObservable{
 	private PlayerManager players;
@@ -89,40 +89,45 @@ public class ApplicationController extends AObservable{
 				lastRemovedStone = null;
 				gameRunning = true;
 				
-				while(isGameRunning()) {
-					if(players.isCurrentPlayerAI()) {
-						setCurrentMoveToAIMove(lastMove);
-						
-						if (isInvalidMove(currentMove)) {
-							winner = players.getOpponent(); //TODO log, inform GUI
-							gameRunning = false;
-							break; //FIXME: do we need any kind of cleanup?
-						}
-					}
-					
-					if (moveAvailable()) {
-						executeMove(currentMove);
-						queryRemovalIfNecessary(currentMove);
-						
-						if (winner == null)
-							updateWinner();
-						
-						if (winner != null) { 
-							System.out.println("Gewinner: "+winner); //TODO: inform GUI, log, remove
-							gameRunning = false;
-							break; //FIXME: do we need any kind of cleanup?
+				try {
+					while(isGameRunning()) {
+						if(players.isCurrentPlayerAI()) {
+							setCurrentMoveToAIMove(lastMove);
 						}
 						
-						players.opponentsTurn();
-						lastMove = currentMove;
-						currentMove = null;
-					} else {
-						waitForHumanPlayerMove();
+						if (moveAvailable()) {
+							executeMove(currentMove);
+							queryRemovalIfNecessary(currentMove);
+							
+							if (winner == null) {
+								updateWinner();
+							}
+							
+							if (winner != null) {
+								gameRunning = false;
+								break;
+							}
+							
+							players.opponentsTurn();
+							lastMove = currentMove;
+							currentMove = null;
+						} else {
+							waitForHumanPlayerMove();
+						}
 					}
+				} catch (InvalidMoveException e) {
+					System.out.println("AI made invalid move "+e.move);
+					winner = players.getOpponent(); //TODO log, inform GUI
+					gameRunning = false;
+				}
+				
+				if (winner != null) { 
+					System.out.println("Gewinner: "+winner); //TODO: inform GUI, log, remove debug
 				}
 			}
 
-			private void setCurrentMoveToAIMove(Move lastMove) {
+			private void setCurrentMoveToAIMove(Move lastMove)
+				throws InvalidMoveException {
 				if (players.isCurrentPlayersPhase(Player.PLACE_PHASE)) {
 					currentMove = new Move(
 						null,
@@ -139,37 +144,50 @@ public class ApplicationController extends AObservable{
 					currentMove = players.getCurrent().doMove(lastMove,
 															  lastRemovedStone);
 				}
+				
+				if (isInvalidMove(currentMove)) {
+					throw new InvalidMoveException(currentMove);
+				}
 			}
 
-			private void queryRemovalIfNecessary(Move move) {
+			private void queryRemovalIfNecessary(Move move)
+				throws InvalidMoveException {
 				if (hasClosedMill(move)) {
 					closedMill = true;
 					System.out.println("Muehle: "+closedMill); //TODO: debug, remove me
 					
+					// Reset query mechanism
+					Move currentMoveCache = currentMove;
+					currentMove = null;
+					
 					if (players.isCurrentPlayerAI()) {
-						lastRemovedStone = new Slot(players.getCurrent().removeStone());
+						currentMove = new Move( //TODO: enforce think time
+							new Slot(players.getCurrent().removeStone()),
+							null
+						);
 						
+						if (isInvalidMove(currentMove)) {
+							closedMill = false;
+							throw new InvalidMoveException(currentMove);
+						}
 					} else {
 						setObservableChanged(true);
 						notifyObserver(); //TODO: inform GUI that the user should remove a stone
-						
-						// Reset query mechanism
-						Move currentMoveCache = currentMove;
-						currentMove = null;
 						
 						// Wait for move
 						while (noMoveAvailable()) {
 							waitForHumanPlayerMove();
 						}
-						
-						executeMove(currentMove);
-						lastRemovedStone = currentMove.fromSlot();
-						
-						//Restore current move
-						currentMove = currentMoveCache;
 					}
 					
+					executeMove(currentMove);
+					
+					lastRemovedStone = currentMove.fromSlot();
+					
+					//Restore current move
+					currentMove = currentMoveCache;
 					closedMill = false;
+					
 				} else {
 					lastRemovedStone = null;
 				}
@@ -192,7 +210,7 @@ public class ApplicationController extends AObservable{
 	 */
 	public void givePlayerMove(Move move) throws InvalidMoveException {
 		if(players.isCurrentPlayerAI() || isInvalidMove(move)) {
-			throw new InvalidMoveException();
+			throw new InvalidMoveException(move);
 		}
 		
 		currentMove = move;

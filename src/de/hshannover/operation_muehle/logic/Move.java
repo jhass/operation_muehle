@@ -29,6 +29,16 @@ public class Move implements de.hshannover.inform.muehle.strategy.Move {
 		this.endSlot= end;
 	}
 	
+	public Move(de.hshannover.inform.muehle.strategy.Move move) {
+		if (move.fromSlot() != null) {
+			this.startSlot = new Slot(move.fromSlot());
+		}
+		
+		if (move.toSlot() != null) {
+			this.endSlot = new Slot(move.toSlot());
+		}
+	}
+
 	/**
 	 * Gibt das Startfeld zurück.
 	 * @return Slot
