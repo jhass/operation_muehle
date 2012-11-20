@@ -14,7 +14,6 @@ import de.hshannover.operation_muehle.utils.observer.AObservable;
  *
  */
 // REFACTOR TODO
-//TODO: test AIvAI
 //TODO: test load/save
 
 public class ApplicationController extends AObservable{
