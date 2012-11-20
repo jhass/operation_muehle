@@ -21,7 +21,7 @@ public class GetPathDialog extends JFileChooser {
 	
 	protected GetPathDialog(Component parent) {
 		super();
-		filter = new FileNameExtensionFilter("Save game", "msave");
+		filter = new FileNameExtensionFilter("Save game (.msave)", "msave");
 		setFileFilter(filter);
 		this.parent = parent;
 	}

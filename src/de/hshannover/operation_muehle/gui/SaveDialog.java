@@ -21,7 +21,12 @@ public class SaveDialog extends GetPathDialog {
 	 */
 	public static String getPath(Component parent) {
 		GetPathDialog dialog = new SaveDialog(parent);
-		return doGetPath(dialog);
+		String path = doGetPath(dialog);
+		if (!path.endsWith(".msave")) {
+			path += ".msave";
+		}
+		
+		return path;
 	}
 }
 
