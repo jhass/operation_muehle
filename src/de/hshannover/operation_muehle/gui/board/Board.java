@@ -1,7 +1,6 @@
 package de.hshannover.operation_muehle.gui.board;
 
 import java.awt.Canvas;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -18,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import de.hshannover.operation_muehle.gui.MoveCallback;
+import de.hshannover.operation_muehle.gui.Theme;
 import de.hshannover.operation_muehle.gui.board.TextureUtils;
 import de.hshannover.operation_muehle.logic.Gameboard;
 import de.hshannover.operation_muehle.logic.Slot;
@@ -45,7 +45,7 @@ public class Board extends Canvas {
 	public Board() {
 		super();
 		
-		boardTexture = TextureUtils.load("light-wood.jpg");
+		boardTexture = TextureUtils.load(Theme.BOARD_TEXTURE);
 		
 		addOfflineRenderBuffersInitializer();
 		addInteractionListeners();
@@ -285,13 +285,13 @@ public class Board extends Canvas {
 	}
 
 	private void drawBackground(Graphics pen) {
-		pen.setColor(new Color(11, 106, 11));
+		pen.setColor(Theme.BACKGROUND_COLOR);
 		
 		pen.fillRect(0, 0, width, height);
 	}
 	
 	private void drawBoard(Graphics2D pen) {
-		pen.setColor(Color.BLACK);
+		pen.setColor(Theme.BOARD_COLOR);
 		
 		pen.drawRect(spacing, spacing,
 					 width-2*spacing, 
@@ -311,7 +311,7 @@ public class Board extends Canvas {
 		pen.drawLine(width/2, spacing, width/2, 3*spacing);
 		pen.drawLine(width/2, height-3*spacing, width/2, height-spacing);
 		
-		pen.setColor(new Color(0xEE222222, true));
+		pen.setColor(Theme.SPOT_HINT);
 		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		for (Spot spot : spots) {
 			pen.fill(new Ellipse2D.Float(spot.getPosition().x-6,
@@ -336,7 +336,7 @@ public class Board extends Canvas {
 	}
 
 	private void drawShade(Graphics pen) {
-		pen.setColor(new Color(0xDD222222, true));
+		pen.setColor(Theme.SHADE_COLOR);
 		pen.fillRect(0, 0, width, height);
 	}
 
