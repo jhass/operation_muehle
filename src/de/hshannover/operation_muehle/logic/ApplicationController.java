@@ -1,6 +1,5 @@
 package de.hshannover.operation_muehle.logic;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.hshannover.operation_muehle.utils.observer.AObservable;
@@ -20,9 +19,11 @@ public class ApplicationController extends AObservable{
 	private Gameboard gameboard;
 	private Player winner;
 	private Move currentMove;
-	private boolean closedMill; //TODO: feels like a hack
 	private Thread gameThread;
 	private boolean gameRunning;
+	private MoveValidator moveValidator;
+	private MoveValidator removeMoveValidator;
+	private MoveValidator currentMoveValidator;
 	
 	/**
 	 * Simple, basic Constructor.
@@ -38,7 +39,9 @@ public class ApplicationController extends AObservable{
 		currentMove = null;
 		gameRunning = false;
 		winner = null;
-		closedMill = false;
+		moveValidator = new MoveValidator(gameboard, players);
+		removeMoveValidator = new RemoveMoveValidator(gameboard, players);
+		currentMoveValidator = moveValidator;
 		
 		setObservableChanged(true);
 	}
@@ -52,6 +55,8 @@ public class ApplicationController extends AObservable{
 		resetController();
 		
 		players = new PlayerManager(gameOptions.get("white"), gameOptions.get("black"));
+		moveValidator.setPlayers(players);
+		removeMoveValidator.setPlayers(players);
 		
 		notifyObserver();
 		playGame();
@@ -67,6 +72,8 @@ public class ApplicationController extends AObservable{
 		
 		players = state.getPlayers();
 		gameboard = state.currentGB;
+		moveValidator.setPlayers(players);
+		removeMoveValidator.setPlayers(players);
 		
 		notifyObserver();
 		playGame();
@@ -149,8 +156,8 @@ public class ApplicationController extends AObservable{
 			private void queryRemovalIfNecessary(Move move)
 				throws InvalidMoveException {
 				if (hasClosedMill(move)) {
-					closedMill = true;
-					System.out.println("Muehle: "+closedMill); //TODO: debug, remove me
+					currentMoveValidator = removeMoveValidator;
+					System.out.println("Muehle!"); //TODO: debug, remove me
 					
 					// Reset query mechanism
 					Move currentMoveCache = currentMove;
@@ -163,7 +170,7 @@ public class ApplicationController extends AObservable{
 						);
 						
 						if (isInvalidMove(currentMove)) {
-							closedMill = false;
+							currentMoveValidator = moveValidator;
 							throw new InvalidMoveException(currentMove);
 						}
 					} else {
@@ -182,7 +189,7 @@ public class ApplicationController extends AObservable{
 					
 					//Restore current move
 					currentMove = currentMoveCache;
-					closedMill = false;
+					currentMoveValidator = moveValidator;
 					
 				} else {
 					lastRemovedStone = null;
@@ -254,7 +261,7 @@ public class ApplicationController extends AObservable{
 	}
 
 	private boolean isInvalidMove(Move move) {
-		return !isValidMove(move);
+		return !currentMoveValidator.isValidMove(move);
 	}
 
 	private boolean moveAvailable() {
@@ -323,234 +330,10 @@ public class ApplicationController extends AObservable{
 
 	private boolean hasClosedMill(Move move) {
 		return move.isNoRemoval() &&
-			   isInMill(gameboard.returnSlot(move.toSlot()));
-	}
-
-	/**
-	 * Checks if the Stone in the given Slot is closing a 
-	 * row of three (mill).
-	 * @param slot The Slot that contains the Stone to be checked.
-	 * @return If the Stone is part of a Mill.
-	 */
-	private boolean isInMill(Slot slot) {
-		if (slot.isEmpty())
-			return false;
-		
-		Slot[] closeSlotNeighbours = gameboard.getNeighbours(slot);
-		boolean isTopNull = (closeSlotNeighbours[0] == null);
-		boolean isRightNull = (closeSlotNeighbours[1] == null);
-		boolean isBottomNull = (closeSlotNeighbours[2] == null);
-		boolean isLeftNull = (closeSlotNeighbours[3] == null);
-		boolean isMill = false;
-				 
-		if (!(isTopNull || isBottomNull)) {
-			/* Wenn die Felder oberhalb und unterhalb des zu pruefenden Feldes existieren,
-			 * pruefe, ob eine Muehle geschlossen ist
-			 */
-			
-			isMill = hasTopAndBottomStatusOf(closeSlotNeighbours, slot.getStatus());
-		} else if (isBottomNull) {
-			/* Wenn der untere Nachbar leer ist, befindet sich der uebergebene Slot
-			 * am unteren Ende einer Dreierreihe. Es muessen zum Vergleich die beiden
-			 * Nachbarn oberhalb bestimmt werden.
-			 */
-			isMill = checkForMill(slot, closeSlotNeighbours[0],0);
-		} else if (isTopNull) {
-			/* Wenn der obere Nachbar leer ist, befindet sich der uebergebene Slot
-			 * am oberen Ende einer Dreierreihe. Es muessen zum Vergleich die beiden
-			 * Nachbarn unterhalb bestimmt werden.
-			 */
-			isMill = checkForMill(slot, closeSlotNeighbours[2],2);
-		}
-		if (isMill)
-			return true;
-		
-		if (!(isLeftNull || isRightNull)) {
-			/* Wenn die Felder links und rechts des zu pruefenden Feldes existieren,
-			 * pruefe, ob eine Muehle geschlossen ist
-			 */
-			
-			isMill = hasLeftAndRightStatusOf(closeSlotNeighbours, slot.getStatus());
-		} else if (isLeftNull) {
-			/* Wenn der rechte Nachbar leer ist, befindet sich der uebergebene Slot
-			 * am rechten Ende einer Dreierreihe. Es muessen zum Vergleich die beiden
-			 * Nachbarn in linker Richtung bestimmt werden.
-			 */
-			isMill = checkForMill(slot, closeSlotNeighbours[1],1);
-		} else if (isRightNull) {
-			/* Wenn der linke Nachbar leer ist, befindet sich der uebergebene Slot
-			 * am linken Ende einer Dreierreihe. Es muessen zum Vergleich die beiden
-			 * Nachbarn in rechter Richtung bestimmt werden.
-			 */
-			isMill = checkForMill(slot, closeSlotNeighbours[3],3);
-		}
-		
-		return isMill;
-	}
-
-	private boolean hasTopAndBottomStatusOf(Slot[] closeSlotNeighbours, Slot.Status status) {
-		return closeSlotNeighbours[0].getStatus() == status &&
-			   closeSlotNeighbours[2].getStatus() == status;
-	}
-
-	/**
-	 * Die Methode nimmt zwei Slots entgegen (die in einer Reihe liegen), bestimmt den
-	 * verbleibenden dritten Slot und prueft die drei Slots auf Statusgleichheit.
-	 * Gibt true zurueck, wenn es eine Muehle ist, gibt falsche zurueck, wenn es keine
-	 * Muehle ist
-	 * @param firstSlot Urspruenglicher Slot
-	 * @param secondSlot Erster Nachbar in Reihe
-	 * @param index Index, an dem der dritte Reihenstein zu finden ist
-	 * @return boolean
-	 */
-	private boolean checkForMill(Slot firstSlot, Slot secondSlot, int index) {
-		return firstSlot.getStatus() == secondSlot.getStatus() &&
-			   firstSlot.getStatus() == gameboard.getNeighbours(secondSlot)[index].getStatus();
-	}
-
-	private boolean hasLeftAndRightStatusOf(Slot[] closeSlotNeighbours, Slot.Status status) {
-		return closeSlotNeighbours[1].getStatus() == status &&
-			   closeSlotNeighbours[3].getStatus() == status;
+			   currentMoveValidator.isInMill(gameboard.returnSlot(move.toSlot()));
 	}
 
 	private boolean noMoveAvailable() {
 		return currentMove == null;
-	}
-
-	/** Checks if a Move is a valid one or not.
-	 * 
-	 * @param move The Move to be checked.
-	 * @return If the Move is true or not.
-	 */
-	private boolean isValidMove(Move move) {
-		Slot startSlot, endSlot;;
-		
-		if (isPlacementAndNotInPlacementPhase(move))
-			return false;
-		if (isRemovalAndNotInRemovalMode(move))
-			return false;
-		if (isNoOperationMove(move))
-			return false;
-		
-		
-		if (isRemovalAndInRemovalMode(move)) {
-			// We don't do this earlier because this function is performance critical
-			startSlot = gameboard.returnSlot(move.fromSlot());
-			return canRemove(startSlot);
-		}
-		
-		// We don't do this earlier because this function is performance critical
-		endSlot = gameboard.returnSlot(move.toSlot());
-		
-		if (isPlacementAndPlacementPhaseAndEmptyDestination(move, endSlot))
-			return true;
-		if (isMoveToUsedSlotAndNotRemovalMode(endSlot))
-			return false;
-		if (isMoveAndJumpPhaseAndEmptyDestination(move, endSlot))
-			return true;
-		
-		// Yeah, I know, not DRY
-		startSlot = gameboard.returnSlot(move.fromSlot());
-		
-		
-		if (isMoveOfOpponentsStoneOrEmptySlot(startSlot))
-			return false;
-		// most expensive op, last one
-		if (isMoveAndMovePhaseAndDestinationEmptyNeighbour(move, startSlot, endSlot))
-			return true;
-		
-		return false; // In doubt refuse
-	}
-
-	private boolean isPlacementAndNotInPlacementPhase(Move move) {
-		return (closedMill || players.isCurrentPlayersPhaseNot(Player.PLACE_PHASE)) &&
-			   move.isPlacement();
-	}
-
-	private boolean isRemovalAndNotInRemovalMode(Move move) {
-		return move.isRemoval() && !closedMill;
-	}
-
-	private boolean isNoOperationMove(Move move) {
-		return move.isMove() &&
-			   move.fromSlot().hashCode() == move.toSlot().hashCode();
-	}
-
-	private boolean isRemovalAndInRemovalMode(Move move) {
-		return move.isRemoval() && closedMill;
-	}
-
-	/**
-	 * Checks if a Stone in a Slot is removable or not.
-	 * @param slot The Slot that contains the Stone in question.
-	 * @return If the Stone can be removed.
-	 */
-	private boolean canRemove(Slot slot) {
-		ArrayList<Slot> removeableSlots = new ArrayList<Slot>();
-		
-		/*
-		 * Pruefen, ob alle gegnerischen Steine innerhalb einer Muehle sind
-		 * Wenn ein gegnerischer Stein nicht in einer Muehle ist, dann wird der
-		 * Slot in die Liste hinzugefuegt. Wenn der gesuchte Slot nicht in einer
-		 * Mühle ist kann er entfernt werden.
-		 */
-		for (Slot opponentSlot: gameboard.getStonesOfStatus(players.getOpponentsSlotStatus())) {
-			if (!isInMill(opponentSlot)) {
-				if (opponentSlot.hashCode() == slot.hashCode())
-					return true;
-				removeableSlots.add(opponentSlot);
-			}
-		}
-		
-		/*
-		 * Gibt true zurueck, wenn der die Liste leer ist, da nun alle Steine
-		 * innherhalb einer Muehle liegen und der Stein erfernt werden darf.
-		 * Oder wenn in der Liste Elemente sind, gibt es Steine außerhalb
-		 * der Muehle, dann darf der Stein nur entfernt werden, wenn er in der
-		 * Liste enthalten ist.
-		 */
-		if (removeableSlots.size() == 0 || removeableSlots.contains(slot))
-			return true;
-		
-		return false;
-	}
-
-	private boolean isPlacementAndPlacementPhaseAndEmptyDestination(Move move,
-			Slot endSlot) {
-		return move.isPlacement() &&
-			   players.isCurrentPlayersPhase(Player.PLACE_PHASE) &&
-			   endSlot.isEmpty();
-	}
-
-	private boolean isMoveToUsedSlotAndNotRemovalMode(Slot endSlot) {
-		return !closedMill && !endSlot.isEmpty();
-	}
-
-	private boolean isMoveAndJumpPhaseAndEmptyDestination(Move move, Slot endSlot) {
-		return move.isMove() &&
-			   players.isCurrentPlayersPhase(Player.JUMP_PHASE) &&
-			   endSlot.isEmpty();
-	}
-
-	private boolean isMoveOfOpponentsStoneOrEmptySlot(Slot startSlot) {
-		return players.isCurrentPlayersPhase(Player.MOVE_PHASE) && 
-			   startSlot.getStatus() != players.getCurrentPlayersSlotStatus();
-	}
-
-	private boolean isMoveAndMovePhaseAndDestinationEmptyNeighbour(Move move,
-			Slot startSlot, Slot endSlot) {
-		if (players.isCurrentPlayersPhaseNot(Player.MOVE_PHASE))
-			return false;
-		
-		for (Slot neighbour : gameboard.getNeighbours(startSlot)) {
-			if (neighbour != null &&
-				neighbour.hashCode() == endSlot.hashCode() &&
-				neighbour.isEmpty()) {
-				return true;
-			}
-		}
-		
-		
-		return false;
 	}
 }
