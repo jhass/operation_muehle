@@ -323,6 +323,10 @@ public class ApplicationController extends AObservable{
 						}
 					}
 				}
+				
+				if (winner != null) {
+					break;
+				}
 			}
 		}
 	}
