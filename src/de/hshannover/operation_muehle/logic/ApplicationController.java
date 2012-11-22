@@ -120,12 +120,14 @@ public class ApplicationController extends AObservable{
 					}
 				} catch (InvalidMoveException e) {
 					System.out.println("AI made invalid move "+e.move);
-					winner = players.getOpponent(); //TODO log, inform GUI
+					winner = players.getOpponent(); //TODO log
 					gameRunning = false;
 				}
 				
 				if (winner != null) { 
-					System.out.println("Gewinner: "+winner); //TODO: inform GUI, log, remove debug
+					System.out.println("Gewinner: "+winner);
+					setObservableChanged(true);
+					notifyObserver(); //TODO: log, remove debug
 				}
 			}
 

@@ -13,6 +13,7 @@ import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -47,6 +48,7 @@ public class Board extends Canvas {
 	private int horizontalSpacing;
 	private int verticalSpacing;
 	private PlayerManager players;
+	private String infoText;
 	
 	public Board() {
 		super();
@@ -187,6 +189,22 @@ public class Board extends Canvas {
 	public void setPlayerInfo(PlayerManager players) {
 		this.players = players;
 	}
+	
+	/** Sets an info text that should be presented to the user
+	 * 
+	 */
+	public void setInfoText(String text) {
+		this.infoText = text;
+	}
+
+	/** Callback that's run when any kind of new move is generated, no matter if
+	 *   it's valid currently or not. 
+	 * 
+	 * @param moveCallback
+	 */
+	public void addNewMoveCallback(MoveCallback moveCallback) {
+		this.newMoveCallbacks .add(moveCallback);
+	}
 
 	private void repopulateStones() {
 		if (currentGameboard == null) {
@@ -245,11 +263,12 @@ public class Board extends Canvas {
 		redrawBoard(pen);
 		drawSpots(pen);
 		drawDraggedStone(pen);
+		
 		if (!isEnabled()) {
 			drawShade(pen);
-		} else {
-			drawWidgets(pen);
 		}
+		
+		drawWidgets(pen);
 	}
 
 	private boolean dimensionChanged() {
@@ -392,6 +411,7 @@ public class Board extends Canvas {
 			pen.fill(new Ellipse2D.Float(spot.getPosition().x-6,
 										 spot.getPosition().y-6, 12, 12));
 		}
+		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 
 	private void redrawBoard(Graphics pen) {
@@ -416,10 +436,17 @@ public class Board extends Canvas {
 	}
 	
 	private void drawWidgets(Graphics2D pen) {
-		if (players == null) {
-			return;
+		if (players != null && isEnabled()) {
+			drawPlayerCards(pen);
+	
 		}
 		
+		if (infoText != null && !infoText.isEmpty()) {
+			drawInfoTextBox(pen);
+		}
+	}
+	
+	private void drawPlayerCards(Graphics2D pen) {
 		Player white = players.getWhitePlayer();
 		Player black = players.getBlackPlayer();
 		Color whiteBG, blackBG;
@@ -453,7 +480,7 @@ public class Board extends Canvas {
 		
 		int offset = 110;
 		pen.setFont(header);
-		pen.drawString(player.getName(), leftCornerBase-120, height-offset);
+		pen.drawString(player.getDisplayName(), leftCornerBase-120, height-offset);
 		offset -= 20;
 		pen.setFont(base);
 		if (player.getAvailableStones() > 0) {
@@ -464,13 +491,29 @@ public class Board extends Canvas {
 		offset -= 20;
 		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
-
-	/** Callback that's run when any kind of new move is generated, no matter if
-	 *   it's valid currently or not. 
-	 * 
-	 * @param moveCallback
-	 */
-	public void addNewMoveCallback(MoveCallback moveCallback) {
-		this.newMoveCallbacks .add(moveCallback);
+	
+	private void drawInfoTextBox(Graphics2D pen) {
+		Font base = pen.getFont();
+		pen.setFont(base.deriveFont(Font.BOLD).deriveFont(16.0f));
+		Rectangle2D dimensions = pen.getFontMetrics().getStringBounds(infoText, pen);
+		int halfStringWidth = (int) (dimensions.getWidth()/2);
+		int halfStringHeight = (int) (dimensions.getHeight()/2);
+		
+		pen.setColor(new Color(0x88000000, true));
+		pen.fillRect(
+			width/2-halfStringWidth-10,
+			height/2-halfStringHeight-30,
+			halfStringWidth*2+20,
+			halfStringHeight*2+30
+		);
+		
+		pen.setColor(Color.WHITE);
+		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		pen.drawString(
+			infoText,
+			(int) (width/2-halfStringWidth),
+			(int) (height/2-halfStringHeight)
+		);
+		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 }

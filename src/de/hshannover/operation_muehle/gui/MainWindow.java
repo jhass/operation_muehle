@@ -68,7 +68,8 @@ public class MainWindow extends JFrame {
 	 */
 	public void noGameMode() {
 		btnSaveGame.setEnabled(false);
-		board.setEnabled(false); 
+		board.setEnabled(false);
+		board.setInfoText("Start a new game!");
 	}
 	
 	/** Set the window into game mode
@@ -77,6 +78,7 @@ public class MainWindow extends JFrame {
 	public void gameMode() {
 		btnSaveGame.setEnabled(true);
 		board.setEnabled(true);
+		board.setInfoText(null);
 	}
 	
 	private void setupListener() {
@@ -169,8 +171,20 @@ public class MainWindow extends JFrame {
 	public void drawBoard(Gameboard gameboard) {
 		board.setGameboard(gameboard);
 	}
-
+	
+	/** Sets the player infos
+	 * 
+	 * @param players
+	 */
 	public void updatePlayerInfo(PlayerManager players) {
 		board.setPlayerInfo(players);
+	}
+
+	/** Sets the info text
+	 * 
+	 * @param string
+	 */
+	public void setInfoText(String text) {
+		board.setInfoText(text);
 	}
 }

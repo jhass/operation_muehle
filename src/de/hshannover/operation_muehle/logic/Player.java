@@ -143,6 +143,20 @@ public class Player implements Serializable {
 		return this.name;
 	}
 	
+	/** Get the displayable name, that is in case of an AI the strategy name
+	 * 
+	 * @return String
+	 */
+	public String getDisplayName() {
+		if (isAI()) {
+			return aiStrategy.getStrategyName();
+		} else if (name.isEmpty()) {
+			return color.toString();
+		} else {
+			return name;
+		}
+	}
+	
 	/**
 	 * Getter für die Farbe
 	 * @return int
