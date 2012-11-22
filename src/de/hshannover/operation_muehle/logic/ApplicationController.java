@@ -189,6 +189,7 @@ public class ApplicationController extends AObservable{
 					
 					//Restore current move
 					currentMove = currentMoveCache;
+					
 					currentMoveValidator = moveValidator;
 					
 				} else {
@@ -280,7 +281,7 @@ public class ApplicationController extends AObservable{
 			players.increaseCurrentPlayersStones();
 			gameboard.applySlot(currentMove.toSlot(), players.getCurrentPlayersSlotStatus());
 			logger.addEntry(move.toSlot());
-		} else if (players.getCurrentPlayersPhase() > Player.PLACE_PHASE) {
+		} else if (players.getCurrentPlayersPhase() >= Player.MOVE_PHASE) {
 			gameboard.applyMove(move);
 			logger.addEntry(move);
 		}
@@ -288,7 +289,7 @@ public class ApplicationController extends AObservable{
 		setObservableChanged(true);
 		notifyObserver();
 		
-		System.out.println("Letzter Zug: \n"); //TODO: debug, remove me
+		System.out.print("Letzter Zug: "); //TODO: debug, remove me
 		System.out.println(logger.getLastEntry());
 	}
 

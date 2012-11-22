@@ -30,7 +30,7 @@ import de.hshannover.operation_muehle.logic.Slot;
  */
 public class Board extends Canvas {
 	private static final long serialVersionUID = 1L;
-	private int spacing;
+	private int innerSpacing;
 
 	private Spot spots[];
 	private Gameboard currentGameboard;
@@ -41,6 +41,8 @@ public class Board extends Canvas {
 	private Stone draggedStone;
 	private Spot draggedStoneSrc;
 	private ArrayList<MoveCallback> newMoveCallbacks = new ArrayList<MoveCallback>();
+	private int horizontalSpacing;
+	private int verticalSpacing;
 	
 	public Board() {
 		super();
@@ -221,7 +223,9 @@ public class Board extends Canvas {
 		if (dimensionChanged()) {
 			width = getWidth();
 			height = getHeight();
-			spacing = (width+height)/20; // TODO: better algorithm, maybe separate border and inner spacing
+			innerSpacing = (width+height)/25;
+			verticalSpacing = innerSpacing/3;
+			horizontalSpacing = 150; //FIXME: special value
 		
 			recreateSpots();
 			recreateBoard();
@@ -245,27 +249,71 @@ public class Board extends Canvas {
 		
 		for (int row = 1; row <= 3; row++) {
 			spots[index++] = new Spot( // A1, B2, C3
-				new Point(row*spacing, height-row*spacing),
-				(char) (64+row), row);
+				new Point(
+					horizontalSpacing+row*innerSpacing,
+					height-verticalSpacing-row*innerSpacing
+				),
+				(char) (64+row),
+				row
+			);
 			spots[index++] = new Spot( // A4, B4, C4 
-				new Point(row*spacing, height/2), (char) (64+row), 4);
+				new Point(
+					horizontalSpacing+row*innerSpacing,
+					height/2
+				),
+				(char) (64+row),
+				4
+			);
 			spots[index++] = new Spot( // A7, B6, C5
-				new Point(row*spacing, row*spacing),
-				(char) (64+row), 8-row);
+				new Point(
+					horizontalSpacing+row*innerSpacing,
+					verticalSpacing+row*innerSpacing
+				),
+				(char) (64+row),
+				8-row
+			);
 			
 			spots[index++] = new Spot( // D1, D2, D3
-				new Point(width/2, height-row*spacing), 'D', row);
+				new Point(
+					width/2,
+					height-verticalSpacing-row*innerSpacing
+				),
+				'D',
+				row
+			);
 			spots[index++] = new Spot( // D7, D6, D5
-				new Point(width/2, row*spacing), 'D', 8-row);
+				new Point(
+					width/2,
+					verticalSpacing+row*innerSpacing
+				),
+				'D',
+				8-row
+			);
 			
 			spots[index++] = new Spot( // G1, F2, E3
-				new Point(width-row*spacing, height-row*spacing),
-				(char) (72-row), row);
+				new Point(
+					width-horizontalSpacing-row*innerSpacing,
+					height-verticalSpacing-row*innerSpacing
+				),
+				(char) (72-row),
+				row
+			);
 			spots[index++] = new Spot( // E4, F5, G4
-				new Point(width-row*spacing, height/2), (char) (72-row), 4);
+				new Point(
+					width-horizontalSpacing-row*innerSpacing,
+					height/2
+				),
+				(char) (72-row),
+				4
+			);
 			spots[index++] = new Spot( // E5, F6, G7
-				new Point(width-row*spacing, row*spacing),
-				(char) (72-row), 8-row);
+				new Point(
+					width-horizontalSpacing-row*innerSpacing,
+					verticalSpacing+row*innerSpacing
+				),
+				(char) (72-row),
+				8-row
+			);
 		}
 		
 		repopulateStones();
@@ -277,9 +325,19 @@ public class Board extends Canvas {
 			board = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 			pen = board.createGraphics();
 			drawBackground(pen);
-			pen.drawImage(TextureUtils.makeRoundedCorner(
-					TextureUtils.getScaledImage(boardTexture, width-spacing, height-spacing),
-					30), spacing/2, spacing/2, null);
+			pen.drawImage(
+				TextureUtils.makeRoundedCorner(
+					TextureUtils.getScaledImage(
+						boardTexture,
+						width-horizontalSpacing*2,
+						height-verticalSpacing*2
+					),
+					30
+				),
+				horizontalSpacing,
+				verticalSpacing,
+				null
+			);
 			drawBoard(pen);
 		} catch (IOException e) {}
 	}
@@ -293,23 +351,27 @@ public class Board extends Canvas {
 	private void drawBoard(Graphics2D pen) {
 		pen.setColor(Color.BLACK);
 		
-		pen.drawRect(spacing, spacing,
-					 width-2*spacing, 
-					 height-2*spacing);
+		pen.drawRect(horizontalSpacing+innerSpacing, verticalSpacing+innerSpacing,
+					 width-2*horizontalSpacing-2*innerSpacing, 
+					 height-2*verticalSpacing-2*innerSpacing);
 		
-		pen.drawRect(2*spacing, 2*spacing,
-				     width-4*spacing,
-				     height-4*spacing);
+		pen.drawRect(horizontalSpacing+2*innerSpacing, verticalSpacing+2*innerSpacing,
+				     width-2*horizontalSpacing-4*innerSpacing,
+				     height-2*verticalSpacing-4*innerSpacing);
 		
 		
-		pen.drawRect(3*spacing, 3*spacing,
-				     width-6*spacing,
-				     height-6*spacing);
+		pen.drawRect(horizontalSpacing+3*innerSpacing, verticalSpacing+3*innerSpacing,
+				     width-2*horizontalSpacing-6*innerSpacing,
+				     height-2*verticalSpacing-6*innerSpacing);
 		
-		pen.drawLine(spacing, height/2, 3*spacing, height/2);
-		pen.drawLine(width-3*spacing, height/2, width-spacing, height/2);
-		pen.drawLine(width/2, spacing, width/2, 3*spacing);
-		pen.drawLine(width/2, height-3*spacing, width/2, height-spacing);
+		pen.drawLine(horizontalSpacing+innerSpacing, height/2,
+					 horizontalSpacing+3*innerSpacing, height/2);
+		pen.drawLine(width-horizontalSpacing-3*innerSpacing, height/2,
+					 width-horizontalSpacing-innerSpacing, height/2);
+		pen.drawLine(width/2, verticalSpacing+innerSpacing,
+					 width/2, verticalSpacing+3*innerSpacing);
+		pen.drawLine(width/2, height-verticalSpacing-3*innerSpacing,
+					 width/2, height-verticalSpacing-innerSpacing);
 		
 		pen.setColor(new Color(0xEE222222, true));
 		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

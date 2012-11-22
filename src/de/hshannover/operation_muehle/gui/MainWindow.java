@@ -57,7 +57,7 @@ public class MainWindow extends JFrame {
 		setupListener();
 		setTitle("Mühle");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(500, 500);
+		setSize(800, 500);
 		
 		noGameMode();
 	}
