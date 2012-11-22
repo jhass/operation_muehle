@@ -10,28 +10,15 @@ import java.util.ArrayList;
  */
 public class SaveState extends GameState {
 	private static final long serialVersionUID = 1L;
-	private PlayerManager players;
 
 	/**
 	 * Konstruktor
-	 * @param g Das aktuelle Spielfeld
-	 * @param cp Der Spieler, der aktuell am Zug ist
-	 * @param w Der Spieler, der das Spiel gewonnen hat
+	 * @param gameboard Das aktuelle Spielfeld
+	 * @param players Der aktuelle PlayerManager
+	 * @param winner Der Spieler, der das Spiel gewonnen hat
 	 * @param log Die Notizen (Log) der Spielzuege
-	 * @param players Informationen über die beiden beteiligten Spieler
 	 */
-	public SaveState(Gameboard g, Player cp, Player w, ArrayList<String> log,
-			          PlayerManager players) {
-		super(g, cp, w, log);
-		this.setPlayers(players);
+	public SaveState(Gameboard gameboard, PlayerManager players, Player winner, ArrayList<String> log) {
+		super(gameboard, players, winner, log);
 	}
-
-	public PlayerManager getPlayers() {
-		return this.players;
-	}
-
-	public void setPlayers(PlayerManager players) {
-		this.players = players;
-	}
-
 }

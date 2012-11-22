@@ -70,7 +70,7 @@ public class ApplicationController extends AObservable{
 	public void initializeSaved(SaveState state) {
 		resetController();
 		
-		players = state.getPlayers();
+		players = state.players;
 		gameboard = state.currentGB;
 		moveValidator.setPlayers(players);
 		removeMoveValidator.setPlayers(players);
@@ -227,8 +227,7 @@ public class ApplicationController extends AObservable{
 	 * @see GameState
 	 */
 	public GameState getGameState() {
-		return new GameState(gameboard, players.getCurrent(), 
-									winner, logger.getLog());
+		return new GameState(gameboard, players, winner, logger.getLog());
 	}
 	
 	/** Returns the current logger object
@@ -246,8 +245,7 @@ public class ApplicationController extends AObservable{
 	 * @see SaveState
 	 */
 	public SaveState getSaveState() {
-		return new SaveState(gameboard, players.getCurrent(), 
-									winner, logger.getLog(), players);
+		return new SaveState(gameboard, players, winner, logger.getLog());
 	}
 	
 	/**

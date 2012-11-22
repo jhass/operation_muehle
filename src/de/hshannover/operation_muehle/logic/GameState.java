@@ -11,21 +11,21 @@ import java.util.ArrayList;
 public class GameState implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public Gameboard currentGB;
-	public Player currentPlayer;
+	public PlayerManager players;
 	public Player winner;
 	public ArrayList<String> log;
 	
 	/**
 	 * Konstruktor
 	 * @param gameboard Das aktuelle Spielfeld
-	 * @param currentPlayer Der Spieler, der aktuell am Zug ist
+	 * @param players Der aktuelle PlayerManager
 	 * @param winner Der Spieler, der das Spiel gewonnen hat
 	 * @param log Die Notizen (Log) der Spielzuege
 	 */
-	public GameState(Gameboard gameboard, Player currentPlayer,
+	public GameState(Gameboard gameboard, PlayerManager players,
 				     Player winner, ArrayList<String> log) {
 		this.currentGB = gameboard;
-		this.currentPlayer = currentPlayer;
+		this.players = players;
 		this.winner = winner;
 		this.log = log;
 	}

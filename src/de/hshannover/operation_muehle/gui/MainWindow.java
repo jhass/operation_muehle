@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 
 import de.hshannover.operation_muehle.gui.board.Board;
 import de.hshannover.operation_muehle.logic.Gameboard;
+import de.hshannover.operation_muehle.logic.PlayerManager;
 
 import java.util.ArrayList;
 import java.awt.event.ActionListener;
@@ -154,12 +155,22 @@ public class MainWindow extends JFrame {
 	public void addNewMoveCallback(MoveCallback moveCallback) {
 		board.addNewMoveCallback(moveCallback);
 	}
+	
+	@Override
+	public void repaint() {
+		super.repaint();
+		board.repaint();
+	}
 
 	/** Draws a Gameboard
 	 * 
 	 * @param gameboard
 	 */
 	public void drawBoard(Gameboard gameboard) {
-		this.board.setGameboard(gameboard);
+		board.setGameboard(gameboard);
+	}
+
+	public void updatePlayerInfo(PlayerManager players) {
+		board.setPlayerInfo(players);
 	}
 }

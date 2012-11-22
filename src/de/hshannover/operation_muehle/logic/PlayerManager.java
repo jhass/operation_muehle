@@ -73,13 +73,33 @@ public class PlayerManager implements Serializable, Iterable<Player> {
 	}
 
 	public Player getOpponentOf(Player player) {
-		if (player == currentPlayer) {
+		if (isCurrentPlayer(player)) {
 			return opponent;
-		} else if (player == opponent) {
+		} else if (isOpponent(player)) {
 			return currentPlayer;
 		} else {
 			return null;
 		}
+	}
+	
+	public boolean isCurrentPlayer(Player player) {
+		return player == currentPlayer;
+	}
+	
+	public boolean isOpponent(Player player) {
+		return player == opponent;
+	}
+	
+	public Player getWhitePlayer() {
+		if (currentPlayer.getColor() == Player.Color.WHITE) {
+			return currentPlayer;
+		} else {
+			return opponent;
+		}
+	}
+	
+	public Player getBlackPlayer() {
+		return getOpponentOf(getWhitePlayer());
 	}
 	
 	@Override

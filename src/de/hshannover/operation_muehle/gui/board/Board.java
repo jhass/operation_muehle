@@ -2,6 +2,7 @@ package de.hshannover.operation_muehle.gui.board;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import de.hshannover.operation_muehle.gui.MoveCallback;
 import de.hshannover.operation_muehle.gui.board.TextureUtils;
 import de.hshannover.operation_muehle.logic.Gameboard;
+import de.hshannover.operation_muehle.logic.Player;
+import de.hshannover.operation_muehle.logic.PlayerManager;
 import de.hshannover.operation_muehle.logic.Slot;
 
 
@@ -43,6 +46,7 @@ public class Board extends Canvas {
 	private ArrayList<MoveCallback> newMoveCallbacks = new ArrayList<MoveCallback>();
 	private int horizontalSpacing;
 	private int verticalSpacing;
+	private PlayerManager players;
 	
 	public Board() {
 		super();
@@ -167,14 +171,21 @@ public class Board extends Canvas {
 		repaint();
 	}
 	
-	/** Updates the current Gameboard and triggers a redraw
+	/** Updates the current Gameboard
 	 * 
 	 * @param gameboard
 	 */
 	public void setGameboard(Gameboard gameboard) {
 		this.currentGameboard = gameboard;
 		repopulateStones();
-		repaint();
+	}
+	
+	/** Updates the current PlayerManager
+	 * 
+	 * @param players
+	 */
+	public void setPlayerInfo(PlayerManager players) {
+		this.players = players;
 	}
 
 	private void repopulateStones() {
@@ -236,6 +247,8 @@ public class Board extends Canvas {
 		drawDraggedStone(pen);
 		if (!isEnabled()) {
 			drawShade(pen);
+		} else {
+			drawWidgets(pen);
 		}
 	}
 
@@ -400,6 +413,56 @@ public class Board extends Canvas {
 	private void drawShade(Graphics pen) {
 		pen.setColor(new Color(0xDD222222, true));
 		pen.fillRect(0, 0, width, height);
+	}
+	
+	private void drawWidgets(Graphics2D pen) {
+		if (players == null) {
+			return;
+		}
+		
+		Player white = players.getWhitePlayer();
+		Player black = players.getBlackPlayer();
+		Color whiteBG, blackBG;
+		
+		if (players.isCurrentPlayer(white)) {
+			whiteBG = new Color(0xEEFFFFFF, true);
+			blackBG = new Color(0xAA000000, true);
+		} else {
+			whiteBG = new Color(0xAAFFFFFF, true);
+			blackBG = new Color(0xEE000000, true);
+		}
+		
+		drawPlayerInfo(pen, whiteBG, Color.BLACK, 140, white, players.isCurrentPlayer(white)); //FIXME: special value
+		
+		drawPlayerInfo(pen, blackBG, Color.WHITE, width, black, players.isCurrentPlayer(black));
+	}
+	
+	private void drawPlayerInfo(Graphics2D pen, Color background, Color foreground,
+								int leftCornerBase, Player player, boolean active) {
+		
+		pen.setColor(background);
+		pen.fillRect(leftCornerBase-130, height-130, 120, 100);
+		pen.setColor(foreground);
+		
+		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		Font base = pen.getFont();
+		Font header = base.deriveFont(Font.ITALIC).deriveFont(14.0f);
+		if (active) {
+			header = header.deriveFont(Font.BOLD);
+		}
+		
+		int offset = 110;
+		pen.setFont(header);
+		pen.drawString(player.getName(), leftCornerBase-120, height-offset);
+		offset -= 20;
+		pen.setFont(base);
+		if (player.getAvailableStones() > 0) {
+			pen.drawString("To place: "+player.getAvailableStones(), leftCornerBase-120, height-offset);
+			offset -= 20;
+		}
+		pen.drawString("On board: "+player.getStones(), leftCornerBase-120, height-offset);
+		offset -= 20;
+		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 
 	/** Callback that's run when any kind of new move is generated, no matter if
