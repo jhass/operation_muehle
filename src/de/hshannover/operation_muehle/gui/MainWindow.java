@@ -58,7 +58,7 @@ public class MainWindow extends JFrame {
 		setupListener();
 		setTitle("Mühle");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(800, 500);
+		setSize(800, 600);
 		
 		noGameMode();
 	}
@@ -168,7 +168,7 @@ public class MainWindow extends JFrame {
 	 * 
 	 * @param gameboard
 	 */
-	public void drawBoard(Gameboard gameboard) {
+	public void updateBoard(Gameboard gameboard) {
 		board.setGameboard(gameboard);
 	}
 	

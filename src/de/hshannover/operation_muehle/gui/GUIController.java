@@ -75,7 +75,7 @@ public class GUIController implements IObserver {
 	@Override
 	public void updateObservable() {
 		final GameState state = Facade.getInstance().getGameState();
-		mainWindow.drawBoard(state.currentGB);
+		mainWindow.updateBoard(state.currentGB);
 		mainWindow.updatePlayerInfo(state.players);
 		if (state.winner != null) {
 			mainWindow.noGameMode();

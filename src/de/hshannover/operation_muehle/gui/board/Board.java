@@ -253,7 +253,7 @@ public class Board extends Canvas {
 			width = getWidth();
 			height = getHeight();
 			innerSpacing = (width+height)/25;
-			verticalSpacing = innerSpacing/3;
+			verticalSpacing = innerSpacing;
 			horizontalSpacing = 150; //FIXME: special value
 		
 			recreateSpots();
