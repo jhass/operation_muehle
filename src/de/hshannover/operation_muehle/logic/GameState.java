@@ -1,7 +1,6 @@
 package de.hshannover.operation_muehle.logic;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * Die Klasse GameState hält regelmäßig den aktuellen Zustand des Spiels fest.
@@ -13,7 +12,7 @@ public class GameState implements Serializable {
 	public Gameboard currentGB;
 	public PlayerManager players;
 	public Player winner;
-	public ArrayList<String> log;
+	public Logger logger;
 	
 	/**
 	 * Konstruktor
@@ -23,11 +22,11 @@ public class GameState implements Serializable {
 	 * @param log Die Notizen (Log) der Spielzuege
 	 */
 	public GameState(Gameboard gameboard, PlayerManager players,
-				     Player winner, ArrayList<String> log) {
+				     Player winner, Logger logger) {
 		this.currentGB = gameboard;
 		this.players = players;
 		this.winner = winner;
-		this.log = log;
+		this.logger = logger;
 	}
 
 }

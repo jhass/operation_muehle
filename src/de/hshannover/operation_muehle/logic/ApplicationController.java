@@ -229,7 +229,7 @@ public class ApplicationController extends AObservable{
 	 * @see GameState
 	 */
 	public GameState getGameState() {
-		return new GameState(gameboard, players, winner, logger.getLog());
+		return new GameState(gameboard, players, winner, logger);
 	}
 	
 	/** Returns the current logger object
@@ -247,7 +247,7 @@ public class ApplicationController extends AObservable{
 	 * @see SaveState
 	 */
 	public SaveState getSaveState() {
-		return new SaveState(gameboard, players, winner, logger.getLog());
+		return new SaveState(gameboard, players, winner, logger);
 	}
 	
 	/**
@@ -280,17 +280,13 @@ public class ApplicationController extends AObservable{
 		} else if (move.isPlacement()) {
 			players.increaseCurrentPlayersStones();
 			gameboard.applySlot(currentMove.toSlot(), players.getCurrentPlayersSlotStatus());
-			logger.addEntry(move.toSlot());
 		} else if (players.getCurrentPlayersPhase() >= Player.MOVE_PHASE) {
 			gameboard.applyMove(move);
-			logger.addEntry(move);
 		}
+		logger.logInfo(move.toStringWithPlayer(players.getCurrent().getDisplayName()));
 		
 		setObservableChanged(true);
 		notifyObserver();
-		
-		System.out.print("Letzter Zug: "); //TODO: debug, remove me
-		System.out.println(logger.getLastEntry());
 	}
 
 	/**

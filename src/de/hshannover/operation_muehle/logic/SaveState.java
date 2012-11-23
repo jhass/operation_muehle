@@ -1,7 +1,5 @@
 package de.hshannover.operation_muehle.logic;
 
-import java.util.ArrayList;
-
 /**
  * Diese Klasse erbt von der Klasse GameState und dient zum Speichern eines Spielstandes
  * in eine Datei, wenn das Spiel beendet werden soll.
@@ -18,7 +16,8 @@ public class SaveState extends GameState {
 	 * @param winner Der Spieler, der das Spiel gewonnen hat
 	 * @param log Die Notizen (Log) der Spielzuege
 	 */
-	public SaveState(Gameboard gameboard, PlayerManager players, Player winner, ArrayList<String> log) {
+	public SaveState(Gameboard gameboard, PlayerManager players, 
+			          Player winner, Logger log) {
 		super(gameboard, players, winner, log);
 	}
 }

@@ -8,6 +8,7 @@ import de.hshannover.operation_muehle.gui.board.Spot;
 import de.hshannover.operation_muehle.gui.board.Stone.Color;
 import de.hshannover.operation_muehle.logic.GameState;
 import de.hshannover.operation_muehle.logic.InvalidMoveException;
+import de.hshannover.operation_muehle.logic.Logger;
 import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.operation_muehle.utils.PerformAsync;
 import de.hshannover.operation_muehle.utils.observer.IObserver;
@@ -82,7 +83,7 @@ public class GUIController implements IObserver {
 			mainWindow.setInfoText(state.winner.getDisplayName()+" wins the game!");
 		}
 		mainWindow.repaint();
-		logWindow.setLog(Facade.getInstance().getLog());
+		logWindow.setLog(state.logger.getMessagesForLevel(Logger.Level.INFO));
 		//TODO: display needed action (set, move, remove)
 	}
 	
