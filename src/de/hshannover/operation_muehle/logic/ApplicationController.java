@@ -135,15 +135,20 @@ public class ApplicationController extends AObservable{
 			private void setCurrentMoveToAIMove(Move lastMove)
 				throws InvalidMoveException {
 				if (players.isCurrentPlayersPhase(Player.PLACE_PHASE)) {
-					currentMove = new Move(
-						null,
-						new Slot(
-							players.getCurrent().placeStone( // TODO: enforce thinkTime
-									lastMove != null ? lastMove.toSlot() : null,
-									lastRemovedStone
+					try {
+						currentMove = new Move(
+							null,
+							new Slot(
+								players.getCurrent().placeStone( // TODO: enforce thinkTime
+										lastMove != null ? lastMove.toSlot() : null,
+										lastRemovedStone
+								)
 							)
-						)
-					);
+						);
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new InvalidMoveException(currentMove);
+					}
 				} else {
 					// lastMove is already correctly set in the transition
 					// special case since we internally handle remove that way.
