@@ -106,12 +106,7 @@ public class Player implements Serializable {
 		this.availableStones--;
 		if (this.availableStones == 0) {
 			this.phase = MOVE_PHASE;
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			System.out.println("Player "+this.color+" enters Phase "+this.phase);
-			if (this.stones == 3) {
-				System.out.println("OMFG, THIS IS REALLY POSSIBLE?!"); //TODO: I'm lazy, remove this entire block if it's never seen in the next month
-				this.phase = JUMP_PHASE; //??
-			}
+			System.out.println("Player "+this.color+" enters Phase "+this.phase);//TODO Ab in Logger
 		}
 	}
 	
@@ -120,10 +115,9 @@ public class Player implements Serializable {
 	 */
 	public void decreaseNumberOfStones() {
 		this.stones--;
-		if (this.stones == 3 && this.phase == 2) { //FIXME: and condition seems bogus/a hack for the hack above
+		if (this.stones == 3) {
 			this.phase = JUMP_PHASE;
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			System.out.println("Entering Phase " + this.phase);
+			System.out.println("Entering Phase " + this.phase);//TODO: Ab in Logger
 		}
 	}
 	

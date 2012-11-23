@@ -119,15 +119,16 @@ public class ApplicationController extends AObservable{
 						}
 					}
 				} catch (InvalidMoveException e) {
-					System.out.println("AI made invalid move "+e.move);
-					winner = players.getOpponent(); //TODO log
+					logger.logError("KI "+players.getCurrent().getDisplayName()+
+							        " hat ungültigen Zug durchgeführt: "+e.move);
+					winner = players.getOpponent();
 					gameRunning = false;
 				}
 				
 				if (winner != null) { 
-					System.out.println("Gewinner: "+winner);
+					logger.logInfo("Gewinner: "+winner.getDisplayName());
 					setObservableChanged(true);
-					notifyObserver(); //TODO: log, remove debug
+					notifyObserver();
 				}
 			}
 
@@ -159,7 +160,7 @@ public class ApplicationController extends AObservable{
 				throws InvalidMoveException {
 				if (hasClosedMill(move)) {
 					currentMoveValidator = removeMoveValidator;
-					System.out.println("Muehle!"); //TODO: debug, remove me
+					logger.logDebug("Muehle!");
 					
 					// Reset query mechanism
 					Move currentMoveCache = currentMove;

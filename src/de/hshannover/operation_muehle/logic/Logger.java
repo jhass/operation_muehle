@@ -1,25 +1,22 @@
 package de.hshannover.operation_muehle.logic;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 /**
  * A simple Class for Logging a Game in a String-ArrayList
  * @Author Richard Pump
  */
 public class Logger {
-	private HashMap<Level,ArrayList<String>> log;
+	private ArrayList<LogEntry> log;
 	
 	/**
 	 * Constructor, creates an empty log.
 	 */
 	public Logger() {
-		log = new HashMap<Level,ArrayList<String>>();
-		for (Level level: Level.values())
-		log.put(level, new ArrayList<String>());
+		log = new ArrayList<LogEntry>();
 	}
 	
 	private void log(String entry, Level level) {
-		log.get(level).add(entry);
+		log.add(new LogEntry(level,entry));
 	}
 	
 	public void logFatal(String entry) {
@@ -44,17 +41,40 @@ public class Logger {
 	
 	public String getMessagesForLevel(Level level) {
 		StringBuilder fullLog = new StringBuilder();
-		for (String message: log.get(level)) {
-			fullLog.append(message+"\n");
+		for (LogEntry entry: log) {
+			if (entry.level.getPriority() >= level.getPriority())
+			fullLog.append(entry.message+"\n");
 		}
 		return fullLog.toString();
 	}
 	
 	public enum Level {
-		FATAL,
-		ERROR,
-		WARNING,
-		INFO,
-		DEBUG
+		FATAL {
+			public int getPriority() { return 5; }
+		},
+		ERROR{
+			public int getPriority() { return 4; }
+		},
+		WARNING{
+			public int getPriority() { return 3; }
+		},
+		INFO{
+			public int getPriority() { return 2; }
+		},
+		DEBUG{
+			public int getPriority() { return 1; }
+		};
+		
+		abstract int getPriority();
+	}
+	
+	private class LogEntry {
+		protected Level level;
+		protected String message;
+		
+		public LogEntry(Level level, String entry) {
+			this.level = level;
+			this.message= entry;
+		}
 	}
 }
