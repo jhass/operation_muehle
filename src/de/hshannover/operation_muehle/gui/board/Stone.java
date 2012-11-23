@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import de.hshannover.operation_muehle.gui.Theme;
 import de.hshannover.operation_muehle.gui.board.TextureUtils;
 import de.hshannover.operation_muehle.logic.Slot;
 
@@ -98,7 +99,7 @@ public class Stone extends Point {
 	private BufferedImage getWhiteStoneTexture() {
 		if (whiteStoneTexture == null) {
 			whiteStoneTexture = TextureUtils.makeOval(
-				TextureUtils.load("white-marble.jpg"),
+				TextureUtils.load(Theme.WHITE_STONE_TEXTURE),
 					RADIUS*2, RADIUS*2
 			);
 		}
@@ -109,7 +110,7 @@ public class Stone extends Point {
 	private BufferedImage getBlackStoneTexture() {
 		if (blackStoneTexture == null) {
 			blackStoneTexture = TextureUtils.makeOval(
-				TextureUtils.load("dark-wood.jpg"),
+				TextureUtils.load(Theme.BLACK_STONE_TEXTURE),
 				RADIUS*2, RADIUS*2
 			);
 		}
