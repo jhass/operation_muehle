@@ -15,7 +15,6 @@ import de.hshannover.operation_muehle.utils.observer.AObservable;
 
 public class ApplicationController extends AObservable{
 	private PlayerManager players;
-	private Logger logger;
 	private Gameboard gameboard;
 	private Player winner;
 	private Move currentMove;
@@ -34,7 +33,6 @@ public class ApplicationController extends AObservable{
 
 	private void resetController() {
 		players = null;
-		logger = new Logger();
 		gameboard = new Gameboard();
 		currentMove = null;
 		gameRunning = false;
@@ -74,6 +72,7 @@ public class ApplicationController extends AObservable{
 		gameboard = state.currentGB;
 		moveValidator.setPlayers(players);
 		removeMoveValidator.setPlayers(players);
+		Logger.setInstance(state.logger);
 		
 		notifyObserver();
 		playGame();
@@ -119,14 +118,14 @@ public class ApplicationController extends AObservable{
 						}
 					}
 				} catch (InvalidMoveException e) {
-					logger.logError("KI "+players.getCurrent().getDisplayName()+
+					Logger.logError("KI "+players.getCurrent().getDisplayName()+
 							        " hat ungültigen Zug durchgeführt: "+e.move);
 					winner = players.getOpponent();
 					gameRunning = false;
 				}
 				
 				if (winner != null) { 
-					logger.logInfo("Gewinner: "+winner.getDisplayName());
+					Logger.logInfo("Gewinner: "+winner.getDisplayName());
 					setObservableChanged(true);
 					notifyObserver();
 				}
@@ -165,7 +164,7 @@ public class ApplicationController extends AObservable{
 				throws InvalidMoveException {
 				if (hasClosedMill(move)) {
 					currentMoveValidator = removeMoveValidator;
-					logger.logDebug("Muehle!");
+					Logger.logDebug("Muehle!");
 					
 					// Reset query mechanism
 					Move currentMoveCache = currentMove;
@@ -235,15 +234,7 @@ public class ApplicationController extends AObservable{
 	 * @see GameState
 	 */
 	public GameState getGameState() {
-		return new GameState(gameboard, players, winner, logger);
-	}
-	
-	/** Returns the current logger object
-	 * 
-	 * @return
-	 */
-	public Logger getLogger() {
-		return logger;
+		return new GameState(gameboard, players, winner, Logger.getInstance());
 	}
 	
 	/**
@@ -253,7 +244,7 @@ public class ApplicationController extends AObservable{
 	 * @see SaveState
 	 */
 	public SaveState getSaveState() {
-		return new SaveState(gameboard, players, winner, logger);
+		return new SaveState(gameboard, players, winner, Logger.getInstance());
 	}
 	
 	/**
@@ -289,7 +280,7 @@ public class ApplicationController extends AObservable{
 		} else if (players.getCurrentPlayersPhase() >= Player.MOVE_PHASE) {
 			gameboard.applyMove(move);
 		}
-		logger.logInfo(move.toStringWithPlayer(players.getCurrent().getDisplayName()));
+		Logger.logInfo(move.toStringWithPlayer(players.getCurrent().getDisplayName()));
 		
 		setObservableChanged(true);
 		notifyObserver();

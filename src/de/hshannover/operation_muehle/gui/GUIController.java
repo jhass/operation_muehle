@@ -112,8 +112,10 @@ public class GUIController implements IObserver {
 				Facade.getInstance().loadGame(path);
 				mainWindow.gameMode();
 			} catch (IOException e) {
+				e.printStackTrace();
 				// TODO display dialog
 			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
 				// TODO display dialog about incompatible save file
 			}
 		}
@@ -130,6 +132,7 @@ public class GUIController implements IObserver {
 				Facade.getInstance().saveGame(path);
 				mainWindow.gameMode();
 			} catch (IOException e) {
+				e.printStackTrace();
 				// TODO display dialog
 			}
 			

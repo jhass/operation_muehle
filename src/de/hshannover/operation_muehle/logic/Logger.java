@@ -1,17 +1,34 @@
 package de.hshannover.operation_muehle.logic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 /**
  * A simple Class for Logging a Game in a String-ArrayList
  * @Author Richard Pump
  */
-public class Logger {
+public class Logger implements Serializable {
+	private static final long serialVersionUID = 1L;
+	private static Logger instance;
+	
 	private ArrayList<LogEntry> log;
+	
+	
+	public static Logger getInstance() {
+		if (instance == null) {
+			instance = new Logger();
+		}
+		
+		return instance;
+	}
+	
+	public static void setInstance(Logger logger) {
+		instance = logger;
+	}
 	
 	/**
 	 * Constructor, creates an empty log.
 	 */
-	public Logger() {
+	private Logger() {
 		log = new ArrayList<LogEntry>();
 	}
 	
@@ -19,32 +36,34 @@ public class Logger {
 		log.add(new LogEntry(level,entry));
 	}
 	
-	public void logFatal(String entry) {
-		log(entry, Level.FATAL);
+	public static void logFatal(String entry) {
+		getInstance().log(entry, Level.FATAL);
 	}
 	
-	public void logError(String entry) {
-		log(entry, Level.ERROR);
+	public static void logError(String entry) {
+		getInstance().log(entry, Level.ERROR);
 	}
 	
-	public void logWarning(String entry) {
-		log(entry, Level.WARNING);
+	public static void logWarning(String entry) {
+		getInstance().log(entry, Level.WARNING);
 	}
 	
-	public void logInfo(String entry) {
-		log(entry, Level.INFO);
+	public static void logInfo(String entry) {
+		getInstance().log(entry, Level.INFO);
 	}
 	
-	public void logDebug(String entry) {
-		log(entry, Level.DEBUG);
+	public static void logDebug(String entry) {
+		getInstance().log(entry, Level.DEBUG);
 	}
 	
 	public String getMessagesForLevel(Level level) {
 		StringBuilder fullLog = new StringBuilder();
+		
 		for (LogEntry entry: log) {
 			if (entry.level.getPriority() >= level.getPriority())
 			fullLog.append(entry.message+"\n");
 		}
+		
 		return fullLog.toString();
 	}
 	
@@ -68,7 +87,9 @@ public class Logger {
 		abstract int getPriority();
 	}
 	
-	private class LogEntry {
+	private class LogEntry implements Serializable {
+		private static final long serialVersionUID = 1L;
+
 		protected Level level;
 		protected String message;
 		
