@@ -453,16 +453,30 @@ public class Board extends Canvas {
 		Color whiteBG, blackBG;
 		
 		if (players.isCurrentPlayer(white)) {
-			whiteBG = new Color(0xEEFFFFFF, true);
-			blackBG = new Color(0xAA000000, true);
+			whiteBG = Theme.PLAYER_INFO_WHITE_ACTIVE_BG_COLOR;
+			blackBG = Theme.PLAYER_INFO_BLACK_INACTIVE_BG_COLOR;;
 		} else {
-			whiteBG = new Color(0xAAFFFFFF, true);
-			blackBG = new Color(0xEE000000, true);
+			whiteBG = Theme.PLAYER_INFO_WHITE_INACTIVE_BG_COLOR;
+			blackBG = Theme.PLAYER_INFO_BLACK_ACTIVE_BG_COLOR;
 		}
 		
-		drawPlayerInfo(pen, whiteBG, Color.BLACK, 140, white, players.isCurrentPlayer(white)); //FIXME: special value
+		drawPlayerInfo(
+			pen,
+			whiteBG,
+			Theme.PLAYER_INFO_WHITE_TEXT_COLOR,
+			140,
+			white,
+			players.isCurrentPlayer(white)
+		); //FIXME: special value
 		
-		drawPlayerInfo(pen, blackBG, Color.WHITE, width, black, players.isCurrentPlayer(black));
+		drawPlayerInfo(
+			pen,
+			blackBG,
+			Theme.PLAYER_INFO_BLACK_TEXT_COLOR,
+			width,
+			black,
+			players.isCurrentPlayer(black)
+		);
 	}
 	
 	private void drawPlayerInfo(Graphics2D pen, Color background, Color foreground,
@@ -474,10 +488,7 @@ public class Board extends Canvas {
 		
 		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		Font base = pen.getFont();
-		Font header = base.deriveFont(Font.ITALIC).deriveFont(14.0f);
-		if (active) {
-			header = header.deriveFont(Font.BOLD);
-		}
+		Font header = Theme.getPlayerInfoHeader(base, active);
 		
 		int offset = 110;
 		pen.setFont(header);
@@ -495,12 +506,12 @@ public class Board extends Canvas {
 	
 	private void drawInfoTextBox(Graphics2D pen) {
 		Font base = pen.getFont();
-		pen.setFont(base.deriveFont(Font.BOLD).deriveFont(16.0f));
+		pen.setFont(Theme.getInfoBoxFont(base));
 		Rectangle2D dimensions = pen.getFontMetrics().getStringBounds(infoText, pen);
 		int halfStringWidth = (int) (dimensions.getWidth()/2);
 		int halfStringHeight = (int) (dimensions.getHeight()/2);
 		
-		pen.setColor(new Color(0x88000000, true));
+		pen.setColor(Theme.INFO_BOX_BACKGROUND_COLOR);
 		pen.fillRect(
 			width/2-halfStringWidth-10,
 			height/2-halfStringHeight-30,
@@ -508,7 +519,7 @@ public class Board extends Canvas {
 			halfStringHeight*2+30
 		);
 		
-		pen.setColor(Color.WHITE);
+		pen.setColor(Theme.INFO_BOX_TEXT_COLOR);
 		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		pen.drawString(
 			infoText,
