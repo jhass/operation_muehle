@@ -39,6 +39,16 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 		this.column = column;
 	}
 	
+	/** Constructor to create a new Slot from external representation values
+	 * 
+	 * @param column
+	 * @param row
+	 * @param status
+	 */
+	public Slot(char column, int row, Status status) {
+		this(column-64, row, status);
+	}
+	
 	/**
 	 * Konstruktor, der den Status automatisch auf unbenutzt
 	 * @param column Spaltenindex (Constraint >0)

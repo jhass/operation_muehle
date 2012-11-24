@@ -23,6 +23,7 @@ public class ApplicationController extends AObservable{
 	private MoveValidator moveValidator;
 	private MoveValidator removeMoveValidator;
 	private MoveValidator currentMoveValidator;
+	private SaveState snapshot;
 	
 	/**
 	 * Simple, basic Constructor.
@@ -45,6 +46,7 @@ public class ApplicationController extends AObservable{
 		removeMoveValidator = new RemoveMoveValidator(gameboard, players);
 		currentMoveValidator = moveValidator;
 		Logger.clear();
+		snapshot = null;
 		
 		setObservableChanged(true);
 	}
@@ -98,13 +100,15 @@ public class ApplicationController extends AObservable{
 				
 				try {
 					while(isGameRunning()) {
+						
 						if(players.isCurrentPlayerAI()) {
 							setCurrentMoveToAIMove(lastMove);
 						}
 						
-						if (moveAvailable()) {
+						if (moveAvailable()) {							
 							executeMove(currentMove);
 							queryRemovalIfNecessary(currentMove);
+							
 							
 							if (winner == null) {
 								updateWinner();
@@ -118,6 +122,7 @@ public class ApplicationController extends AObservable{
 							players.opponentsTurn();
 							lastMove = currentMove;
 							currentMove = null;
+							snapshot();
 						} else {
 							waitForHumanPlayerMove();
 						}
@@ -249,7 +254,10 @@ public class ApplicationController extends AObservable{
 	 * @see SaveState
 	 */
 	public SaveState getSaveState() {
-		return new SaveState(gameboard, players, winner, Logger.getInstance());
+		if (snapshot == null) {
+			snapshot();
+		}
+		return snapshot;
 	}
 	
 	/**
@@ -257,6 +265,10 @@ public class ApplicationController extends AObservable{
 	 */
 	public synchronized void endGame() {
 		gameRunning = false;
+	}
+	
+	private void snapshot()  {
+		snapshot = new SaveState(gameboard, players, winner, Logger.getInstance());
 	}
 	
 	private synchronized boolean isGameRunning() {

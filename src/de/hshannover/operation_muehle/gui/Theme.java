@@ -27,9 +27,9 @@ public class Theme {
 	public static Font getPlayerInfoHeader(Font base, boolean active) {
 		base = base.deriveFont(14.0f);
 		if (active) {
-			return base.deriveFont(Font.ITALIC);
-		} else {
 			return base.deriveFont(Font.BOLD);
+		} else {
+			return base.deriveFont(Font.ITALIC);
 		}
 	}
 }

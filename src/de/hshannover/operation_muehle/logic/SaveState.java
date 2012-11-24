@@ -18,6 +18,6 @@ public class SaveState extends GameState {
 	 */
 	public SaveState(Gameboard gameboard, PlayerManager players, 
 			          Player winner, Logger log) {
-		super(gameboard, players, winner, log);
+		super(new Gameboard(gameboard), players, winner, log.copy());
 	}
 }

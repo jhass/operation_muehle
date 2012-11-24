@@ -36,8 +36,17 @@ public class Logger implements Serializable {
 		log = new ArrayList<LogEntry>();
 	}
 	
+	@SuppressWarnings("unchecked")
+	private Logger(Logger logger) {
+		log = (ArrayList<LogEntry>) logger.log.clone();
+	}
+	
 	private void log(String entry, Level level) {
 		log.add(new LogEntry(level,entry));
+	}
+	
+	public Logger copy() {
+		return new Logger(this);
 	}
 	
 	public static void logFatal(String entry) {

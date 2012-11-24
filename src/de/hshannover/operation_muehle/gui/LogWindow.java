@@ -17,6 +17,7 @@ import javax.swing.JTextPane;
 
 public class LogWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
+	
 	private JTextPane textPane;
 	private boolean autoscroll;
 	private JScrollPane scrollPane;

@@ -26,6 +26,20 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 		initializeSlots();
 	}
 	
+	public Gameboard(Gameboard gameboard) {
+		this.board = new HashMap<Integer,Slot>();
+		for (Slot slot : gameboard) {
+			this.board.put(
+				slot.hashCode(),
+				new Slot(
+					slot.getColumn(),
+					slot.getRow(),
+					slot.getStatus()
+				)
+			);
+		}
+	}
+	
 	/**
 	 * Anlegen der gueltigen Spielfelder
 	 */
