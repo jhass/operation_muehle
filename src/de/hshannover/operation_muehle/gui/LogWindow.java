@@ -1,6 +1,9 @@
 package de.hshannover.operation_muehle.gui;
 
 import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollBar;
@@ -15,7 +18,8 @@ import javax.swing.JTextPane;
 public class LogWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JTextPane textPane;
-	private JScrollBar verticalScrollbar;
+	private boolean autoscroll;
+	private JScrollPane scrollPane;
 
 	/**
 	 * LogWindow Frame
@@ -27,15 +31,21 @@ public class LogWindow extends JFrame {
 		setBounds(100, 100, 400, 300);
 		getContentPane().setLayout(new BorderLayout(0, 0));
 		
-		JScrollPane scrollPane = new JScrollPane();
-		verticalScrollbar = scrollPane.getVerticalScrollBar();
+		scrollPane = new JScrollPane();
+		scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+			@Override
+			public void adjustmentValueChanged(AdjustmentEvent ev) {
+				autoscroll = ev.getAdjustable().getMaximum()-ev.getValue() < 250;
+			}
+		});
 		
 		textPane = new JTextPane();
 		textPane.setEditable(false);
 		scrollPane.setViewportView(textPane);
 		getContentPane().add(scrollPane);
 		setVisible(false);
-				
+		
+		autoscroll = true;
 	}
 	
 	/**
@@ -44,6 +54,7 @@ public class LogWindow extends JFrame {
 	
 	public void toggleVisibility() {
 		setVisible(!isVisible());
+		scrollToTheEnd();
 	}
 	
 	/**
@@ -52,6 +63,19 @@ public class LogWindow extends JFrame {
 	
 	public void setLog(String log) {
 		textPane.setText(log);
-		verticalScrollbar.setValue(verticalScrollbar.getMaximum());
+		scrollToTheEnd();
+	}
+
+	private void scrollToTheEnd() {
+		if (autoscroll) {
+			scrollPane.revalidate();
+			final JScrollBar verticalScrollbar = scrollPane.getVerticalScrollBar();
+			EventQueue.invokeLater(new Runnable() { // Give the revalidate a chance to populate
+				@Override
+				public void run() {
+					verticalScrollbar.setValue(verticalScrollbar.getMaximum());
+				}
+			});
+		}
 	}
 }

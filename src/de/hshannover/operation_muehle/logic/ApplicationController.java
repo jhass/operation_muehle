@@ -36,10 +36,15 @@ public class ApplicationController extends AObservable{
 		gameboard = new Gameboard();
 		currentMove = null;
 		gameRunning = false;
+		if (gameThread != null) {
+			gameThread.interrupt();
+			gameThread = null;
+		}
 		winner = null;
 		moveValidator = new MoveValidator(gameboard, players);
 		removeMoveValidator = new RemoveMoveValidator(gameboard, players);
 		currentMoveValidator = moveValidator;
+		Logger.clear();
 		
 		setObservableChanged(true);
 	}

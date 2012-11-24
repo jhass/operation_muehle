@@ -194,7 +194,7 @@ public class Board extends Canvas {
 	/** Sets an info text that should be presented to the user
 	 * 
 	 */
-	public void setInfoText(String text) {
+	public synchronized void setInfoText(String text) {
 		this.infoText = text;
 	}
 
@@ -437,17 +437,14 @@ public class Board extends Canvas {
 	}
 	
 	private void drawWidgets(Graphics2D pen) {
-		if (players != null && isEnabled()) {
-			drawPlayerCards(pen);
-	
-		}
-		
-		if (infoText != null && !infoText.isEmpty()) {
-			drawInfoTextBox(pen);
-		}
+		drawPlayerCards(pen);
+		drawInfoTextBox(pen);
 	}
 	
 	private void drawPlayerCards(Graphics2D pen) {
+		if (players == null || !isEnabled()) {
+			return;
+		}
 		Player white = players.getWhitePlayer();
 		Player black = players.getBlackPlayer();
 		Color whiteBG, blackBG;
@@ -481,7 +478,6 @@ public class Board extends Canvas {
 	
 	private void drawPlayerInfo(Graphics2D pen, Color background, Color foreground,
 								int leftCornerBase, Player player, boolean active) {
-		
 		pen.setColor(background);
 		pen.fillRect(leftCornerBase-130, height-130, 120, 100);
 		pen.setColor(foreground);
@@ -504,7 +500,11 @@ public class Board extends Canvas {
 		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 	
-	private void drawInfoTextBox(Graphics2D pen) {
+	private synchronized void drawInfoTextBox(Graphics2D pen) {
+		if (infoText == null || infoText.isEmpty()) {
+			return;
+		}
+		
 		Font base = pen.getFont();
 		pen.setFont(Theme.getInfoBoxFont(base));
 		Rectangle2D dimensions = pen.getFontMetrics().getStringBounds(infoText, pen);

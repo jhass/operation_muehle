@@ -25,6 +25,10 @@ public class Logger implements Serializable {
 		instance = logger;
 	}
 	
+	public static void clear() {
+		instance = null;
+	}
+	
 	/**
 	 * Constructor, creates an empty log.
 	 */
