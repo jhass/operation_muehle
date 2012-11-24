@@ -115,7 +115,10 @@ public class Player implements Serializable {
 	 */
 	public void decreaseNumberOfStones() {
 		this.stones--;
-		if (this.stones == 3) {
+		// If white makes a mill with its first 3 stones,
+		// black would enter jump phase from place phase,
+		// so do not allow moving from place to jump phase
+		if (this.stones <= 3 && this.phase != PLACE_PHASE) {
 			this.phase = JUMP_PHASE;
 			System.out.println("Entering Phase " + this.phase);//TODO: Ab in Logger
 		}

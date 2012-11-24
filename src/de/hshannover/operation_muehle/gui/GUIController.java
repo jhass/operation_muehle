@@ -9,6 +9,8 @@ import de.hshannover.operation_muehle.gui.board.Stone.Color;
 import de.hshannover.operation_muehle.logic.GameState;
 import de.hshannover.operation_muehle.logic.InvalidMoveException;
 import de.hshannover.operation_muehle.logic.Logger;
+import de.hshannover.operation_muehle.logic.Player;
+import de.hshannover.operation_muehle.logic.PlayerManager;
 import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.operation_muehle.utils.PerformAsync;
 import de.hshannover.operation_muehle.utils.observer.IObserver;
@@ -78,16 +80,45 @@ public class GUIController implements IObserver {
 		final GameState state = Facade.getInstance().getGameState();
 		mainWindow.updateBoard(state.currentGB);
 		mainWindow.updatePlayerInfo(state.players);
+		mainWindow.setGameSaveable(!(state.players.isCurrentPlayerAI() ||
+									 state.players.isOpponentAI()));
 		if (state.winner != null) {
 			mainWindow.noGameMode();
 			mainWindow.setInfoText(state.winner.getDisplayName()+" wins the game!");
 		}
+		mainWindow.setMessageText(determineCurrentMessage(state));
 		mainWindow.repaint();
 		logWindow.setLog(state.logger.getMessagesForLevel(Logger.Level.INFO));
-		//TODO: display needed action (set, move, remove)
 	}
 	
 	
+	private String determineCurrentMessage(GameState state) {
+		PlayerManager players = state.players;
+		if (players.isCurrentPlayerAI()) {
+			if (!players.isOpponentAI()) {
+				return "Wait for your opponent to move.";
+			}
+		} else {
+			String prepend = "";
+			if (!players.isOpponentAI()) {
+				prepend = players.getCurrent().getDisplayName()+": ";
+			}
+			
+			if (state.inRemovalPhase) {
+				return prepend+"Remove a stone of "
+					   +players.getOpponent().getDisplayName()+".";
+			}
+			
+			switch (players.getCurrentPlayersPhase()) {
+			case Player.PLACE_PHASE: return prepend+"Place a stone.";
+			case Player.MOVE_PHASE: return prepend+"Move a stone.";
+			case Player.JUMP_PHASE: return prepend+"Move a stone anywhere.";
+			}
+		}
+		
+		return null;
+	}
+
 	/** Initialize a new game
 	 * 
 	 */

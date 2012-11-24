@@ -13,20 +13,20 @@ public class GameState implements Serializable {
 	public PlayerManager players;
 	public Player winner;
 	public Logger logger;
+	public boolean inRemovalPhase;
 	
 	/**
 	 * Konstruktor
 	 * @param gameboard Das aktuelle Spielfeld
 	 * @param players Der aktuelle PlayerManager
-	 * @param winner Der Spieler, der das Spiel gewonnen hat
 	 * @param log Die Notizen (Log) der Spielzuege
 	 */
-	public GameState(Gameboard gameboard, PlayerManager players,
-				     Player winner, Logger logger) {
+	public GameState(Gameboard gameboard, PlayerManager players, Logger logger) {
 		this.currentGB = gameboard;
 		this.players = players;
-		this.winner = winner;
 		this.logger = logger;
+		this.inRemovalPhase = false;
+		this.winner = null;
 	}
 
 }

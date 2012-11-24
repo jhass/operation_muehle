@@ -43,6 +43,10 @@ public class PlayerManager implements Serializable, Iterable<Player> {
 	public boolean isCurrentPlayerAI() {
 		return currentPlayer.isAI();
 	}
+	
+	public boolean isOpponentAI() {
+		return opponent.isAI();
+	}
 
 	public int getCurrentPlayersPhase() {
 		return currentPlayer.getPhase();

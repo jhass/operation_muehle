@@ -16,7 +16,6 @@ import de.hshannover.operation_muehle.utils.observer.AObservable;
 public class ApplicationController extends AObservable{
 	private PlayerManager players;
 	private Gameboard gameboard;
-	private Player winner;
 	private Move currentMove;
 	private Thread gameThread;
 	private boolean gameRunning;
@@ -24,6 +23,7 @@ public class ApplicationController extends AObservable{
 	private MoveValidator removeMoveValidator;
 	private MoveValidator currentMoveValidator;
 	private SaveState snapshot;
+	private GameState state;
 	
 	/**
 	 * Simple, basic Constructor.
@@ -32,7 +32,7 @@ public class ApplicationController extends AObservable{
 		resetController();
 	}
 
-	private void resetController() {
+	private synchronized void resetController() {
 		players = null;
 		gameboard = new Gameboard();
 		currentMove = null;
@@ -41,12 +41,12 @@ public class ApplicationController extends AObservable{
 			gameThread.interrupt();
 			gameThread = null;
 		}
-		winner = null;
 		moveValidator = new MoveValidator(gameboard, players);
 		removeMoveValidator = new RemoveMoveValidator(gameboard, players);
 		currentMoveValidator = moveValidator;
 		Logger.clear();
 		snapshot = null;
+		state = null;
 		
 		setObservableChanged(true);
 	}
@@ -110,11 +110,11 @@ public class ApplicationController extends AObservable{
 							queryRemovalIfNecessary(currentMove);
 							
 							
-							if (winner == null) {
+							if (getGameState().winner == null) {
 								updateWinner();
 							}
 							
-							if (winner != null) {
+							if (getGameState().winner != null) {
 								gameRunning = false;
 								break;
 							}
@@ -123,6 +123,8 @@ public class ApplicationController extends AObservable{
 							lastMove = currentMove;
 							currentMove = null;
 							snapshot();
+							
+							notifyObserver();
 						} else {
 							waitForHumanPlayerMove();
 						}
@@ -130,12 +132,12 @@ public class ApplicationController extends AObservable{
 				} catch (InvalidMoveException e) {
 					Logger.logError("KI "+players.getCurrent().getDisplayName()+
 							        " hat ungültigen Zug durchgeführt: "+e.move);
-					winner = players.getOpponent();
+					getGameState().winner = players.getOpponent();
 					gameRunning = false;
 				}
 				
-				if (winner != null) { 
-					Logger.logInfo("Gewinner: "+winner.getDisplayName());
+				if (getGameState().winner != null) { 
+					Logger.logInfo("Gewinner: "+getGameState().winner.getDisplayName());
 					setObservableChanged(true);
 					notifyObserver();
 				}
@@ -180,6 +182,9 @@ public class ApplicationController extends AObservable{
 					Move currentMoveCache = currentMove;
 					currentMove = null;
 					
+					getGameState().inRemovalPhase = true;
+					setObservableChanged(true);
+					
 					if (players.isCurrentPlayerAI()) {
 						currentMove = new Move( //TODO: enforce think time
 							new Slot(players.getCurrent().removeStone()),
@@ -191,8 +196,7 @@ public class ApplicationController extends AObservable{
 							throw new InvalidMoveException(currentMove);
 						}
 					} else {
-						setObservableChanged(true);
-						notifyObserver(); //TODO: inform GUI that the user should remove a stone
+						notifyObserver();
 						
 						// Wait for move
 						while (noMoveAvailable()) {
@@ -204,11 +208,13 @@ public class ApplicationController extends AObservable{
 					
 					lastRemovedStone = currentMove.fromSlot();
 					
+					getGameState().inRemovalPhase = false;
+					setObservableChanged(true);
+					
 					//Restore current move
 					currentMove = currentMoveCache;
 					
 					currentMoveValidator = moveValidator;
-					
 				} else {
 					lastRemovedStone = null;
 				}
@@ -243,8 +249,12 @@ public class ApplicationController extends AObservable{
 	 * @return A "fresh" GameState.
 	 * @see GameState
 	 */
-	public GameState getGameState() {
-		return new GameState(gameboard, players, winner, Logger.getInstance());
+	public synchronized GameState getGameState() {
+		if (state == null) {
+			state = new GameState(gameboard, players, Logger.getInstance());
+		}
+		
+		return state;
 	}
 	
 	/**
@@ -268,7 +278,7 @@ public class ApplicationController extends AObservable{
 	}
 	
 	private void snapshot()  {
-		snapshot = new SaveState(gameboard, players, winner, Logger.getInstance());
+		snapshot = new SaveState(gameboard, players, Logger.getInstance());
 	}
 	
 	private synchronized boolean isGameRunning() {
@@ -300,22 +310,21 @@ public class ApplicationController extends AObservable{
 		Logger.logInfo(move.toStringWithPlayer(players.getCurrent().getDisplayName()));
 		
 		setObservableChanged(true);
-		notifyObserver();
 	}
 
 	/**
 	 * Die Methode prueft, ob eine der Siegbedingungen eingetreten ist
 	 * @return boolean
 	 */
-	private void updateWinner() {
-		winner = null;
+	private synchronized void updateWinner() {
+		state.winner = null;
 		
 		for (Player player: players) {			
 			/*
 			 * Gewinnbedingung fuer die Anzahl der Steine (n < 3)
 			 */
 			if (player.getStones() < 3 && player.getPhase() > Player.PLACE_PHASE) {
-				winner = players.getOpponentOf(player);
+				state.winner = players.getOpponentOf(player);
 				break;
 			}
 			
@@ -323,20 +332,20 @@ public class ApplicationController extends AObservable{
 				/*
 				 * Gewinnbedingung, wenn kein Zug mehr moeglich ist
 				 */
-				winner = players.getOpponentOf(player);
+				state.winner = players.getOpponentOf(player);
 				
 				slotLoop:
 				for (Slot slot : gameboard.getStonesOfStatus(player.getSlotStatus())) {
 					for (Slot neighbour : gameboard.getNeighbours(slot)) {
 						if (neighbour != null && 
 							neighbour.isEmpty()) {
-							winner = null;
+							state.winner = null;
 							break slotLoop;
 						}
 					}
 				}
 				
-				if (winner != null) {
+				if (state.winner != null) {
 					break;
 				}
 			}

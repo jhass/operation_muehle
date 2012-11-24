@@ -50,6 +50,7 @@ public class Board extends Canvas {
 	private int verticalSpacing;
 	private PlayerManager players;
 	private String infoText;
+	private String messageText;
 	
 	public Board() {
 		super();
@@ -196,6 +197,10 @@ public class Board extends Canvas {
 	 */
 	public synchronized void setInfoText(String text) {
 		this.infoText = text;
+	}
+	
+	public synchronized void setMessageText(String text) {
+		this.messageText = text;
 	}
 
 	/** Callback that's run when any kind of new move is generated, no matter if
@@ -438,6 +443,7 @@ public class Board extends Canvas {
 	
 	private void drawWidgets(Graphics2D pen) {
 		drawPlayerCards(pen);
+		drawMessageBox(pen);
 		drawInfoTextBox(pen);
 	}
 	
@@ -500,6 +506,26 @@ public class Board extends Canvas {
 		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 	
+	private synchronized void drawMessageBox(Graphics2D pen) {
+		if (!isEnabled() || messageText == null || messageText.isEmpty()) {
+			return;
+		}
+		
+		
+		Font base = pen.getFont();
+		pen.setFont(Theme.getMessageBoxFont(base));
+		drawStringWithBox(
+			pen,
+			messageText,
+			width/2,
+			verticalSpacing/2,
+			Theme.MESSAGE_BOX_BACKGROUND_COLOR,
+			Theme.MESSAGE_BOX_TEXT_COLOR
+		);
+		
+		pen.setFont(base);
+	}
+	
 	private synchronized void drawInfoTextBox(Graphics2D pen) {
 		if (infoText == null || infoText.isEmpty()) {
 			return;
@@ -507,25 +533,40 @@ public class Board extends Canvas {
 		
 		Font base = pen.getFont();
 		pen.setFont(Theme.getInfoBoxFont(base));
-		Rectangle2D dimensions = pen.getFontMetrics().getStringBounds(infoText, pen);
+		drawStringWithBox(
+			pen,
+			infoText,
+			width/2,
+			height/2,
+			Theme.INFO_BOX_BACKGROUND_COLOR,
+			Theme.INFO_BOX_TEXT_COLOR
+		);
+		pen.setFont(base);
+	}
+
+	private void drawStringWithBox(Graphics2D pen, String string, int centerx,
+								   int centery, Color background, Color text) {
+		
+		Rectangle2D dimensions = pen.getFontMetrics().getStringBounds(string, pen);
 		int halfStringWidth = (int) (dimensions.getWidth()/2);
 		int halfStringHeight = (int) (dimensions.getHeight()/2);
 		
-		pen.setColor(Theme.INFO_BOX_BACKGROUND_COLOR);
+		pen.setColor(background);
 		pen.fillRect(
-			width/2-halfStringWidth-10,
-			height/2-halfStringHeight-30,
+			centerx-halfStringWidth-10,
+			centery-halfStringHeight-30,
 			halfStringWidth*2+20,
 			halfStringHeight*2+30
 		);
 		
-		pen.setColor(Theme.INFO_BOX_TEXT_COLOR);
+		pen.setColor(text);
 		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		pen.drawString(
-			infoText,
-			(int) (width/2-halfStringWidth),
-			(int) (height/2-halfStringHeight)
-		);
+				string,
+				(int) (centerx-halfStringWidth),
+				(int) (centery-halfStringHeight)
+				);
 		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		
 	}
 }

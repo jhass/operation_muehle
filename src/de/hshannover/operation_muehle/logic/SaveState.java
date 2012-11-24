@@ -13,11 +13,9 @@ public class SaveState extends GameState {
 	 * Konstruktor
 	 * @param gameboard Das aktuelle Spielfeld
 	 * @param players Der aktuelle PlayerManager
-	 * @param winner Der Spieler, der das Spiel gewonnen hat
 	 * @param log Die Notizen (Log) der Spielzuege
 	 */
-	public SaveState(Gameboard gameboard, PlayerManager players, 
-			          Player winner, Logger log) {
-		super(new Gameboard(gameboard), players, winner, log.copy());
+	public SaveState(Gameboard gameboard, PlayerManager players, Logger log) {
+		super(new Gameboard(gameboard), players, log.copy());
 	}
 }
