@@ -40,8 +40,7 @@ public class IOOperation {
 			ObjectOutputStream pump = new ObjectOutputStream(file);
 			pump.writeObject(data);
 			pump.close();
-			System.out.println("Game Saved."); // GUI should print this. How?
-
+			Logger.logInfof("Current game saved to %s", name);
 	}
 
 }

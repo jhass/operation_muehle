@@ -63,13 +63,13 @@ public class Move implements de.hshannover.inform.muehle.strategy.Move {
 	}
 	
 	public String toStringWithPlayer(String player) {
-		String playerMessage = "Spieler "+player;
-		if (isPlacement()) return playerMessage+" setzt Stein nach "
-									+this.endSlot.toString();
-		else if (isRemoval()) return playerMessage+" entfernt Stein von "
+		String playerMessage = "Player "+player;
+		if (isPlacement()) return playerMessage+" places stone at "
+									+this.endSlot;
+		else if (isRemoval()) return playerMessage+" removes stone from "
 									+this.startSlot;
-		else return playerMessage +" zieht Stein von "+this.startSlot+
-					 " nach "+this.endSlot;
+		else return playerMessage +" moves stone from "+this.startSlot+
+					 " to "+this.endSlot;
 	}
 
 	public boolean isRemoval() {

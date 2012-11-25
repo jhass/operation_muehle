@@ -134,14 +134,16 @@ public class ApplicationController extends AObservable{
 						}
 					}
 				} catch (InvalidMoveException e) {
-					Logger.logError("KI "+players.getCurrent().getDisplayName()+
-							        " hat ungültigen Zug durchgeführt: "+e.move);
+					Logger.logErrorf("AI %s made invalid move: %s! ",
+									 players.getCurrent().getDisplayName(),
+									 e.move);
 					getGameState().winner = players.getOpponent();
 					gameRunning = false;
 				}
 				
 				if (getGameState().winner != null) { 
-					Logger.logInfo("Gewinner: "+getGameState().winner.getDisplayName());
+					Logger.logInfof("Winner: %s",
+									getGameState().winner.getDisplayName());
 					setObservableChanged(true);
 					notifyObserver();
 				}
@@ -180,7 +182,8 @@ public class ApplicationController extends AObservable{
 				throws InvalidMoveException {
 				if (hasClosedMill(move)) {
 					currentMoveValidator = removeMoveValidator;
-					Logger.logDebug("Muehle!");
+					Logger.logDebugf("%s made a mill, querying removal.",
+									 players.getCurrent().getDisplayName());
 					
 					// Reset query mechanism
 					Move currentMoveCache = currentMove;
@@ -302,6 +305,8 @@ public class ApplicationController extends AObservable{
 	 * @param move A VALID(!) Move.
 	 */
 	private void executeMove(Move move) {
+		Logger.logInfo(move.toStringWithPlayer(players.getCurrent().getDisplayName()));
+		
 		if (move.isRemoval()) {
 			players.decreaseOpponentsNumberOfStones();
 			gameboard.removeStone(currentMove.fromSlot());
@@ -311,7 +316,6 @@ public class ApplicationController extends AObservable{
 		} else if (players.getCurrentPlayersPhase() >= Player.MOVE_PHASE) {
 			gameboard.applyMove(move);
 		}
-		Logger.logInfo(move.toStringWithPlayer(players.getCurrent().getDisplayName()));
 		
 		setObservableChanged(true);
 	}

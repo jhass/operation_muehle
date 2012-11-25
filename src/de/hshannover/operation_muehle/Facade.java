@@ -6,6 +6,7 @@ import java.util.HashMap;
 import de.hshannover.operation_muehle.gui.board.Spot;
 import de.hshannover.operation_muehle.logic.GameState;
 import de.hshannover.operation_muehle.logic.InvalidMoveException;
+import de.hshannover.operation_muehle.logic.Logger;
 import de.hshannover.operation_muehle.logic.PlayerOptions;
 import de.hshannover.operation_muehle.logic.SaveState;
 import de.hshannover.operation_muehle.logic.Slot;
@@ -113,7 +114,7 @@ public class Facade {
 		}
 		
 		Move move = new Move(srcSlot, dstSlot);
-		System.out.println(move);
+		Logger.logDebugf("Generated move from user interaction: %s", move);
 		appController.givePlayerMove(move);
 	}
 

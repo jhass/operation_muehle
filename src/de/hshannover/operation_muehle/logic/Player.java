@@ -106,7 +106,7 @@ public class Player implements Serializable {
 		this.availableStones--;
 		if (this.availableStones == 0) {
 			this.phase = MOVE_PHASE;
-			System.out.println("Player "+this.color+" enters Phase "+this.phase);//TODO Ab in Logger
+			Logger.logDebugf("Player %s enters phase %s", color, phase);
 		}
 	}
 	
@@ -120,7 +120,7 @@ public class Player implements Serializable {
 		// so do not allow moving from place to jump phase
 		if (this.stones <= 3 && this.phase != PLACE_PHASE) {
 			this.phase = JUMP_PHASE;
-			System.out.println("Entering Phase " + this.phase);//TODO: Ab in Logger
+			Logger.logDebugf("Player %s enters phase %s", color, phase);
 		}
 	}
 	

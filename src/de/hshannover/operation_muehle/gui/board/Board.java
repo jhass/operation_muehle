@@ -23,6 +23,7 @@ import de.hshannover.operation_muehle.gui.MoveCallback;
 import de.hshannover.operation_muehle.gui.Theme;
 import de.hshannover.operation_muehle.gui.board.TextureUtils;
 import de.hshannover.operation_muehle.logic.Gameboard;
+import de.hshannover.operation_muehle.logic.Logger;
 import de.hshannover.operation_muehle.logic.Player;
 import de.hshannover.operation_muehle.logic.PlayerManager;
 import de.hshannover.operation_muehle.logic.Slot;
@@ -105,7 +106,7 @@ public class Board extends Canvas {
 	private void pointClicked(Point clicked) {
 		for (Spot spot : spots) {
 			if (spot.isCovering(clicked)) {
-				System.out.printf("Clicked %s\n", spot);
+				Logger.logDebugf("Clicked %s", spot);
 				for (MoveCallback callback : newMoveCallbacks) {
 					if (spot.hasStone()) {
 						if (!callback.process(spot, null, null)) {
@@ -120,7 +121,7 @@ public class Board extends Canvas {
 				return;
 			}
 		}
-		System.out.println("Nothing at "+clicked);
+		Logger.logDebugf("Clicked nothing at %s", clicked);
 	}
 
 	private void startDragFromPoint(Point source) {
@@ -137,9 +138,9 @@ public class Board extends Canvas {
 	private void endDragToPoint(Point destination) {
 		if (draggedStone != null) {
 			spotLoop: for (Spot spot : spots) {
-				// TODO: don't check if the spot has a stone, that's app logic
 				if (!spot.hasStone() && spot.isCovering(destination)) {
-					System.out.println("Moved "+draggedStone+" from "+draggedStoneSrc+" to "+spot);
+					Logger.logDebugf("User moved %s from %s to %s",
+									 draggedStone,draggedStoneSrc, spot);
 					for (MoveCallback callback : newMoveCallbacks) {
 						if (!callback.process(draggedStoneSrc, spot,
 											  draggedStone.getColor())) {

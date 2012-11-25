@@ -45,6 +45,10 @@ public class Logger implements Serializable {
 		log.add(new LogEntry(level,entry));
 	}
 	
+	private void logf(Level level, String entry, Object... args) {
+		log(String.format(entry, args), level);
+	}
+	
 	public Logger copy() {
 		return new Logger(this);
 	}
@@ -53,20 +57,43 @@ public class Logger implements Serializable {
 		getInstance().log(entry, Level.FATAL);
 	}
 	
+	public static void logFatalf(String entry, Object... args) {
+		getInstance().logf(Level.FATAL, entry, args);
+	}
+	
 	public static void logError(String entry) {
 		getInstance().log(entry, Level.ERROR);
+	}
+	
+	
+	public static void logErrorf(String entry, Object... args) {
+		getInstance().logf(Level.ERROR, entry, args);
 	}
 	
 	public static void logWarning(String entry) {
 		getInstance().log(entry, Level.WARNING);
 	}
 	
+	public static void logWarningf(String entry, Object... args) {
+		getInstance().logf(Level.WARNING, entry, args);
+	}
+	
 	public static void logInfo(String entry) {
 		getInstance().log(entry, Level.INFO);
 	}
 	
+	
+	public static void logInfof(String entry, Object... args) {
+		getInstance().logf(Level.INFO, entry, args);
+	}
+	
 	public static void logDebug(String entry) {
 		getInstance().log(entry, Level.DEBUG);
+	}
+	
+	
+	public static void logDebugf(String entry, Object... args) {
+		getInstance().logf(Level.DEBUG, entry, args);
 	}
 	
 	public ArrayList<LogEntry> getEntriesForLevel(Level level) {
@@ -116,15 +143,17 @@ public class Logger implements Serializable {
 
 		protected Level level;
 		protected String message;
+		protected long timestamp;
 		
 		public LogEntry(Level level, String entry) {
 			this.level = level;
 			this.message= entry;
+			this.timestamp = System.currentTimeMillis();
 		}
 		
 		@Override
 		public String toString() {
-			return level+": "+message;
+			return String.format("%tc [%s]: %s", timestamp, level, message);
 		}
 	}
 }
