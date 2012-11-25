@@ -62,6 +62,7 @@ public class ApplicationController extends AObservable{
 		players = new PlayerManager(gameOptions.get("white"), gameOptions.get("black"));
 		moveValidator.setPlayers(players);
 		removeMoveValidator.setPlayers(players);
+		state = null;
 		
 		notifyObserver();
 		playGame();

@@ -69,11 +69,22 @@ public class Logger implements Serializable {
 		getInstance().log(entry, Level.DEBUG);
 	}
 	
+	public ArrayList<LogEntry> getEntriesForLevel(Level level) {
+		ArrayList<LogEntry> entries = new ArrayList<LogEntry>();
+		
+		for (LogEntry entry : log) {
+			if (entry.level.getPriority() >= level.getPriority()) {
+				entries.add(entry);
+			}
+		}
+		
+		return entries;
+	}
+	
 	public String getMessagesForLevel(Level level) {
 		StringBuilder fullLog = new StringBuilder();
 		
-		for (LogEntry entry: log) {
-			if (entry.level.getPriority() >= level.getPriority())
+		for (LogEntry entry: getEntriesForLevel(level)) {
 			fullLog.append(entry.message+"\n");
 		}
 		
@@ -100,7 +111,7 @@ public class Logger implements Serializable {
 		abstract int getPriority();
 	}
 	
-	private class LogEntry implements Serializable {
+	public class LogEntry implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		protected Level level;
@@ -109,6 +120,11 @@ public class Logger implements Serializable {
 		public LogEntry(Level level, String entry) {
 			this.level = level;
 			this.message= entry;
+		}
+		
+		@Override
+		public String toString() {
+			return level+": "+message;
 		}
 	}
 }
