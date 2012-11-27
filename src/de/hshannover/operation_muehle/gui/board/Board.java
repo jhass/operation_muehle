@@ -504,6 +504,8 @@ public class Board extends Canvas {
 		}
 		pen.drawString("On board: "+player.getStones(), leftCornerBase-120, height-offset);
 		offset -= 20;
+		pen.drawString("Moves: "+player.getNumberOfMoves(), leftCornerBase-120, height-offset);
+		offset -= 20;
 		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 	}
 	

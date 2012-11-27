@@ -95,7 +95,7 @@ public class ApplicationController extends AObservable{
 	public void playGame() {
 		gameThread = new Thread() {
 			private Slot lastRemovedStone;
-
+			
 			@Override
 			public void run() {
 				Move lastMove = null;
@@ -142,7 +142,8 @@ public class ApplicationController extends AObservable{
 				}
 				
 				if (getGameState().winner != null) { 
-					Logger.logInfof("Winner: %s",
+					Logger.logInfof("Winner in %d moves: %s",
+									getGameState().winner.getNumberOfMoves(),
 									getGameState().winner.getDisplayName());
 					setObservableChanged(true);
 					notifyObserver();
@@ -305,7 +306,10 @@ public class ApplicationController extends AObservable{
 	 * @param move A VALID(!) Move.
 	 */
 	private void executeMove(Move move) {
-		Logger.logInfo(move.toStringWithPlayer(players.getCurrent().getDisplayName()));
+		// log first since increasing/decreasing a players stones can
+		// cause a phase change log that looks weird if it comes
+		// before this one :P
+		Logger.logInfo(move.toStringWithPlayer(players.getCurrent().getDisplayName()));		
 		
 		if (move.isRemoval()) {
 			players.decreaseOpponentsNumberOfStones();
@@ -317,7 +321,16 @@ public class ApplicationController extends AObservable{
 			gameboard.applyMove(move);
 		}
 		
+		players.getCurrent().incrementMoveCounter();
 		setObservableChanged(true);
+		
+		// give the GUI a chance to redraw
+		if (players.isCurrentPlayerAI()) {
+			notifyObserver();
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {}
+		}
 	}
 
 	/**

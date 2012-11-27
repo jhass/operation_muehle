@@ -56,7 +56,8 @@ public class Player implements Serializable {
 	private int thinkTime;
 	private int phase;
 	private Strategy aiStrategy;
-	private int availableStones= 9;
+	private int availableStones;
+	private int moveCounter; 
 	
 	/**
 	 * Konstruktor fuer Spieler bei einem neuen Spiel. Geandert, um der 
@@ -76,29 +77,10 @@ public class Player implements Serializable {
 		this.isAI = oPlayer.isAI();
 		this.thinkTime = oPlayer.getThinkTime();
 		this.stones = 0;
+		this.availableStones = 9;
+		this.moveCounter = 0;
 		this.phase = PLACE_PHASE;
 		if (this.isAI)	this.aiStrategy = Facade.getInstance().getStrategyLoader().getInstance(this.name);
-	}
-	
-	/**
-	 * Konstruktor fuer Spieler bei einem geladenen Spielstand.
-	 * @param name Name des Spielers
-	 * @param color Farbe des Spielers
-	 * @param isAI logischer Wert zur Unterscheidung von menschlichen
-	 * Spieler und kuenstlicher Intelligenz
-	 * @param thinkTime Denkzeit der kuenstlichen Intelligenz
-	 * @param stones Array mit den Feldern, in denen der Spieler Spielsteine
-	 * hat
-	 * @param phase Spielphase, in der sich der Spieler befindet 
-	 */
-	public Player(String name, Color color, boolean isAI, int thinkTime, 
-			       Slot[] stones, int phase) {
-		this.name = name;
-		this.color = color;
-		this.isAI = isAI;
-		this.thinkTime = thinkTime;
-		this.stones = stones.length;
-		this.phase = phase;
 	}
 	
 	public void increaseStones() {
@@ -122,6 +104,20 @@ public class Player implements Serializable {
 			this.phase = JUMP_PHASE;
 			Logger.logDebugf("Player %s enters phase %s", color, phase);
 		}
+	}
+	
+	/** Increment the move counter
+	 * 
+	 */
+	public void incrementMoveCounter() {
+		this.moveCounter++;
+	}
+	
+	/** Get the amount of moves the player made so far
+	 * 
+	 */
+	public int getNumberOfMoves() {
+		return this.moveCounter;
 	}
 	
 	/**

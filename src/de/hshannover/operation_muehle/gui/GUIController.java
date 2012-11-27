@@ -84,7 +84,11 @@ public class GUIController implements IObserver {
 									 state.players.isOpponentAI()));
 		if (state.winner != null) {
 			mainWindow.noGameMode();
-			mainWindow.setInfoText(state.winner.getDisplayName()+" wins the game!");
+			mainWindow.setInfoText(
+				String.format("%s wins the game in %d moves!",
+							  state.winner.getDisplayName(),
+							  state.winner.getNumberOfMoves())
+			);
 		}
 		mainWindow.setMessageText(determineCurrentMessage(state));
 		mainWindow.repaint();

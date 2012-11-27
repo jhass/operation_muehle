@@ -41,7 +41,7 @@ public class Logger implements Serializable {
 		log = (ArrayList<LogEntry>) logger.log.clone();
 	}
 	
-	private void log(String entry, Level level) {
+	private synchronized void log(String entry, Level level) {
 		log.add(new LogEntry(level,entry));
 	}
 	
@@ -96,7 +96,7 @@ public class Logger implements Serializable {
 		getInstance().logf(Level.DEBUG, entry, args);
 	}
 	
-	public ArrayList<LogEntry> getEntriesForLevel(Level level) {
+	public synchronized ArrayList<LogEntry> getEntriesForLevel(Level level) {
 		ArrayList<LogEntry> entries = new ArrayList<LogEntry>();
 		
 		for (LogEntry entry : log) {
