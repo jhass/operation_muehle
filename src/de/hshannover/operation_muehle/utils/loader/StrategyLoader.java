@@ -53,9 +53,14 @@ public class StrategyLoader extends ClassesLoader {
 	 * @throws IllegalAccessException if the given class can't be accessed
 	 * @throws ClassCastException if the given class is not a strategy
 	 */
-	public Strategy getInstance(String klass) {
+	public Strategy getInstance(String klassName) {
 		try {
-			return (Strategy) super.getInstance(klass);
+			Class<?> klass = getClass(klassName);
+			for (Class<?> iface : klass.getInterfaces()) {
+				if (iface.getCanonicalName().equals("de.hshannover.inform.muehle.strategy.Strategy")) {
+					return (Strategy) super.getInstance(klassName); 
+				}
+			}
 		} catch (ClassNotFoundException e) {
 		} catch (InstantiationException e) {
 		} catch (IllegalAccessException e) {

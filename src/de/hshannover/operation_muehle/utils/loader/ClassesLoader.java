@@ -109,7 +109,7 @@ public class ClassesLoader {
 	 * @return the Class object for klass
 	 * @throws ClassNotFoundException if the class isn't available
 	 */
-	private Class<?> getClass(String klass)
+	protected Class<?> getClass(String klass)
 		throws ClassNotFoundException {
 		if (availableClasses.contains(klass)) {
 			return Class.forName(klass);
