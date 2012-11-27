@@ -55,7 +55,7 @@ public class LogWindow extends JFrame {
 	
 	public void toggleVisibility() {
 		setVisible(!isVisible());
-		scrollToTheEnd();
+		scrollToTheEnd(true);
 	}
 	
 	/**
@@ -66,9 +66,13 @@ public class LogWindow extends JFrame {
 		textPane.setText(log);
 		scrollToTheEnd();
 	}
-
+	
 	private void scrollToTheEnd() {
-		if (autoscroll) {
+		scrollToTheEnd(false);
+	}
+
+	private void scrollToTheEnd(boolean force) {
+		if (autoscroll || force) {
 			scrollPane.revalidate();
 			final JScrollBar verticalScrollbar = scrollPane.getVerticalScrollBar();
 			EventQueue.invokeLater(new Runnable() { // Give the revalidate a chance to populate

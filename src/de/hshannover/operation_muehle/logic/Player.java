@@ -145,12 +145,17 @@ public class Player implements Serializable {
 	 * @return String
 	 */
 	public String getDisplayName() {
+		String name;
 		if (isAI()) {
-			return aiStrategy.getStrategyName();
-		} else if (name.isEmpty()) {
-			return color.toString();
+			name = aiStrategy.getStrategyName();
 		} else {
-			return name;
+			name = this.name;
+		}
+		
+		if (name.isEmpty()) {
+			return color.toString().toLowerCase();
+		} else {
+			return String.format("%s (%s)", name, color.toString().toLowerCase());
 		}
 	}
 	
