@@ -87,10 +87,6 @@ public class AIBoard {
 
 	private HashMap<Integer, Status> fields;
 
-	private int foreignMovesWithoutFrom = 0;
-	private int numberOfMyStones = 0;
-	private int numberOfForeignStones = 0;
-
 	public AIBoard() {
 		this.fields = new HashMap<Integer, Status>();
 		initializeFields();
@@ -138,10 +134,9 @@ public class AIBoard {
 			if (this.fields.containsKey(address)) {
 				Status s = this.fields.get(address);
 				if (s == Status.EMPTY) {
-					if (status == Status.MYSTONE)
-						this.numberOfMyStones++;
-					else
-						this.numberOfForeignStones++;
+					if (status == Status.MYSTONE) {
+					} else {
+					}
 					this.fields.put(address, status);
 				} else {
 					throw new IllegalArgumentException(
@@ -163,7 +158,6 @@ public class AIBoard {
 			if (from != null) {
 				this.removeStone(from);
 			} else {
-				this.foreignMovesWithoutFrom++;
 			}
 			this.placeStone(move.toSlot(), status);
 		}
@@ -179,10 +173,9 @@ public class AIBoard {
 						("Field " + slot.getColumn()) + slot.getRow()
 								+ " does not contain a stone.");
 			}
-			if (status == Status.MYSTONE)
-				this.numberOfMyStones++;
-			else
-				this.numberOfForeignStones++;
+			if (status == Status.MYSTONE) {
+			} else {
+			}
 			this.fields.put(address, Status.EMPTY);
 		}
 	}
