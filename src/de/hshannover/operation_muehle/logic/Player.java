@@ -75,7 +75,7 @@ public class Player implements Serializable {
 		this.name = oPlayer.getName();
 		this.color = color;
 		this.isAI = oPlayer.isAI();
-		this.thinkTime = oPlayer.getThinkTime();
+		this.thinkTime = oPlayer.getThinkTime()*1000;
 		this.stones = 0;
 		this.availableStones = 9;
 		this.moveCounter = 0;

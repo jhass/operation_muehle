@@ -2,6 +2,7 @@ package de.hshannover.operation_muehle.logic;
 
 import java.util.HashMap;
 
+import de.hshannover.operation_muehle.utils.TimeObserver;
 import de.hshannover.operation_muehle.utils.observer.AObservable;
 
 /**
@@ -134,9 +135,14 @@ public class ApplicationController extends AObservable{
 						}
 					}
 				} catch (InvalidMoveException e) {
-					Logger.logErrorf("AI %s made invalid move: %s! ",
-									 players.getCurrent().getDisplayName(),
-									 e.move);
+					if (e.move == null) {
+						Logger.logError("AI has not made a valid Move in Time: "+
+								players.getCurrent().getThinkTime()+" ms.");
+					} else {
+						Logger.logErrorf("AI %s made invalid move: %s! ",
+										 players.getCurrent().getDisplayName(),
+										 e.move);
+					}
 					getGameState().winner = players.getOpponent();
 					gameRunning = false;
 				}
@@ -150,28 +156,48 @@ public class ApplicationController extends AObservable{
 				}
 			}
 
-			private void setCurrentMoveToAIMove(Move lastMove)
+			private void setCurrentMoveToAIMove(final Move lastMove)
 				throws InvalidMoveException {
 				if (players.isCurrentPlayersPhase(Player.PLACE_PHASE)) {
 					try {
-						currentMove = new Move(
-							null,
-							new Slot(
-								players.getCurrent().placeStone( // TODO: enforce thinkTime
-										lastMove != null ? lastMove.toSlot() : null,
-										lastRemovedStone
-								)
-							)
-						);
+						TimeObserver observer = new TimeObserver(players.getCurrent()
+																 .getThinkTime()) {
+							@Override
+							public void run() {
+								currentMove = new Move(
+										null,
+										new Slot(
+											players.getCurrent().placeStone(
+													lastMove != null ? lastMove.toSlot() : null,
+													lastRemovedStone
+											)
+										)
+									);
+								
+							}
+						};
+						
+						if (!observer.hasFinishedInTime()) throw new InvalidMoveException(null);
+						
 					} catch (Exception e) {
 						e.printStackTrace();
 						throw new InvalidMoveException(currentMove);
 					}
 				} else {
-					// lastMove is already correctly set in the transition
-					// special case since we internally handle remove that way.
-					currentMove = players.getCurrent().doMove(lastMove,
-															  lastRemovedStone);
+					TimeObserver observer = new TimeObserver(players.getCurrent()
+							 .getThinkTime()) {
+						@Override
+						public void run() {
+							
+							// lastMove is already correctly set in the transition
+							// special case since we internally handle remove that way.
+							currentMove = players.getCurrent().doMove(lastMove,
+									lastRemovedStone);
+						
+						}
+					};
+						
+					if (!observer.hasFinishedInTime()) throw new InvalidMoveException(null);
 				}
 				
 				if (isInvalidMove(currentMove)) {
@@ -192,12 +218,21 @@ public class ApplicationController extends AObservable{
 					
 					getGameState().inRemovalPhase = true;
 					setObservableChanged(true);
-					
+					// TODO: catch Exceptions
 					if (players.isCurrentPlayerAI()) {
-						currentMove = new Move( //TODO: enforce think time
-							new Slot(players.getCurrent().removeStone()),
-							null
-						);
+						TimeObserver observer = new TimeObserver(players.getCurrent()
+								 .getThinkTime()) {
+							
+							@Override
+							public void run() {
+								currentMove = new Move( 
+										new Slot(players.getCurrent().removeStone()),
+										null
+									);
+							}
+						};
+
+						if (!observer.hasFinishedInTime()) throw new InvalidMoveException(null);
 						
 						if (isInvalidMove(currentMove)) {
 							currentMoveValidator = moveValidator;
