@@ -100,7 +100,8 @@ public class GUIController implements IObserver {
 		PlayerManager players = state.players;
 		if (players.isCurrentPlayerAI()) {
 			if (!players.isOpponentAI()) {
-				return "Wait for your opponent to move.";
+				return "Wait for "+players.getOpponent().getDisplayName()
+						+" to move.";
 			}
 		} else {
 			String prepend = "";
