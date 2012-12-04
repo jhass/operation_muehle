@@ -13,12 +13,12 @@ public class AIGameBoard extends Gameboard {
 	}
 
 	public ArrayList<de.hshannover.operation_muehle.logic.Slot> getFreeSlots() {
-		return getStonesFromColor(Slot.Status.EMPTY);
+		return getStonesOfStatus(Slot.Status.EMPTY);
 		
 	}
 
 	public ArrayList<de.hshannover.operation_muehle.logic.Slot> getMyStones() {
-		return getStonesFromColor(Slot.Status.WHITE);
+		return getStonesOfStatus(Slot.Status.WHITE);
 	}
 
 	public ArrayList<de.hshannover.operation_muehle.logic.Slot> getMoveableStones() {
@@ -50,7 +50,7 @@ public class AIGameBoard extends Gameboard {
 	}
 
 	public ArrayList<de.hshannover.operation_muehle.logic.Slot> getOppositeStones() {
-		return getStonesFromColor(Slot.Status.BLACK);
+		return getStonesOfStatus(Slot.Status.BLACK);
 		
 	}
 

@@ -1,11 +1,14 @@
 package de.hshannover.operation_muehle.gui;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
+import java.awt.EventQueue;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 
 /**LogWindow shows the game log
  * 
@@ -14,7 +17,10 @@ import javax.swing.JTextArea;
 
 public class LogWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private JTextArea jtxtareaLog;
+	
+	private JTextPane textPane;
+	private boolean autoscroll;
+	private JScrollPane scrollPane;
 
 	/**
 	 * LogWindow Frame
@@ -24,18 +30,23 @@ public class LogWindow extends JFrame {
 		setTitle("Log");
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 400, 300);
+		getContentPane().setLayout(new BorderLayout(0, 0));
 		
-		JScrollPane scrollPane = new JScrollPane();
-		getContentPane().add(scrollPane, BorderLayout.CENTER);
+		scrollPane = new JScrollPane();
+		scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+			@Override
+			public void adjustmentValueChanged(AdjustmentEvent ev) {
+				autoscroll = ev.getAdjustable().getMaximum()-ev.getValue() < 250;
+			}
+		});
 		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane.setViewportView(scrollPane_1);
-		
-		jtxtareaLog = new JTextArea();
-		jtxtareaLog.setEditable(false);
-		scrollPane_1.setViewportView(jtxtareaLog);
+		textPane = new JTextPane();
+		textPane.setEditable(false);
+		scrollPane.setViewportView(textPane);
+		getContentPane().add(scrollPane);
 		setVisible(false);
-				
+		
+		autoscroll = true;
 	}
 	
 	/**
@@ -44,17 +55,32 @@ public class LogWindow extends JFrame {
 	
 	public void toggleVisibility() {
 		setVisible(!isVisible());
+		scrollToTheEnd(true);
 	}
 	
 	/**
-	 * Replace log entries with new ones
+	 * Add String to textarea
 	 */
 	
-	public void setLog(ArrayList<String> logList) {
-		jtxtareaLog.setText("");
-		for(int i = 0; i < logList.size(); i++){
-		jtxtareaLog.append((String)logList.get(i) + "\n");
-		}
+	public void setLog(String log) {
+		textPane.setText(log);
+		scrollToTheEnd();
+	}
+	
+	private void scrollToTheEnd() {
+		scrollToTheEnd(false);
 	}
 
+	private void scrollToTheEnd(boolean force) {
+		if (autoscroll || force) {
+			scrollPane.revalidate();
+			final JScrollBar verticalScrollbar = scrollPane.getVerticalScrollBar();
+			EventQueue.invokeLater(new Runnable() { // Give the revalidate a chance to populate
+				@Override
+				public void run() {
+					verticalScrollbar.setValue(verticalScrollbar.getMaximum());
+				}
+			});
+		}
+	}
 }

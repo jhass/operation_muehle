@@ -39,19 +39,59 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 		this.column = column;
 	}
 	
+	/** Constructor to create a new Slot from external representation values
+	 * 
+	 * @param column
+	 * @param row
+	 * @param status
+	 */
+	public Slot(char column, int row, Status status) {
+		this(column-64, row, status);
+	}
+	
 	/**
 	 * Konstruktor, der den Status automatisch auf unbenutzt
 	 * @param column Spaltenindex (Constraint >0)
 	 * @param row Zeilenindex (Constraint >0)
 	 */
 	public Slot(int column, int row) {
-		if (row<0) 
+		if (row <= 0) 
 			throw new IllegalArgumentException("Slot.Row ungueltig!");
-		if (column<0) 
+		if (column <= 0) 
 			throw new IllegalArgumentException("Slot.Column ungueltig!");
 		this.status = Status.EMPTY;
 		this.row = row;
 		this.column = column;
+	}
+	
+	/** Constructor for a Slot from interface parameters
+	 * 
+	 * @param column
+	 * @param row
+	 */
+	public Slot(char column, int row) {
+		if (row <= 0) {
+			throw new IllegalArgumentException("Slot.Row ungueltig!");
+		}
+		
+		column = String.valueOf(column).toUpperCase().toCharArray()[0];
+		
+		if (column < 'A') {
+			throw new IllegalArgumentException("Slot.Column ungueltig!");
+		}
+		
+		this.status = Status.EMPTY;
+		this.row = row;
+		this.column = column-64; // TODO: converter function
+	}
+	
+	
+	/** Constructor to create a new Slot from the interface Slot
+	 * 
+	 * @param slot
+	 */
+	public Slot(de.hshannover.inform.muehle.strategy.Slot slot) {
+		this(slot.getColumn(), slot.getRow());
 	}
 	
 	/**
@@ -94,9 +134,14 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 		return this.column*10+this.row;
 	}
 	
+	
+	public boolean isEmpty() {
+		return status == Status.EMPTY;
+	}
+	
 	@Override
 	public String toString() {
 		char c= (char) (this.column+64);
-		return "("+c+", "+this.row+", "+this.status+")";
+		return c+""+this.row;
 	}
 }

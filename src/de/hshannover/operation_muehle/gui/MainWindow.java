@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 
 import de.hshannover.operation_muehle.gui.board.Board;
 import de.hshannover.operation_muehle.logic.Gameboard;
+import de.hshannover.operation_muehle.logic.PlayerManager;
 
 import java.util.ArrayList;
 import java.awt.event.ActionListener;
@@ -35,6 +36,7 @@ public class MainWindow extends JFrame {
 	private final JButton btnSaveGame = new JButton("Save Game");
 
 	private Board board;
+	private boolean saveableGame;
 	
 	public MainWindow() {
 		setVisible(true);
@@ -57,25 +59,36 @@ public class MainWindow extends JFrame {
 		setupListener();
 		setTitle("Mühle");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(500, 500);
+		setSize(800, 600);
 		
 		noGameMode();
+	}
+	
+	/** Whether a game should be saveable
+	 * 
+	 * @param saveable
+	 */
+	public void setGameSaveable(boolean saveable) {
+		saveableGame = saveable;
 	}
 	
 	/** Set the window into no game mode
 	 * 
 	 */
 	public void noGameMode() {
-		btnSaveGame.setEnabled(false);
-		board.setEnabled(false); 
+		board.setEnabled(false);
+		board.setInfoText("Start a new game!");
+		saveableGame = false;
+		btnSaveGame.setEnabled(saveableGame);
 	}
 	
 	/** Set the window into game mode
 	 * 
 	 */
 	public void gameMode() {
-		btnSaveGame.setEnabled(true);
 		board.setEnabled(true);
+		board.setInfoText(null);
+		btnSaveGame.setEnabled(saveableGame);
 	}
 	
 	private void setupListener() {
@@ -154,12 +167,42 @@ public class MainWindow extends JFrame {
 	public void addNewMoveCallback(MoveCallback moveCallback) {
 		board.addNewMoveCallback(moveCallback);
 	}
+	
+	@Override
+	public void repaint() {
+		super.repaint();
+		board.repaint();
+	}
 
 	/** Draws a Gameboard
 	 * 
 	 * @param gameboard
 	 */
-	public void drawBoard(Gameboard gameboard) {
-		this.board.setGameboard(gameboard);
+	public void updateBoard(Gameboard gameboard) {
+		board.setGameboard(gameboard);
+	}
+	
+	/** Sets the player infos
+	 * 
+	 * @param players
+	 */
+	public void updatePlayerInfo(PlayerManager players) {
+		board.setPlayerInfo(players);
+	}
+
+	/** Sets the info text
+	 * 
+	 * @param string
+	 */
+	public void setInfoText(String text) {
+		board.setInfoText(text);
+	}
+
+	/** Sets the message text
+	 * 
+	 * @param determineCurrentMessage
+	 */
+	public void setMessageText(String text) {
+		board.setMessageText(text);
 	}
 }

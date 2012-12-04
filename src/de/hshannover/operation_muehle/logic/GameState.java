@@ -1,7 +1,6 @@
 package de.hshannover.operation_muehle.logic;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * Die Klasse GameState hält regelmäßig den aktuellen Zustand des Spiels fest.
@@ -11,23 +10,23 @@ import java.util.ArrayList;
 public class GameState implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public Gameboard currentGB;
-	public Player currentPlayer;
+	public PlayerManager players;
 	public Player winner;
-	public ArrayList<String> log;
+	public Logger logger;
+	public boolean inRemovalPhase;
 	
 	/**
 	 * Konstruktor
 	 * @param gameboard Das aktuelle Spielfeld
-	 * @param currentPlayer Der Spieler, der aktuell am Zug ist
-	 * @param winner Der Spieler, der das Spiel gewonnen hat
+	 * @param players Der aktuelle PlayerManager
 	 * @param log Die Notizen (Log) der Spielzuege
 	 */
-	public GameState(Gameboard gameboard, Player currentPlayer,
-				     Player winner, ArrayList<String> log) {
+	public GameState(Gameboard gameboard, PlayerManager players, Logger logger) {
 		this.currentGB = gameboard;
-		this.currentPlayer = currentPlayer;
-		this.winner = winner;
-		this.log = log;
+		this.players = players;
+		this.logger = logger;
+		this.inRemovalPhase = false;
+		this.winner = null;
 	}
 
 }

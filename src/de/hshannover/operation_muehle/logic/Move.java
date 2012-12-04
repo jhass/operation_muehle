@@ -29,6 +29,16 @@ public class Move implements de.hshannover.inform.muehle.strategy.Move {
 		this.endSlot= end;
 	}
 	
+	public Move(de.hshannover.inform.muehle.strategy.Move move) {
+		if (move.fromSlot() != null) {
+			this.startSlot = new Slot(move.fromSlot());
+		}
+		
+		if (move.toSlot() != null) {
+			this.endSlot = new Slot(move.toSlot());
+		}
+	}
+
 	/**
 	 * Gibt das Startfeld zurück.
 	 * @return Slot
@@ -50,5 +60,35 @@ public class Move implements de.hshannover.inform.muehle.strategy.Move {
 	@Override
 	public String toString() {
 		return "["+ this.startSlot + " to " + this.endSlot + "]";
+	}
+	
+	public String toStringWithPlayer(String player) {
+		String playerMessage = "Player "+player;
+		if (isPlacement()) return playerMessage+" places stone at "
+									+this.endSlot;
+		else if (isRemoval()) return playerMessage+" removes stone from "
+									+this.startSlot;
+		else return playerMessage +" moves stone from "+this.startSlot+
+					 " to "+this.endSlot;
+	}
+
+	public boolean isRemoval() {
+		return toSlot() == null;
+	}
+	
+	public boolean isNoRemoval() {
+		return !isRemoval();
+	}
+
+	public boolean isPlacement() {
+		return fromSlot() == null;
+	}
+	
+	public boolean isNoPlacement() {
+		return !isPlacement();
+	}
+
+	public boolean isMove() {
+		return isNoPlacement() && isNoRemoval();
 	}
 }

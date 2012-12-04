@@ -34,14 +34,13 @@ public class IOOperation {
 	 * @throws IOException 
 	 * @see GameState
 	 */
-	public static void saveGameInfo(String name, GameState data) throws IOException {
+	public static void saveGameInfo(String name, SaveState data) throws IOException {
 
 			FileOutputStream file = new FileOutputStream(name);
 			ObjectOutputStream pump = new ObjectOutputStream(file);
 			pump.writeObject(data);
 			pump.close();
-			System.out.println("Game Saved."); // GUI should print this. How?
-
+			Logger.logInfof("Current game saved to %s", name);
 	}
 
 }

@@ -1,8 +1,5 @@
 package de.hshannover.operation_muehle.logic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 /**
  * Diese Klasse erbt von der Klasse GameState und dient zum Speichern eines Spielstandes
  * in eine Datei, wenn das Spiel beendet werden soll.
@@ -11,28 +8,14 @@ import java.util.HashMap;
  */
 public class SaveState extends GameState {
 	private static final long serialVersionUID = 1L;
-	private HashMap<Player.Color, Player> players;
 
 	/**
 	 * Konstruktor
-	 * @param g Das aktuelle Spielfeld
-	 * @param cp Der Spieler, der aktuell am Zug ist
-	 * @param w Der Spieler, der das Spiel gewonnen hat
+	 * @param gameboard Das aktuelle Spielfeld
+	 * @param players Der aktuelle PlayerManager
 	 * @param log Die Notizen (Log) der Spielzuege
-	 * @param players Informationen über die beiden beteiligten Spieler
 	 */
-	public SaveState(Gameboard g, Player cp, Player w, ArrayList<String> log,
-			          HashMap<Player.Color, Player> players) {
-		super(g, cp, w, log);
-		this.setPlayers(players);
+	public SaveState(Gameboard gameboard, PlayerManager players, Logger log) {
+		super(new Gameboard(gameboard), players, log.copy());
 	}
-
-	public HashMap<Player.Color, Player> getPlayers() {
-		return this.players;
-	}
-
-	public void setPlayers(HashMap<Player.Color, Player> players) {
-		this.players = players;
-	}
-
 }

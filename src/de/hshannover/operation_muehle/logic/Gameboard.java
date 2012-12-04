@@ -26,6 +26,20 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 		initializeSlots();
 	}
 	
+	public Gameboard(Gameboard gameboard) {
+		this.board = new HashMap<Integer,Slot>();
+		for (Slot slot : gameboard) {
+			this.board.put(
+				slot.hashCode(),
+				new Slot(
+					slot.getColumn(),
+					slot.getRow(),
+					slot.getStatus()
+				)
+			);
+		}
+	}
+	
 	/**
 	 * Anlegen der gueltigen Spielfelder
 	 */
@@ -186,12 +200,12 @@ public class Gameboard implements Serializable, Iterable<Slot> {
 	 * @param status Die Farbe, fuer den die Steine gesucht werden sollen
 	 * @return ArrayList<Slot>
 	 */
-	public ArrayList<Slot> getStonesFromColor(Slot.Status status) {
+	public ArrayList<Slot> getStonesOfStatus(Slot.Status status) {
 		ArrayList<Slot> slotList = new ArrayList<Slot>();
 		
-		for (Integer ite: this.board.keySet()) {
-			Slot cSlot = this.board.get(ite);
-			if (cSlot.getStatus() == status) slotList.add(cSlot);
+		for (Slot slot: this.board.values()) {
+			if (slot.getStatus() == status)
+				slotList.add(slot);
 		}
 		
 		return slotList;

@@ -18,6 +18,14 @@
         <fileset dir="bin/" includes="de/hshannover/operation_muehle/airichard/**/*.class"/>
       </jar>
     </target>
+    <target name="create_test_ais_jar">
+      <jar destfile="lib/TestAIs.jar">
+        <manifest>
+          <attribute name="Class-Path" value="."/>
+        </manifest>
+        <fileset dir="bin/" includes="de/hshannover/operation_muehle/testais/**/*.class"/>
+      </jar>
+    </target>
     <target name="create_run_jar">
         <jar destfile="export/operation_muehle.jar" filesetmanifest="mergewithoutmain">
             <manifest>

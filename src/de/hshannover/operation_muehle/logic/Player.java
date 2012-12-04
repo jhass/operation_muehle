@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import de.hshannover.inform.muehle.strategy.Strategy;
 import de.hshannover.operation_muehle.Facade;
+import de.hshannover.operation_muehle.logic.Slot.Status;
 
 /**
  * Diese Klasse realisiert ein Spieler-Objekt. Es handelt sich hierbei um
@@ -42,7 +43,12 @@ public class Player implements Serializable {
 		}
 	}
 	
+	public static final int PLACE_PHASE = 1;
+	public static final int MOVE_PHASE  = 2;
+	public static final int JUMP_PHASE  = 3;
+	
 	private static final long serialVersionUID = 1L;
+	
 	private String name;
 	private Color color;
 	private int stones;
@@ -50,7 +56,8 @@ public class Player implements Serializable {
 	private int thinkTime;
 	private int phase;
 	private Strategy aiStrategy;
-	private int availableStones= 9;
+	private int availableStones;
+	private int moveCounter; 
 	
 	/**
 	 * Konstruktor fuer Spieler bei einem neuen Spiel. Geandert, um der 
@@ -68,41 +75,20 @@ public class Player implements Serializable {
 		this.name = oPlayer.getName();
 		this.color = color;
 		this.isAI = oPlayer.isAI();
-		this.thinkTime = oPlayer.getThinkTime();
+		this.thinkTime = oPlayer.getThinkTime()*1000;
 		this.stones = 0;
-		this.phase = 1;
+		this.availableStones = 9;
+		this.moveCounter = 0;
+		this.phase = PLACE_PHASE;
 		if (this.isAI)	this.aiStrategy = Facade.getInstance().getStrategyLoader().getInstance(this.name);
-	}
-	
-	/**
-	 * Konstruktor fuer Spieler bei einem geladenen Spielstand.
-	 * @param name Name des Spielers
-	 * @param color Farbe des Spielers
-	 * @param isAI logischer Wert zur Unterscheidung von menschlichen
-	 * Spieler und kuenstlicher Intelligenz
-	 * @param thinkTime Denkzeit der kuenstlichen Intelligenz
-	 * @param stones Array mit den Feldern, in denen der Spieler Spielsteine
-	 * hat
-	 * @param phase Spielphase, in der sich der Spieler befindet 
-	 */
-	public Player(String name, Color color, boolean isAI, int thinkTime, 
-			       Slot[] stones, int phase) {
-		this.name = name;
-		this.color = color;
-		this.isAI = isAI;
-		this.thinkTime = thinkTime;
-		this.stones = stones.length;
-		this.phase = phase;
 	}
 	
 	public void increaseStones() {
 		this.stones++;
 		this.availableStones--;
 		if (this.availableStones == 0) {
-			this.phase++;
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			System.out.println("Player "+this.color+" enters Phase "+this.phase);
-			if (this.stones == 3) this.phase++; //??
+			this.phase = MOVE_PHASE;
+			Logger.logDebugf("Player %s enters phase %s", color, phase);
 		}
 	}
 	
@@ -111,11 +97,27 @@ public class Player implements Serializable {
 	 */
 	public void decreaseNumberOfStones() {
 		this.stones--;
-		if (this.stones == 3 && this.phase == 2) {
-			this.phase++;
-			System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			System.out.println("Entering Phase " + this.phase);
+		// If white makes a mill with its first 3 stones,
+		// black would enter jump phase from place phase,
+		// so do not allow moving from place to jump phase
+		if (this.stones <= 3 && this.phase != PLACE_PHASE) {
+			this.phase = JUMP_PHASE;
+			Logger.logDebugf("Player %s enters phase %s", color, phase);
 		}
+	}
+	
+	/** Increment the move counter
+	 * 
+	 */
+	public void incrementMoveCounter() {
+		this.moveCounter++;
+	}
+	
+	/** Get the amount of moves the player made so far
+	 * 
+	 */
+	public int getNumberOfMoves() {
+		return this.moveCounter;
 	}
 	
 	/**
@@ -127,18 +129,30 @@ public class Player implements Serializable {
 	}
 	
 	/**
-	 * Methode zur Aenderung der Spielphase um 1
-	 */
-	public void nextPhase() {
-		this.phase++;
-	}
-	
-	/**
 	 * Getter fuer den Namen
 	 * @return String
 	 */
 	public String getName() {
 		return this.name;
+	}
+	
+	/** Get the displayable name, that is in case of an AI the strategy name
+	 * 
+	 * @return String
+	 */
+	public String getDisplayName() {
+		String name;
+		if (isAI()) {
+			name = aiStrategy.getStrategyName();
+		} else {
+			name = this.name;
+		}
+		
+		if (name.isEmpty()) {
+			return color.toString().toLowerCase();
+		} else {
+			return String.format("%s (%s)", name, color.toString().toLowerCase());
+		}
 	}
 	
 	/**
@@ -192,7 +206,7 @@ public class Player implements Serializable {
 	 * @return
 	 */
 	public Move doMove(Move last, Slot removed ) {
-		return (Move) this.aiStrategy.doMove(last, (de.hshannover.inform.muehle.strategy.Slot)removed , this.thinkTime);
+		return new Move(this.aiStrategy.doMove(last, removed , this.thinkTime));
 	}
 	
 	/**
@@ -202,8 +216,22 @@ public class Player implements Serializable {
 	 * @return
 	 */
 	public de.hshannover.inform.muehle.strategy.Slot placeStone(Slot last, Slot removed) {
-		return (de.hshannover.inform.muehle.strategy.Slot)this.aiStrategy.placeStone(
-					(de.hshannover.inform.muehle.strategy.Slot)last, 
-					(de.hshannover.inform.muehle.strategy.Slot)removed, this.thinkTime);
+		return this.aiStrategy.placeStone(last, removed, this.thinkTime);
+	}
+
+	/** Returns the opponent color
+	 * 
+	 * @return
+	 */
+	public Color getOpponentColor() {
+		return color.getOpponent();
+	}
+
+	/** Returns the matching SlotStatus for the player
+	 * 
+	 * @return
+	 */
+	public Status getSlotStatus() {
+		return color.getSlotStatus();
 	}
 }
