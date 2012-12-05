@@ -26,57 +26,66 @@ public class PlayerManager implements Serializable, Iterable<Player> {
 		players.add(opponent);
 	}
 	
-	public Player getCurrent() {
+	public synchronized Player getCurrent() {
 		return currentPlayer;
 	}
 	
-	public Player getOpponent() {
+	public synchronized Player getOpponent() {
 		return opponent;
 	}
 	
-	public void opponentsTurn() {
+	public synchronized void opponentsTurn() {
 		Player tmp = currentPlayer;
 		currentPlayer = opponent;
 		opponent = tmp;
+		Logger.logDebugf("Switched current player to %s", currentPlayer);
 	}
 
-	public boolean isCurrentPlayerAI() {
+	public synchronized boolean isCurrentPlayerAI() {
 		return currentPlayer.isAI();
 	}
 	
-	public boolean isOpponentAI() {
+	public synchronized boolean isOpponentAI() {
 		return opponent.isAI();
 	}
 
-	public int getCurrentPlayersPhase() {
+	public synchronized int getCurrentPlayersPhase() {
 		return currentPlayer.getPhase();
 	}
 	
-	public boolean isCurrentPlayersPhase(int phase) {
+	public synchronized String getCurrentPlayersDisplayName() {
+		return currentPlayer.getDisplayName();
+	}
+	
+	public synchronized String getOpponentsDisplayName() {
+		return opponent.getDisplayName();
+	}
+	
+	public synchronized boolean isCurrentPlayersPhase(int phase) {
 		return currentPlayer.getPhase() == phase;
 	}
 	
-	public boolean isCurrentPlayersPhaseNot(int phase) {
+	public synchronized boolean isCurrentPlayersPhaseNot(int phase) {
 		return !isCurrentPlayersPhase(phase);
 	}
 
-	public void increaseCurrentPlayersStones() {
+	public synchronized void increaseCurrentPlayersStones() {
 		currentPlayer.increaseStones();
 	}
 
-	public Status getCurrentPlayersSlotStatus() {
+	public synchronized Status getCurrentPlayersSlotStatus() {
 		return currentPlayer.getSlotStatus();
 	}
 	
-	public Status getOpponentsSlotStatus() {
+	public synchronized Status getOpponentsSlotStatus() {
 		return opponent.getSlotStatus();
 	}
 
-	public void decreaseOpponentsNumberOfStones() {
+	public synchronized void decreaseOpponentsNumberOfStones() {
 		opponent.decreaseNumberOfStones();
 	}
 
-	public Player getOpponentOf(Player player) {
+	public synchronized Player getOpponentOf(Player player) {
 		if (isCurrentPlayer(player)) {
 			return opponent;
 		} else if (isOpponent(player)) {
@@ -84,17 +93,18 @@ public class PlayerManager implements Serializable, Iterable<Player> {
 		} else {
 			return null;
 		}
+		
 	}
 	
-	public boolean isCurrentPlayer(Player player) {
+	public synchronized boolean isCurrentPlayer(Player player) {
 		return player == currentPlayer;
 	}
 	
-	public boolean isOpponent(Player player) {
+	public synchronized boolean isOpponent(Player player) {
 		return player == opponent;
 	}
 	
-	public Player getWhitePlayer() {
+	public synchronized Player getWhitePlayer() {
 		if (currentPlayer.getColor() == Player.Color.WHITE) {
 			return currentPlayer;
 		} else {
@@ -102,7 +112,7 @@ public class PlayerManager implements Serializable, Iterable<Player> {
 		}
 	}
 	
-	public Player getBlackPlayer() {
+	public synchronized Player getBlackPlayer() {
 		return getOpponentOf(getWhitePlayer());
 	}
 	

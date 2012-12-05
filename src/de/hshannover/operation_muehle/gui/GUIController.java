@@ -1,6 +1,5 @@
 package de.hshannover.operation_muehle.gui;
 
-import java.util.ArrayList;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -78,6 +77,7 @@ public class GUIController implements IObserver {
 
 	@Override
 	public void updateObservable() {
+		Logger.logDebug("Updating GUI");
 		final GameState state = Facade.getInstance().getGameState();
 		mainWindow.updateBoard(state.currentGB);
 		mainWindow.updatePlayerInfo(state.players);
@@ -101,18 +101,18 @@ public class GUIController implements IObserver {
 		PlayerManager players = state.players;
 		if (players.isCurrentPlayerAI()) {
 			if (!players.isOpponentAI()) {
-				return "Wait for "+players.getOpponent().getDisplayName()
+				return "Wait for "+players.getCurrentPlayersDisplayName()
 						+" to move.";
 			}
 		} else {
 			String prepend = "";
 			if (!players.isOpponentAI()) {
-				prepend = players.getCurrent().getDisplayName()+": ";
+				prepend = players.getCurrentPlayersDisplayName()+": ";
 			}
 			
 			if (state.inRemovalPhase) {
 				return prepend+"Remove a stone of "
-					   +players.getOpponent().getDisplayName()+".";
+					   +players.getOpponentsDisplayName()+".";
 			}
 			
 			switch (players.getCurrentPlayersPhase()) {

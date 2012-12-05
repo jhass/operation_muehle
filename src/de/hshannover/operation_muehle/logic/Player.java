@@ -234,4 +234,9 @@ public class Player implements Serializable {
 	public Status getSlotStatus() {
 		return color.getSlotStatus();
 	}
+	
+	@Override
+	public String toString() {
+		return getDisplayName();
+	}
 }

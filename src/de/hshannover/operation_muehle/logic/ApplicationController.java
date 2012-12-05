@@ -125,9 +125,11 @@ public class ApplicationController extends AObservable{
 							}
 							
 							players.opponentsTurn();
+							
 							lastMove = currentMove;
 							currentMove = null;
 							snapshot();
+							setObservableChanged(true);
 							
 							notifyObserver();
 						} else {
@@ -140,7 +142,7 @@ public class ApplicationController extends AObservable{
 								players.getCurrent().getThinkTime()+" ms.");
 					} else {
 						Logger.logErrorf("AI %s made invalid move: %s! ",
-										 players.getCurrent().getDisplayName(),
+										 players.getCurrentPlayersDisplayName(),
 										 e.move);
 					}
 					getGameState().winner = players.getOpponent();
@@ -210,7 +212,7 @@ public class ApplicationController extends AObservable{
 				if (hasClosedMill(move)) {
 					currentMoveValidator = removeMoveValidator;
 					Logger.logDebugf("%s made a mill, querying removal.",
-									 players.getCurrent().getDisplayName());
+									 players.getCurrentPlayersDisplayName());
 					
 					// Reset query mechanism
 					Move currentMoveCache = currentMove;
@@ -344,7 +346,7 @@ public class ApplicationController extends AObservable{
 		// log first since increasing/decreasing a players stones can
 		// cause a phase change log that looks weird if it comes
 		// before this one :P
-		Logger.logInfo(move.toStringWithPlayer(players.getCurrent().getDisplayName()));		
+		Logger.logInfo(move.toStringWithPlayer(players.getCurrentPlayersDisplayName()));		
 		
 		if (move.isRemoval()) {
 			players.decreaseOpponentsNumberOfStones();
