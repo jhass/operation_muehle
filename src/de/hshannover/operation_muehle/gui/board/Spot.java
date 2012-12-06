@@ -1,7 +1,10 @@
 package de.hshannover.operation_muehle.gui.board;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+
+import de.hshannover.operation_muehle.logic.GameState;
+import de.hshannover.operation_muehle.logic.Player;
 
 
 /** GUI helper class representing a Spot aka Slot, that is a location that has a
@@ -15,6 +18,7 @@ public class Spot {
 	private Point position;
 	private char column;
 	private int row;
+	private boolean highlighted;
 	
 	/** Create a new spot at the graphical position position and with the
 	 *  coordinates (column,row). 
@@ -88,6 +92,10 @@ public class Spot {
 		return getStone() != null;
 	}
 
+	public boolean hasStoneOfColor(Stone.Color color) {
+		return hasStone() && stone.getColor() == color;
+	}
+
 	/** Get the graphical position of this Spot.
 	 * 
 	 * @return
@@ -111,18 +119,34 @@ public class Spot {
 				point.y < position.y+Stone.RADIUS;
 	}
 
+	public void determineHighlighted(GameState currentState, Point point) {
+		Player.Color targetColor;
+		if (currentState.inRemovalPhase) {
+			targetColor = currentState.players.getOpponent().getColor();
+		} else {
+			targetColor = currentState.players.getCurrent().getColor();
+		}
+		this.highlighted =
+			(currentState.players.getCurrent().getPhase() == Player.MOVE_PHASE ||
+			 currentState.inRemovalPhase) &&
+			hasStoneOfColor(
+				Stone.Color.fromPlayerColor(targetColor)
+			) &&
+			isCovering(point); //TODO: exclude mills
+	}
+
 	/** Draw the Spot on the given Graphics object.
 	 * 
 	 * If the Spot is holding no stone no action is taken.
 	 * 
 	 * @param pen
 	 */
-	public void draw(Graphics pen) {
+	public void draw(Graphics2D pen) {
 		if (getStone() == null) {
 			return;
 		}
 		
-		getStone().draw(pen);
+		getStone().draw(pen, highlighted);
 	}
 	
 	@Override

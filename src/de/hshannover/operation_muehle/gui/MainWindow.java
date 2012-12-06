@@ -5,8 +5,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import de.hshannover.operation_muehle.gui.board.Board;
-import de.hshannover.operation_muehle.logic.Gameboard;
-import de.hshannover.operation_muehle.logic.PlayerManager;
+import de.hshannover.operation_muehle.logic.GameState;
 
 import java.util.ArrayList;
 import java.awt.event.ActionListener;
@@ -178,16 +177,8 @@ public class MainWindow extends JFrame {
 	 * 
 	 * @param gameboard
 	 */
-	public void updateBoard(Gameboard gameboard) {
-		board.setGameboard(gameboard);
-	}
-	
-	/** Sets the player infos
-	 * 
-	 * @param players
-	 */
-	public void updatePlayerInfo(PlayerManager players) {
-		board.setPlayerInfo(players);
+	public void update(GameState state) {
+		board.setState(state);
 	}
 
 	/** Sets the info text

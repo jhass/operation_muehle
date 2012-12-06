@@ -6,8 +6,12 @@ import java.awt.Font;
 public class Theme {
 	public static final String WHITE_STONE_TEXTURE
 		= "white-marble.jpg";
+	public static final String HIGHLIGHTED_WHITE_STONE_TEXTURE
+		= "white-marble_highlighted.jpg";
 	public static final String BLACK_STONE_TEXTURE
 		= "dark-wood.jpg";
+	public static final String HIGHLIGHTED_BLACK_STONE_TEXTURE
+		= "dark-wood_highlighted.jpg";
 	public static final String BOARD_TEXTURE
 		= "light-wood.jpg";
 	public static final Color  SPOT_HINT

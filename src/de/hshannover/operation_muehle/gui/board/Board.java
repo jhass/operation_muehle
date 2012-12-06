@@ -22,10 +22,9 @@ import java.util.ArrayList;
 import de.hshannover.operation_muehle.gui.MoveCallback;
 import de.hshannover.operation_muehle.gui.Theme;
 import de.hshannover.operation_muehle.gui.board.TextureUtils;
-import de.hshannover.operation_muehle.logic.Gameboard;
+import de.hshannover.operation_muehle.logic.GameState;
 import de.hshannover.operation_muehle.logic.Logger;
 import de.hshannover.operation_muehle.logic.Player;
-import de.hshannover.operation_muehle.logic.PlayerManager;
 import de.hshannover.operation_muehle.logic.Slot;
 
 
@@ -39,7 +38,7 @@ public class Board extends Canvas {
 	private int innerSpacing;
 
 	private Spot spots[];
-	private Gameboard currentGameboard;
+	private GameState currentState;
 	private int width;
 	private int height;
 	private BufferedImage boardTexture;
@@ -49,7 +48,6 @@ public class Board extends Canvas {
 	private ArrayList<MoveCallback> newMoveCallbacks = new ArrayList<MoveCallback>();
 	private int horizontalSpacing;
 	private int verticalSpacing;
-	private PlayerManager players;
 	private String infoText;
 	private String messageText;
 	
@@ -75,7 +73,6 @@ public class Board extends Canvas {
 
 	private void addInteractionListeners() {
 		addMouseListener(new MouseAdapter() {
-
 			@Override
 			public void mouseClicked(MouseEvent event) {
 				Point clicked = new Point(event.getX(), event.getY());
@@ -96,6 +93,16 @@ public class Board extends Canvas {
 		});
 		
 		addMouseMotionListener(new MouseAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent event) {
+				for (Spot spot : spots) {
+					spot.determineHighlighted(
+						currentState,
+						new Point(event.getX(), event.getY()));
+				}
+				repaint();
+			}
+			
 			@Override
 			public void mouseDragged(MouseEvent event) {
 				updatedDraggedStone(event);
@@ -180,18 +187,11 @@ public class Board extends Canvas {
 	 * 
 	 * @param gameboard
 	 */
-	public void setGameboard(Gameboard gameboard) {
-		this.currentGameboard = gameboard;
+	public void setState(GameState state) {
+		this.currentState = state;
 		repopulateStones();
 	}
 	
-	/** Updates the current PlayerManager
-	 * 
-	 * @param players
-	 */
-	public void setPlayerInfo(PlayerManager players) {
-		this.players = players;
-	}
 	
 	/** Sets an info text that should be presented to the user
 	 * 
@@ -214,11 +214,11 @@ public class Board extends Canvas {
 	}
 
 	private void repopulateStones() {
-		if (currentGameboard == null) {
+		if (currentState == null) {
 			return;
 		}
 		
-		for (Slot slot : currentGameboard) {
+		for (Slot slot : currentState.currentGB) {
 			for (Spot spot : spots) {
 				if (spot.getRow() == slot.getRow() &&
 					spot.getColumn() == slot.getColumn()) {
@@ -425,15 +425,15 @@ public class Board extends Canvas {
 		pen.drawImage(board, 0, 0, null);
 	}
 
-	private void drawSpots(Graphics pen) {
+	private void drawSpots(Graphics2D pen) {
 		for (Spot spot : spots) {
 			spot.draw(pen);
 		}
 	}
 
-	private void drawDraggedStone(Graphics pen) {
+	private void drawDraggedStone(Graphics2D pen) {
 		if (draggedStone != null) {
-			draggedStone.draw(pen);
+			draggedStone.draw(pen, true);
 		}
 	}
 
@@ -449,14 +449,14 @@ public class Board extends Canvas {
 	}
 	
 	private void drawPlayerCards(Graphics2D pen) {
-		if (players == null || !isEnabled()) {
+		if (currentState == null || !isEnabled()) {
 			return;
 		}
-		Player white = players.getWhitePlayer();
-		Player black = players.getBlackPlayer();
+		Player white = currentState.players.getWhitePlayer();
+		Player black = currentState.players.getBlackPlayer();
 		Color whiteBG, blackBG;
 		
-		if (players.isCurrentPlayer(white)) {
+		if (currentState.players.isCurrentPlayer(white)) {
 			whiteBG = Theme.PLAYER_INFO_WHITE_ACTIVE_BG_COLOR;
 			blackBG = Theme.PLAYER_INFO_BLACK_INACTIVE_BG_COLOR;;
 		} else {
@@ -470,7 +470,7 @@ public class Board extends Canvas {
 			Theme.PLAYER_INFO_WHITE_TEXT_COLOR,
 			140,
 			white,
-			players.isCurrentPlayer(white)
+			currentState.players.isCurrentPlayer(white)
 		); //FIXME: special value
 		
 		drawPlayerInfo(
@@ -479,7 +479,7 @@ public class Board extends Canvas {
 			Theme.PLAYER_INFO_BLACK_TEXT_COLOR,
 			width,
 			black,
-			players.isCurrentPlayer(black)
+			currentState.players.isCurrentPlayer(black)
 		);
 	}
 	

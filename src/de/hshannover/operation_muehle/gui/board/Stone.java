@@ -1,11 +1,12 @@
 package de.hshannover.operation_muehle.gui.board;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import de.hshannover.operation_muehle.gui.Theme;
 import de.hshannover.operation_muehle.gui.board.TextureUtils;
+import de.hshannover.operation_muehle.logic.Player;
 import de.hshannover.operation_muehle.logic.Slot;
 
 /** GUI helper class representing the position and color of a Stone
@@ -30,6 +31,14 @@ public class Stone extends Point {
 			default: return null;
 			}
 		}
+
+		public static Color fromPlayerColor(Player.Color color) {
+			switch(color) {
+			case WHITE: return Color.WHITE;
+			case BLACK: return Color.BLACK;
+			default: return null;
+			}
+		}
 	}
 	
 	/**
@@ -39,7 +48,9 @@ public class Stone extends Point {
 	private static final long serialVersionUID = 1L;
 	
 	private static BufferedImage blackStoneTexture;
+	private static BufferedImage highlightedBlackStoneTexture;
 	private static BufferedImage whiteStoneTexture;
+	private static BufferedImage highlightedWhiteStoneTexture;
 	
 	private Stone.Color color;
 	
@@ -76,46 +87,60 @@ public class Stone extends Point {
 	/** Draw the stone on the given Graphics object
 	 * 
 	 * @param pen
+	 * @param highlighted 
 	 */
-	public void draw(Graphics pen) {
+	public void draw(Graphics2D pen, boolean highlighted) {
 		pen.drawImage(
-				getTexture(),
+				getTexture(highlighted),
 				x-Stone.RADIUS,
 				y-Stone.RADIUS,
 				null);
 	}
 
-	private BufferedImage getTexture() {
+	private BufferedImage getTexture(boolean highlighted) {
 		switch (color) {
 		case WHITE:
-			return getWhiteStoneTexture();
+			return getWhiteStoneTexture(highlighted);
 		case BLACK:
-			return getBlackStoneTexture();
+			return getBlackStoneTexture(highlighted);
 		default:
 			return null;
 		}
 	}
 	
-	private BufferedImage getWhiteStoneTexture() {
-		if (whiteStoneTexture == null) {
-			whiteStoneTexture = TextureUtils.makeOval(
-				TextureUtils.load(Theme.WHITE_STONE_TEXTURE),
-					RADIUS*2, RADIUS*2
-			);
+	private BufferedImage getWhiteStoneTexture(boolean highlighted) {
+		if (highlighted) {
+			if (highlightedWhiteStoneTexture == null) {
+				highlightedWhiteStoneTexture = generateTexture(Theme.HIGHLIGHTED_WHITE_STONE_TEXTURE);
+			}
+			return highlightedWhiteStoneTexture;
+		} else {
+			if (whiteStoneTexture == null) {
+				whiteStoneTexture = generateTexture(Theme.WHITE_STONE_TEXTURE);
+			}
+			return whiteStoneTexture;
 		}
-		
-		return whiteStoneTexture;
 	}
 	
-	private BufferedImage getBlackStoneTexture() {
-		if (blackStoneTexture == null) {
-			blackStoneTexture = TextureUtils.makeOval(
-				TextureUtils.load(Theme.BLACK_STONE_TEXTURE),
-				RADIUS*2, RADIUS*2
-			);
+	private BufferedImage getBlackStoneTexture(boolean highlighted) {
+		if (highlighted) {
+			if (highlightedBlackStoneTexture == null) {
+				highlightedBlackStoneTexture = generateTexture(Theme.HIGHLIGHTED_BLACK_STONE_TEXTURE );
+			}
+			return highlightedBlackStoneTexture;
+		} else {
+			if (blackStoneTexture == null) {
+				blackStoneTexture = generateTexture(Theme.BLACK_STONE_TEXTURE);
+			}
+			return blackStoneTexture;
 		}
-		
-		return blackStoneTexture;
+	}
+
+	private BufferedImage generateTexture(String texture) {
+		return TextureUtils.makeOval(
+			TextureUtils.load(texture),
+			RADIUS*2, RADIUS*2
+		);
 	}
 	
 	public Color getColor() {

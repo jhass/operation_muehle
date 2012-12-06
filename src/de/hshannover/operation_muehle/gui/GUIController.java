@@ -22,7 +22,7 @@ import de.hshannover.operation_muehle.utils.observer.IObserver;
  */
 public class GUIController implements IObserver {
 	private MainWindow mainWindow;
-	private static LogWindow logWindow;
+	private LogWindow logWindow;
 	
 	public GUIController() {
 		this.mainWindow = new MainWindow();
@@ -79,8 +79,7 @@ public class GUIController implements IObserver {
 	public void updateObservable() {
 		Logger.logDebug("Updating GUI");
 		final GameState state = Facade.getInstance().getGameState();
-		mainWindow.updateBoard(state.currentGB);
-		mainWindow.updatePlayerInfo(state.players);
+		mainWindow.update(state);
 		mainWindow.setGameSaveable(!(state.players.isCurrentPlayerAI() ||
 									 state.players.isOpponentAI()));
 		if (state.winner != null) {
@@ -195,12 +194,5 @@ public class GUIController implements IObserver {
 	public void close() {
 		Facade.getInstance().abortGame();
 		System.exit(0); // TODO: -> Facade?
-	}
-	
-	/**
-	 * gives the current log to logWindow
-	 */
-	public static void doLog(String logList) {
-		logWindow.setLog(logList);
 	}
 }
