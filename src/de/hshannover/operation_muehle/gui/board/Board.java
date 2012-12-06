@@ -521,7 +521,7 @@ public class Board extends Canvas {
 			pen,
 			messageText,
 			width/2,
-			verticalSpacing/2,
+			height,
 			Theme.MESSAGE_BOX_BACKGROUND_COLOR,
 			Theme.MESSAGE_BOX_TEXT_COLOR
 		);
@@ -559,7 +559,7 @@ public class Board extends Canvas {
 			centerx-halfStringWidth-10,
 			centery-halfStringHeight-30,
 			halfStringWidth*2+20,
-			halfStringHeight*2+30
+			halfStringHeight*2+20
 		);
 		
 		pen.setColor(text);
@@ -567,7 +567,7 @@ public class Board extends Canvas {
 		pen.drawString(
 				string,
 				(int) (centerx-halfStringWidth),
-				(int) (centery-halfStringHeight)
+				(int) (centery-halfStringHeight-8)
 				);
 		pen.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		
