@@ -18,6 +18,18 @@
         <fileset dir="bin/" includes="de/hshannover/operation_muehle/airichard/**/*.class"/>
       </jar>
     </target>
+    <target name="create_benni_ai_jar">
+      <jar destfile="lib/BenniAI.jar">
+        <manifest>
+          <attribute name="Class-Path" value="."/>
+        </manifest>
+        <fileset dir="bin/" includes="de/hshannover/operation_muehle/advancedAI/**/*.class"/>
+        <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/Gameboard.class" />
+        <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/Move.class" />
+        <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/Slot.class" />
+        <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/MoveValidator.class" />
+      </jar>
+    </target>
     <target name="create_test_ais_jar">
       <jar destfile="lib/TestAIs.jar">
         <manifest>
