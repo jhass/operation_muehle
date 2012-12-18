@@ -3,7 +3,7 @@ package de.hshannover.operation_muehle.gui.board;
 import java.awt.Graphics2D;
 import java.awt.Point;
 
-import de.hshannover.operation_muehle.logic.GameState;
+import de.hshannover.operation_muehle.logic.State;
 import de.hshannover.operation_muehle.logic.Player;
 
 
@@ -119,7 +119,7 @@ public class Spot {
 				point.y < position.y+Stone.RADIUS;
 	}
 
-	public void determineHighlighted(GameState currentState, Point point) {
+	public void determineHighlighted(State currentState, Point point) {
 		Player.Color targetColor;
 		if (currentState.inRemovalPhase) {
 			targetColor = currentState.players.getOpponent().getColor();

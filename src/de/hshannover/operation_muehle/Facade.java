@@ -4,11 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import de.hshannover.operation_muehle.gui.board.Spot;
-import de.hshannover.operation_muehle.logic.GameState;
+import de.hshannover.operation_muehle.logic.State;
 import de.hshannover.operation_muehle.logic.InvalidMoveException;
 import de.hshannover.operation_muehle.logic.Logger;
 import de.hshannover.operation_muehle.logic.PlayerOptions;
-import de.hshannover.operation_muehle.logic.SaveState;
 import de.hshannover.operation_muehle.logic.Slot;
 import de.hshannover.operation_muehle.logic.Move;
 import de.hshannover.operation_muehle.logic.ApplicationController;
@@ -63,7 +62,7 @@ public class Facade {
 	 * @see IOOperation
 	 */
 	public void saveGame(String path) throws IOException {
-		SaveState save = appController.getSaveState();
+		State save = appController.getSaveState();
 		IOOperation.saveGameInfo(path, save);
 	}
 	/**
@@ -73,7 +72,7 @@ public class Facade {
 	 * @throws IOException 
 	 */
 	public void loadGame(String path) throws IOException, ClassNotFoundException {
-		SaveState save = IOOperation.loadGameInfo(path);
+		State save = IOOperation.loadGameInfo(path);
 		appController.initializeSaved(save);
 	}
 	
@@ -122,7 +121,7 @@ public class Facade {
 	 * 
 	 * @return
 	 */
-	public GameState getGameState() {
+	public State getGameState() {
 		return appController.getGameState();
 	}
 }

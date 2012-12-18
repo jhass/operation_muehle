@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @author Benjamin Held
  *
  */
-public class GameState implements Serializable {
+public class State implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public Gameboard currentGB;
 	public PlayerManager players;
@@ -21,7 +21,7 @@ public class GameState implements Serializable {
 	 * @param players Der aktuelle PlayerManager
 	 * @param log Die Notizen (Log) der Spielzuege
 	 */
-	public GameState(Gameboard gameboard, PlayerManager players, Logger logger) {
+	public State(Gameboard gameboard, PlayerManager players, Logger logger) {
 		this.currentGB = gameboard;
 		this.players = players;
 		this.logger = logger;

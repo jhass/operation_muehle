@@ -6,7 +6,7 @@ import java.util.HashMap;
 import de.hshannover.operation_muehle.Facade;
 import de.hshannover.operation_muehle.gui.board.Spot;
 import de.hshannover.operation_muehle.gui.board.Stone.Color;
-import de.hshannover.operation_muehle.logic.GameState;
+import de.hshannover.operation_muehle.logic.State;
 import de.hshannover.operation_muehle.logic.InvalidMoveException;
 import de.hshannover.operation_muehle.logic.Logger;
 import de.hshannover.operation_muehle.logic.Player;
@@ -78,7 +78,7 @@ public class GUIController implements IObserver {
 	@Override
 	public void updateObservable() {
 		Logger.logDebug("Updating GUI");
-		final GameState state = Facade.getInstance().getGameState();
+		final State state = Facade.getInstance().getGameState();
 		mainWindow.update(state);
 		mainWindow.setGameSaveable(!(state.players.isCurrentPlayerAI() ||
 									 state.players.isOpponentAI()));
@@ -96,7 +96,7 @@ public class GUIController implements IObserver {
 	}
 	
 	
-	private String determineCurrentMessage(GameState state) {
+	private String determineCurrentMessage(State state) {
 		PlayerManager players = state.players;
 		if (players.isCurrentPlayerAI()) {
 			if (!players.isOpponentAI()) {

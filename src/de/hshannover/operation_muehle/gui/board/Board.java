@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import de.hshannover.operation_muehle.gui.MoveCallback;
 import de.hshannover.operation_muehle.gui.Theme;
 import de.hshannover.operation_muehle.gui.board.TextureUtils;
-import de.hshannover.operation_muehle.logic.GameState;
+import de.hshannover.operation_muehle.logic.State;
 import de.hshannover.operation_muehle.logic.Logger;
 import de.hshannover.operation_muehle.logic.Player;
 import de.hshannover.operation_muehle.logic.Slot;
@@ -38,7 +38,7 @@ public class Board extends Canvas {
 	private int innerSpacing;
 
 	private Spot spots[];
-	private GameState currentState;
+	private State currentState;
 	private int width;
 	private int height;
 	private BufferedImage boardTexture;
@@ -187,7 +187,7 @@ public class Board extends Canvas {
 	 * 
 	 * @param gameboard
 	 */
-	public void setState(GameState state) {
+	public void setState(State state) {
 		this.currentState = state;
 		repopulateStones();
 	}

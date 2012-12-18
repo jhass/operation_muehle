@@ -17,11 +17,11 @@ public class IOOperation {
 	 * @throws ClassNotFoundException 
 	 * @see SaveState
 	 */
-	public static SaveState loadGameInfo(String name) throws IOException, ClassNotFoundException {
-		SaveState s = null; // Eclipse complaining if not initializing here....
+	public static State loadGameInfo(String name) throws IOException, ClassNotFoundException {
+		State s = null; // Eclipse complaining if not initializing here....
 			FileInputStream file = new FileInputStream(name);
 			ObjectInputStream pump = new ObjectInputStream(file);
-			s = (SaveState) pump.readObject();
+			s = (State) pump.readObject();
 			pump.close();
 		return s;
 	}
@@ -32,9 +32,9 @@ public class IOOperation {
 	 * @param name Name of the Savefile.
 	 * @param data The Data thats to be saved.
 	 * @throws IOException 
-	 * @see GameState
+	 * @see State
 	 */
-	public static void saveGameInfo(String name, SaveState data) throws IOException {
+	public static void saveGameInfo(String name, State data) throws IOException {
 
 			FileOutputStream file = new FileOutputStream(name);
 			ObjectOutputStream pump = new ObjectOutputStream(file);

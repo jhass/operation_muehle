@@ -5,7 +5,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import de.hshannover.operation_muehle.gui.board.Board;
-import de.hshannover.operation_muehle.logic.GameState;
+import de.hshannover.operation_muehle.logic.State;
 
 import java.util.ArrayList;
 import java.awt.event.ActionListener;
@@ -177,7 +177,7 @@ public class MainWindow extends JFrame {
 	 * 
 	 * @param gameboard
 	 */
-	public void update(GameState state) {
+	public void update(State state) {
 		board.setState(state);
 	}
 

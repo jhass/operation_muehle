@@ -23,8 +23,8 @@ public class ApplicationController extends AObservable{
 	private MoveValidator moveValidator;
 	private MoveValidator removeMoveValidator;
 	private MoveValidator currentMoveValidator;
-	private SaveState snapshot;
-	private GameState state;
+	private State snapshot;
+	private State state;
 	
 	/**
 	 * Simple, basic Constructor.
@@ -72,7 +72,7 @@ public class ApplicationController extends AObservable{
 	 * @param state SaveState from an older game.
 	 * @see SaveState
 	 */
-	public void initializeSaved(SaveState state) {
+	public void initializeSaved(State state) {
 		resetController();
 		
 		players = state.players;
@@ -292,11 +292,11 @@ public class ApplicationController extends AObservable{
 	/**
 	 * Returns a new GameState, representing the game in its most recent state.
 	 * @return A "fresh" GameState.
-	 * @see GameState
+	 * @see State
 	 */
-	public synchronized GameState getGameState() {
+	public synchronized State getGameState() {
 		if (state == null) {
-			state = new GameState(gameboard, players, Logger.getInstance());
+			state = new State(gameboard, players, Logger.getInstance());
 		}
 		
 		return state;
@@ -308,7 +308,7 @@ public class ApplicationController extends AObservable{
 	 * @return A "fresh" SaveState
 	 * @see SaveState
 	 */
-	public SaveState getSaveState() {
+	public State getSaveState() {
 		if (snapshot == null) {
 			snapshot();
 		}
@@ -323,7 +323,7 @@ public class ApplicationController extends AObservable{
 	}
 	
 	private void snapshot()  {
-		snapshot = new SaveState(gameboard, players, Logger.getInstance());
+		snapshot = new State(gameboard, players, Logger.getInstance());
 	}
 	
 	private synchronized boolean isGameRunning() {
