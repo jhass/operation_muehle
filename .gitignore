@@ -1,6 +1,9 @@
 bin/
 export/*.jar
 export/lib/*.jar
+export/README.md
+export/LICENSE
+*.zip
 
 *.class
 

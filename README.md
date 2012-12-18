@@ -1,14 +1,24 @@
-﻿Operation Mühle
-================
+# Operation Mühle
 
-Programmierprojekt im dritten Semester an der HS Hannover im Wintersemester 2012/2013.
+Programmierprojekt im dritten Semester WS12/13, Gruppe 2
 
+# Starten
 
-# Mitarbeiter
+## Linux und OS X
 
-* Benjamin Held
-* Richard Pump
-* Jonne Haß
-* Julian Haack
-* Alexander Sirotin
+    cd export
+    ./operation_muehle.sh
 
+## Windows
+
+    cd export
+    java -jar operation_muehle.jar
+
+# AIs laden
+
+Um die AIs verfügbar zu machen reicht es das `jar` in das Verzeichniss lib/
+zu tun, siehe mitgelieferte Beispiele.
+
+# Lizenz
+
+siehe LICENSE
