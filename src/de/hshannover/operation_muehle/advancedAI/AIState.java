@@ -15,7 +15,7 @@ public class AIState {
 	public static int availableStones;
 	public static int stones;
 
-	public static void increaseStones() {
+	public synchronized static void increaseStones() {
 		stones++;
 		availableStones--;
 		if (availableStones == 0) {
@@ -26,7 +26,7 @@ public class AIState {
 	/**
 	 * Methode zum reduzieren der Spielsteine um 1 (wenn ein Stein vom Feld entfernt wurde)
 	 */
-	public static void decreaseNumberOfStones() {
+	public synchronized static void decreaseNumberOfStones() {
 		stones--;
 		// If white makes a mill with its first 3 stones,
 		// black would enter jump phase from place phase,
