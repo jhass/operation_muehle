@@ -59,16 +59,24 @@ public class StrategyLoader extends ClassesLoader {
 			Class<?> klass = getClass(klassName);
 			for (Class<?> iface : klass.getInterfaces()) {
 				if (iface.getCanonicalName().equals("de.hshannover.inform.muehle.strategy.Strategy")) {
+					Logger.logDebugf("Found class implementing the Strategy interface: %s", klassName);
 					return (Strategy) super.getInstance(klassName); 
 				} else {
-					Logger.logDebugf("%s doesn't implement the Strategy interface but %s. Skipping.", klassName, iface.getCanonicalName());
+					Logger.logDebugf("%s implements %s.", klassName, iface.getCanonicalName());
 				}
 			}
+		// Meh, I want Java 7
 		} catch (ClassNotFoundException e) {
+			Logger.logDebugf("Couldn't load %s (%s).", klassName, e);
 		} catch (InstantiationException e) {
+			Logger.logDebugf("Couldn't load %s (%s).", klassName, e);
 		} catch (IllegalAccessException e) {
+			Logger.logDebugf("Couldn't load %s (%s).", klassName, e);
 		} catch (ClassCastException e) {
-		} catch (NoClassDefFoundError e) {}
+			Logger.logDebugf("Couldn't load %s (%s).", klassName, e);
+		} catch (NoClassDefFoundError e) {
+			Logger.logDebugf("Couldn't load %s (%s).", klassName, e);
+		}
 		
 		return null;
 	}
@@ -83,6 +91,7 @@ public class StrategyLoader extends ClassesLoader {
 		
 		for (Object strategy : super.getAllInstances()) {
 			if (strategy != null) {
+			
 				strategies.add((Strategy) strategy);
 			}
 		}
