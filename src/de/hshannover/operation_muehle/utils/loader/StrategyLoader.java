@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import de.hshannover.inform.muehle.strategy.Strategy;
+import de.hshannover.operation_muehle.logic.Logger;
 
 
 /** Loads any found strategies
@@ -59,6 +60,8 @@ public class StrategyLoader extends ClassesLoader {
 			for (Class<?> iface : klass.getInterfaces()) {
 				if (iface.getCanonicalName().equals("de.hshannover.inform.muehle.strategy.Strategy")) {
 					return (Strategy) super.getInstance(klassName); 
+				} else {
+					Logger.logDebugf("%s doesn't implement the Strategy interface but %s. Skipping.", klassName, iface.getCanonicalName());
 				}
 			}
 		} catch (ClassNotFoundException e) {
