@@ -3,7 +3,6 @@ package de.hshannover.operation_muehle.advancedAI;
 import de.hshannover.operation_muehle.logic.Move;
 import de.hshannover.inform.muehle.strategy.Strategy;
 import de.hshannover.operation_muehle.logic.Gameboard;
-import de.hshannover.operation_muehle.logic.Logger;
 import de.hshannover.operation_muehle.logic.Slot;
 
 public class AdvAI implements Strategy {
@@ -25,7 +24,6 @@ public class AdvAI implements Strategy {
 			} else {
 				AIState.board.applyMove(move);
 			}
-			Logger.logDebugf("AI received %s", move);
 		}
 		AIState.removalRequested = false;
 		return generateMove(thinkTime);
@@ -71,7 +69,6 @@ public class AdvAI implements Strategy {
 		
 		if (placed != null) {
 			Slot slot = new Slot(placed);
-			Logger.logDebugf("AI received placement to %s", slot);
 			AIState.board.applySlot(slot, 
 								 AIState.color.getOpponentSlotStatus());
 		}
@@ -84,7 +81,6 @@ public class AdvAI implements Strategy {
 	private void removeOwnStone(de.hshannover.inform.muehle.strategy.Slot removed) {
 		if (removed != null) {
 			Slot slot = new Slot(removed);
-			Logger.logDebugf("AI received removal of %s", slot);
 			AIState.board.applySlot(slot, Slot.Status.EMPTY);
 			AIState.decreaseNumberOfStones();
 		}

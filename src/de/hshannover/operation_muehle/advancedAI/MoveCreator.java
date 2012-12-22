@@ -3,7 +3,6 @@ package de.hshannover.operation_muehle.advancedAI;
 import java.util.ArrayList;
 import java.util.Random;
 
-import de.hshannover.operation_muehle.logic.Logger;
 import de.hshannover.operation_muehle.logic.Move;
 import de.hshannover.operation_muehle.logic.MoveValidator;
 import de.hshannover.operation_muehle.logic.Slot;
@@ -13,16 +12,6 @@ public class MoveCreator extends Thread{
 
 	@Override
 	public void run() {
-		Logger.logDebug("Meine Steine: ");
-		for (Slot slot: AIState.board) {
-			if (slot.getStatus() ==AIState.color.getSlotStatus())
-				Logger.logDebug(slot.toString()+", ");
-		}
-		Logger.logDebug("Andere Steine: ");
-		for (Slot slot: AIState.board) {
-			if (slot.getStatus() ==AIState.color.getOpponentSlotStatus())
-				Logger.logDebug(slot.toString()+", ");
-		}
 		if (AIState.removalRequested) {
 			computeRemoval();
 		} else {
@@ -42,7 +31,6 @@ public class MoveCreator extends Thread{
 	}
 	
 	private void computeRemoval() {
-		Logger.logDebug("AI: compute removal");
 		ArrayList<Slot> enemyStones = AIState.board.getStonesOfStatus(
 							  AIState.color.getOpponentSlotStatus());
 		ArrayList<Slot> canRemove= new ArrayList<Slot>();
@@ -61,7 +49,6 @@ public class MoveCreator extends Thread{
 		
 
 	private void computeJump() {
-		Logger.logDebug("AI: compute jump");
 		ArrayList<Slot> freeSlots = AIState.board.getStonesOfStatus(Slot.Status.EMPTY);
 		ArrayList<Slot> colorSlots = AIState.board.getStonesOfStatus(AIState.color.getSlotStatus());
 		Random slotNumber = new Random();
@@ -72,7 +59,6 @@ public class MoveCreator extends Thread{
 	}
 
 	private void computeMove() {
-		Logger.logDebug("AI: compute move");
 		ArrayList<Slot> freeSlots = AIState.board.getStonesOfStatus(AIState.color.getSlotStatus());
 		ArrayList<Move> avaMoves = new ArrayList<Move>();
 		
@@ -90,7 +76,6 @@ public class MoveCreator extends Thread{
 	}
 
 	private void computePlacement() {
-		Logger.logDebug("AI: compute placement");
 		ArrayList<Slot> freeSlots = AIState.board.getStonesOfStatus(Slot.Status.EMPTY);
 		Random slotNumber = new Random();
 		int index = slotNumber.nextInt(freeSlots.size());
