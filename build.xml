@@ -26,8 +26,9 @@
         <fileset dir="bin/" includes="de/hshannover/operation_muehle/advancedAI/**/*.class"/>
         <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/Gameboard.class" />
         <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/Move.class" />
-        <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/Slot.class" />
+        <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/Slot*.class" />
         <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/MoveValidator.class" />
+        <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/RemoveValidator.class" />
       </jar>
     </target>
     <target name="create_test_ais_jar">
