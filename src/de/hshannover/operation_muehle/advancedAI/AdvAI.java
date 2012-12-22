@@ -2,16 +2,13 @@ package de.hshannover.operation_muehle.advancedAI;
 
 import de.hshannover.operation_muehle.logic.Move;
 import de.hshannover.inform.muehle.strategy.Strategy;
-import de.hshannover.operation_muehle.logic.Gameboard;
 import de.hshannover.operation_muehle.logic.Slot;
 
 public class AdvAI implements Strategy {
-
+	private AIState state;
+	
 	public AdvAI() {
-		AIState.phase = AIState.PLACE_PHASE;
-		AIState.board = new Gameboard();
-		AIState.availableStones = 9;
-		AIState.stones = 0;
+		state = new AIState();
 	}
 	
 	@Override
@@ -20,17 +17,17 @@ public class AdvAI implements Strategy {
 		if (lastMove != null) {
 			Move move = new Move(lastMove);
 			if (move.isPlacement()) {
-				AIState.board.applySlot(move.toSlot(), AIState.color.getOpponentSlotStatus());
+				state.board.applySlot(move.toSlot(), state.color.getOpponentSlotStatus());
 			} else {
-				AIState.board.applyMove(move);
+				state.board.applyMove(move);
 			}
 		}
-		AIState.removalRequested = false;
+		state.removalRequested = false;
 		return generateMove(thinkTime);
 	}
 
 	private Move generateMove(int thinkTime) {
-		MoveCreator moveCreator = new MoveCreator();
+		MoveCreator moveCreator = new MoveCreator(state);
 		moveCreator.start();
 		try {
 			moveCreator.join((long) thinkTime);
@@ -38,11 +35,11 @@ public class AdvAI implements Strategy {
 		Move move = moveCreator.getBestMove();
 		
 		if (move.isRemoval()) {
-			AIState.board.applySlot(move.fromSlot(), Slot.Status.EMPTY);
+			state.board.applySlot(move.fromSlot(), Slot.Status.EMPTY);
 		} else if (move.isPlacement()) {
-			AIState.board.applySlot(move.toSlot(), AIState.color.getSlotStatus());
+			state.board.applySlot(move.toSlot(), state.color.getSlotStatus());
 		} else {
-			AIState.board.applyMove(move);
+			state.board.applyMove(move);
 		}
 		return move;
 	}
@@ -61,34 +58,34 @@ public class AdvAI implements Strategy {
 	public Slot placeStone(de.hshannover.inform.muehle.strategy.Slot placed, 
 						   de.hshannover.inform.muehle.strategy.Slot removed,
 						   int thinkTime) {
-		if (AIState.color == null) {
-			if (placed == null) AIState.color = AIState.Color.WHITE;
-			else AIState.color = AIState.Color.BLACK;
+		if (state.color == null) {
+			if (placed == null) state.color = AIState.Color.WHITE;
+			else state.color = AIState.Color.BLACK;
 		}
 		removeOwnStone(removed);
 		
 		if (placed != null) {
 			Slot slot = new Slot(placed);
-			AIState.board.applySlot(slot, 
-								 AIState.color.getOpponentSlotStatus());
+			state.board.applySlot(slot, 
+								 state.color.getOpponentSlotStatus());
 		}
-		AIState.removalRequested = false;
+		state.removalRequested = false;
 		Move move = generateMove(thinkTime);
-		AIState.increaseStones();
+		state.increaseStones();
 		return move.toSlot();
 	}
 
 	private void removeOwnStone(de.hshannover.inform.muehle.strategy.Slot removed) {
 		if (removed != null) {
 			Slot slot = new Slot(removed);
-			AIState.board.applySlot(slot, Slot.Status.EMPTY);
-			AIState.decreaseNumberOfStones();
+			state.board.applySlot(slot, Slot.Status.EMPTY);
+			state.decreaseNumberOfStones();
 		}
 	}
 
 	@Override
 	public Slot removeStone(int thinkTime) {
-		AIState.removalRequested = true;
+		state.removalRequested = true;
 		return generateMove(thinkTime).fromSlot();
 	}	
 }

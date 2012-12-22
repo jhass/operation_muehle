@@ -7,15 +7,21 @@ import de.hshannover.operation_muehle.logic.Move;
 import de.hshannover.operation_muehle.logic.MoveValidator;
 import de.hshannover.operation_muehle.logic.Slot;
 
-public class MoveCreator extends Thread{
+public class MoveCreator extends Thread {
+	private AIState state;
 	private Move bestMove;
 
+	public MoveCreator(AIState state) {
+		super();
+		this.state = state;
+	}
+	
 	@Override
 	public void run() {
-		if (AIState.removalRequested) {
+		if (state.removalRequested) {
 			computeRemoval();
 		} else {
-			switch (AIState.phase) {
+			switch (state.phase) {
 			case AIState.PLACE_PHASE: computePlacement();
 				break;
 			case AIState.MOVE_PHASE: computeMove();
@@ -25,17 +31,12 @@ public class MoveCreator extends Thread{
 		}
 	}
 	
-	public MoveCreator() {
-		super();
-		//new Throwable("").printStackTrace();
-	}
-	
 	private void computeRemoval() {
-		ArrayList<Slot> enemyStones = AIState.board.getStonesOfStatus(
-							  AIState.color.getOpponentSlotStatus());
+		ArrayList<Slot> enemyStones = state.board.getStonesOfStatus(
+							  state.color.getOpponentSlotStatus());
 		ArrayList<Slot> canRemove= new ArrayList<Slot>();
 		
-		MoveValidator moveVal = new MoveValidator(AIState.board, null);
+		MoveValidator moveVal = new MoveValidator(state.board, null);
 		
 		for (Slot slot : enemyStones) {
 		if (!moveVal.isInMill(slot)) canRemove.add(slot);
@@ -49,8 +50,8 @@ public class MoveCreator extends Thread{
 		
 
 	private void computeJump() {
-		ArrayList<Slot> freeSlots = AIState.board.getStonesOfStatus(Slot.Status.EMPTY);
-		ArrayList<Slot> colorSlots = AIState.board.getStonesOfStatus(AIState.color.getSlotStatus());
+		ArrayList<Slot> freeSlots = state.board.getStonesOfStatus(Slot.Status.EMPTY);
+		ArrayList<Slot> colorSlots = state.board.getStonesOfStatus(state.color.getSlotStatus());
 		Random slotNumber = new Random();
 		int index = slotNumber.nextInt(colorSlots.size());
 		Slot jumpSlot = colorSlots.get(index);
@@ -59,11 +60,11 @@ public class MoveCreator extends Thread{
 	}
 
 	private void computeMove() {
-		ArrayList<Slot> freeSlots = AIState.board.getStonesOfStatus(AIState.color.getSlotStatus());
+		ArrayList<Slot> freeSlots = state.board.getStonesOfStatus(state.color.getSlotStatus());
 		ArrayList<Move> avaMoves = new ArrayList<Move>();
 		
 		for (Slot slot: freeSlots) {
-			Slot[] neighbours = AIState.board.getNeighbours(slot);
+			Slot[] neighbours = state.board.getNeighbours(slot);
 			for (Slot nSlot: neighbours) {
 				if (nSlot != null && 
 					nSlot.getStatus() == Slot.Status.EMPTY) 
@@ -76,7 +77,7 @@ public class MoveCreator extends Thread{
 	}
 
 	private void computePlacement() {
-		ArrayList<Slot> freeSlots = AIState.board.getStonesOfStatus(Slot.Status.EMPTY);
+		ArrayList<Slot> freeSlots = state.board.getStonesOfStatus(Slot.Status.EMPTY);
 		Random slotNumber = new Random();
 		int index = slotNumber.nextInt(freeSlots.size());
 		this.bestMove = new Move(null, freeSlots.get(index));

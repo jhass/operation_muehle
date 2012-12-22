@@ -8,14 +8,22 @@ public class AIState {
 	public static final int MOVE_PHASE  = 2;
 	public static final int JUMP_PHASE  = 3;
 	
-	public static Gameboard board;
-	public static int phase;
-	public static Color color;
-	public static boolean removalRequested;
-	public static int availableStones;
-	public static int stones;
-
-	public synchronized static void increaseStones() {
+	public Gameboard board;
+	public int phase;
+	public Color color;
+	public boolean removalRequested;
+	public int availableStones;
+	public int stones;
+	
+	public AIState() {
+		phase = AIState.PLACE_PHASE;
+		board = new Gameboard();
+		availableStones = 9;
+		stones = 0;
+	}
+	
+	
+	public synchronized void increaseStones() {
 		stones++;
 		availableStones--;
 		if (availableStones == 0) {
@@ -26,7 +34,7 @@ public class AIState {
 	/**
 	 * Methode zum reduzieren der Spielsteine um 1 (wenn ein Stein vom Feld entfernt wurde)
 	 */
-	public synchronized static void decreaseNumberOfStones() {
+	public synchronized void decreaseNumberOfStones() {
 		stones--;
 		// If white makes a mill with its first 3 stones,
 		// black would enter jump phase from place phase,
