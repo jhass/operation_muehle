@@ -24,7 +24,7 @@
           <attribute name="Class-Path" value="."/>
         </manifest>
         <fileset dir="bin/" includes="de/hshannover/operation_muehle/advancedAI/**/*.class"/>
-        <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/Gameboard.class" />
+        <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/Gameboard*.class" />
         <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/Move.class" />
         <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/Slot*.class" />
         <fileset dir="bin/" includes="de/hshannover/operation_muehle/logic/MoveValidator.class" />
