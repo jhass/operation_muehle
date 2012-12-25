@@ -147,6 +147,12 @@ public class ApplicationController extends AObservable{
 					}
 					getGameState().winner = players.getOpponent();
 					gameRunning = false;
+				} catch (RuntimeException e) {
+					Logger.logErrorf("An Exception occured from AI: "+
+									  players.getCurrentPlayersDisplayName()+
+									  "\nExceptiontype: "+e);
+					getGameState().winner = players.getOpponent();
+					gameRunning = false;
 				}
 				
 				if (getGameState().winner != null) { 
