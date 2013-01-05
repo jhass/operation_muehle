@@ -23,15 +23,25 @@ import de.hshannover.operation_muehle.utils.observer.IObserver;
 public class GUIController implements IObserver {
 	private MainWindow mainWindow;
 	private LogWindow logWindow;
+	private GameInfoWindow gameInfoWindow;
 	
 	public GUIController() {
 		this.mainWindow = new MainWindow();
 		logWindow = new LogWindow();
+		gameInfoWindow = new GameInfoWindow();
 		
 		this.mainWindow.addToggleLogCallback(new Runnable() {
 			@Override
 			public void run() {
 				toggleLog();
+				
+			}
+		});
+		
+		this.mainWindow.addToggleGameInfoCallback(new Runnable() {
+			@Override
+			public void run() {
+				toggleGameInfo();
 				
 			}
 		});
@@ -180,6 +190,13 @@ public class GUIController implements IObserver {
 	 */
 	public void toggleLog() {
 		logWindow.toggleVisibility();
+	}
+	
+	/** Display/hide gameInfo depending on the current state.
+	 * 
+	 */
+	public void toggleGameInfo() {
+		gameInfoWindow.toggleVisibility();
 	}
 		
 	private boolean newMove(Spot src, Spot dst, Color color) {

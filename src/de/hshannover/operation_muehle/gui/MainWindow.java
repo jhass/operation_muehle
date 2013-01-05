@@ -28,11 +28,13 @@ public class MainWindow extends JFrame {
 	private ArrayList<Runnable> closeWindowCallbacks = new ArrayList<Runnable>();
 	private ArrayList<Runnable> loadGameCallbacks = new ArrayList<Runnable>();
 	private ArrayList<Runnable> saveGameCallbacks = new ArrayList<Runnable>();
+	private ArrayList<Runnable> toggleGameInfoCallbacks = new ArrayList<Runnable>();
 	
 	private final JButton btnNewGame = new JButton("New Game");
 	private final JButton btnToggleLog = new JButton("Toggle Log");
 	private final JButton btnLoadGame = new JButton("Load Game");
 	private final JButton btnSaveGame = new JButton("Save Game");
+	private final JButton btnToggleGameInfo = new JButton("Info");
 
 	private Board board;
 	private boolean saveableGame;
@@ -54,6 +56,7 @@ public class MainWindow extends JFrame {
 		buttonContainer.add(btnNewGame);
 		buttonContainer.add(btnLoadGame);
 		buttonContainer.add(btnSaveGame);
+		buttonContainer.add(btnToggleGameInfo);
 		
 		setupListener();
 		setTitle("Mühle");
@@ -95,6 +98,7 @@ public class MainWindow extends JFrame {
 		setupButtonCallbacks(btnToggleLog, toggleLogCallbacks);
 		setupButtonCallbacks(btnLoadGame, loadGameCallbacks);
 		setupButtonCallbacks(btnSaveGame, saveGameCallbacks);
+		setupButtonCallbacks(btnToggleGameInfo, toggleGameInfoCallbacks);
 		
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -124,6 +128,14 @@ public class MainWindow extends JFrame {
 	 */
 	public void addToggleLogCallback(Runnable callback) {
 		this.toggleLogCallbacks.add(callback);
+	}
+
+	/** Add an item to the callback chain for when the gameInfowWindow should be toggled
+	 * 
+	 * @param callback
+	 */
+	public void addToggleGameInfoCallback(Runnable callback) {
+		this.toggleGameInfoCallbacks.add(callback);
 	}
 	
 	/** Add an item to the callback chain for when a new game is requested
