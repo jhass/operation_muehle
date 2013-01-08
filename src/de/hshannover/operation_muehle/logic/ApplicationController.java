@@ -138,8 +138,9 @@ public class ApplicationController extends AObservable{
 					}
 				} catch (InvalidMoveException e) {
 					if (e.move == null) {
-						Logger.logError("AI has not made a valid Move in Time: "+
-								players.getCurrent().getThinkTime()+" ms.");
+						Logger.logErrorf("AI %s has not made a valid Move in %sms",
+								players.getCurrentPlayersDisplayName(),
+								players.getCurrent().getThinkTime());
 					} else {
 						Logger.logErrorf("AI %s made invalid move: %s! ",
 										 players.getCurrentPlayersDisplayName(),
@@ -147,10 +148,11 @@ public class ApplicationController extends AObservable{
 					}
 					getGameState().winner = players.getOpponent();
 					gameRunning = false;
-				} catch (RuntimeException e) {
-					Logger.logErrorf("An Exception occured from AI: "+
-									  players.getCurrentPlayersDisplayName()+
-									  "\nExceptiontype: "+e);
+				} catch (Exception e) {
+					Logger.logErrorf("An Exception occured from AI: %s", 
+									players.getCurrentPlayersDisplayName());
+					Logger.logErrorf("Exception type: %s", e);
+					Logger.logDebugf("Stacktrace: %s", Logger.traceToString(e));
 					getGameState().winner = players.getOpponent();
 					gameRunning = false;
 				}
@@ -166,8 +168,8 @@ public class ApplicationController extends AObservable{
 
 			private void setCurrentMoveToAIMove(final Move lastMove)
 				throws InvalidMoveException {
-				if (players.isCurrentPlayersPhase(Player.PLACE_PHASE)) {
-					try {
+				try {
+					if (players.isCurrentPlayersPhase(Player.PLACE_PHASE)) {
 						TimeObserver observer = new TimeObserver(players.getCurrent()
 																 .getThinkTime()+100) {
 							@Override
@@ -187,25 +189,27 @@ public class ApplicationController extends AObservable{
 						
 						if (!observer.hasFinishedInTime()) throw new InvalidMoveException(null);
 						
-					} catch (Exception e) {
-						e.printStackTrace();
-						throw new InvalidMoveException(currentMove);
-					}
-				} else {
-					TimeObserver observer = new TimeObserver(players.getCurrent()
-							 .getThinkTime()) {
-						@Override
-						public void run() {
+					} else {
+						TimeObserver observer = new TimeObserver(players.getCurrent()
+								 .getThinkTime()+100) {
+							@Override
+							public void run() {
+								
+								// lastMove is already correctly set in the transition
+								// special case since we internally handle remove that way.
+								currentMove = players.getCurrent().doMove(lastMove,
+										lastRemovedStone);
 							
-							// lastMove is already correctly set in the transition
-							// special case since we internally handle remove that way.
-							currentMove = players.getCurrent().doMove(lastMove,
-									lastRemovedStone);
+							}
+						};
 						
-						}
-					};
-						
-					if (!observer.hasFinishedInTime()) throw new InvalidMoveException(null);
+						if (!observer.hasFinishedInTime()) throw new InvalidMoveException(null);
+					}
+				} catch (Exception e) {
+					Logger.logDebugf("AI (%s) missbehaved: %s",
+							players.getCurrentPlayersDisplayName(),
+							Logger.traceToString(e));//e.printStackTrace();
+					throw new InvalidMoveException(currentMove);
 				}
 				
 				if (isInvalidMove(currentMove)) {

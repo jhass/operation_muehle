@@ -1,6 +1,8 @@
 package de.hshannover.operation_muehle.logic;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.ArrayList;
 /**
  * A simple Class for Logging a Game in a String-ArrayList
@@ -155,5 +157,12 @@ public class Logger implements Serializable {
 		public String toString() {
 			return String.format("%tc [%s]: %s", timestamp, level, message);
 		}
+	}
+
+	public static String traceToString(Exception e) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		e.printStackTrace(pw);
+		return sw.toString();
 	}
 }
