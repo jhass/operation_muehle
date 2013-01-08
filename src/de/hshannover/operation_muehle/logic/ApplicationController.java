@@ -169,7 +169,7 @@ public class ApplicationController extends AObservable{
 				if (players.isCurrentPlayersPhase(Player.PLACE_PHASE)) {
 					try {
 						TimeObserver observer = new TimeObserver(players.getCurrent()
-																 .getThinkTime()) {
+																 .getThinkTime()+100) {
 							@Override
 							public void run() {
 								currentMove = new Move(
