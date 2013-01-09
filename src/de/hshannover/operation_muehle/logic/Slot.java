@@ -74,7 +74,7 @@ public class Slot implements de.hshannover.inform.muehle.strategy.Slot,
 			throw new IllegalArgumentException("Slot.Row ungueltig!");
 		}
 		
-		column = String.valueOf(column).toUpperCase().toCharArray()[0];
+		column = Character.toUpperCase(column);
 		
 		if (column < 'A') {
 			throw new IllegalArgumentException("Slot.Column ungueltig!");

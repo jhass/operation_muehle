@@ -174,13 +174,16 @@ public class ApplicationController extends AObservable{
 																 .getThinkTime()+100) {
 							@Override
 							public void run() {
+								de.hshannover.inform.muehle.strategy.Slot slot = players.getCurrent().placeStone(
+										lastMove != null ? new CompatSlot(lastMove.toSlot()) : null,
+										lastRemovedStone != null ? new CompatSlot(lastRemovedStone) : null
+								);
+								
+								
 								currentMove = new Move(
 										null,
 										new Slot(
-											players.getCurrent().placeStone(
-													lastMove != null ? lastMove.toSlot() : null,
-													lastRemovedStone
-											)
+											slot
 										)
 									);
 								
@@ -197,8 +200,9 @@ public class ApplicationController extends AObservable{
 								
 								// lastMove is already correctly set in the transition
 								// special case since we internally handle remove that way.
-								currentMove = players.getCurrent().doMove(lastMove,
-										lastRemovedStone);
+								currentMove = players.getCurrent().doMove(new Move(lastMove.fromSlot() != null ? new CompatSlot(lastMove.fromSlot()) : null, lastMove.toSlot() != null ? new CompatSlot(lastMove.toSlot()) : null),
+										lastRemovedStone != null ? new CompatSlot(lastRemovedStone) : null);
+								currentMove = new Move(new Slot(currentMove.fromSlot()), new Slot(currentMove.toSlot()));
 							
 							}
 						};
